@@ -2,6 +2,7 @@
 title: Héritage de gabarit
 description: Docs intro
 ---
+import { Card, Aside, Icon, FileTree} from '@astrojs/starlight/components';
 
 On vous a annoncé plus tôt que DRY est la devise de Django. Pourtant, si l'on regarde les gabarits, nous pouvons voir énormément de redondance. Nous allons améliorer cela et mettre un peu de style dans notre site.
 
@@ -35,9 +36,13 @@ Ajoutez le code suivant :
 Ce bout de code permet d'ajouter une liste de chemins dans lequel Django peut trouver un gabarit. Le chemin que l'on définit ici est un dossier qui se nomme `templates` et qui se trouve directement à la racine du projet. Créez ce dossier et ajoutez un fichier nommé `_base.html`.
 
 
-📃 Le nom de ce fichier est totalement arbitraire, toutefois, nous précédons le nom par un underscore puisque ce fichier est destiné à être étendu. La communauté de Django vous remerciera de respecter cette convention.
+<Aside title="Convention" >
+Le nom de ce fichier est arbitraire, toutefois, nous précédons le nom par un underscore puisque ce fichier est destiné à être étendu. La communauté de Django vous remerciera de respecter cette convention.
+</Aside>
 
-📃 Petit rappel, `BASE_DIR / 'templates'` désigne la concaténation d'un chemin (`BASE_DIR`) qui est défini dans le fichier `settings.py` avec `templates`.
+<Card title="Rappel" icon="seti:python">
+`BASE_DIR / 'templates'` désigne la concaténation d'un chemin (`BASE_DIR`) qui est défini dans le fichier `settings.py` avec `templates`.
+</Card>
 
 ## Gabarit de base
 
@@ -63,7 +68,9 @@ Dans le fichier `_base.html`, placez-y le code suivant
 
 Les balises `{% block %}` permettent de définir des blocs qui peuvent être surchargés par les gabarits enfants.
 
-📃 Notez qu'il n'est pas obligatoire de nommer le bloc fermé (`{% endblock content %`), mais nous préférons par soucis de lisibilité.
+<Aside title="{% endblock %}" >
+Il n'est pas obligatoire de nommer le bloc fermé (`{% endblock content %`), mais nous préférons par soucis de lisibilité.
+</Aside>
 
 ## Héritage du gabarit de base
 
@@ -101,7 +108,10 @@ Ainsi que le fichier `index.html`
 
 Les gabarits ont été modifiés afin que les morceaux de code soient placés correctement au sein des blocs `title` et `content` défini dans le gabarit de base. Nous avons ajouté la balise `{% extends '_base.html' %}` dans les gabarits `detail.html`et `index.html` afin qu'ils héritent du gabarit de base.
 
-Vérifiez que votre site fonctionne toujours aussi bien qu'avant. ✏️
+
+<Aside title="Exercice" icon="pencil">
+Vérifiez que votre site fonctionne toujours aussi bien qu'avant.
+</Aside>
 
 Pour plus d'information sur les balises, lisez cette [page](https://docs.djangoproject.com/fr/4.1/ref/templates/builtins/).
 
@@ -152,4 +162,6 @@ et ajoutons un menu
 
 Nous n'avons pas ajouté de fonctionnalité, mais notre site est maintenant un peu plus habillé. Passez de la vue `detail` à la vue `index` et profiter du site mis en style.
 
-✏️ Quel bout de code permet de revenir à la liste des développeurs lorsque je clique sur le menu `Developers` ?
+<Aside title="Question" icon="pencil">
+Quel bout de code permet de revenir à la liste des développeurs lorsque je clique sur le menu `Developers` ?
+</Aside>

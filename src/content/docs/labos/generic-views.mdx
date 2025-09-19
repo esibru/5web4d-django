@@ -2,16 +2,17 @@
 title: Vues génériques
 description: /
 ---
+import { Card, Aside, FileTree, Steps, Tabs, TabItem, Code } from '@astrojs/starlight/components';
 
 En Django, il y a les vues fonctions que nous avons déjà vues, mais il y a aussi les vues génériques (vues classes). Ces dernières, plus récentes, ont pour objectif de simplifier davantage la création de vue.
 
-De base, ces vues sont utilisées pour les cas classiques du développement Web : récupérer les données depuis la base de données suivant un paramètre contenu dans l’URL, charger un gabarit et renvoyer le gabarit interprété.
+De base, ces vues sont utilisées pour les cas classiques du développement Web : récupérer les données depuis la base de données suivant un paramètre contenu dans l'URL, charger un gabarit et renvoyer le gabarit interprété.
 
-Les vues génériques permettent l’abstraction de pratiques communes, à un tel point que vous n’avez pas à écrire de code Python pour écrire une application.
+Les vues génériques permettent l'abstraction de pratiques communes, à un tel point que vous n'avez pas à écrire de code Python pour écrire une application.
 
-Nous allons convertir notre application de gestion de projet pour qu’elle utilise le système de vues génériques. Nous pourrons ainsi supprimer une partie de notre code. Nous avons quelques pas à faire pour effectuer cette conversion. Nous allons :
+Nous allons convertir notre application de gestion de projet pour qu'elle utilise le système de vues génériques. Nous pourrons ainsi supprimer une partie de notre code. Nous avons quelques pas à faire pour effectuer cette conversion. Nous allons :
 
-* Convertir l’`URLconf`.
+* Convertir l'`URLconf`.
 * Supprimer quelques anciennes vues désormais inutiles.
 * Introduire de nouvelles vues basées sur les vues génériques de Django.
 
@@ -21,8 +22,6 @@ Nous allons convertir notre application de gestion de projet pour qu’elle util
 
 Dans le fichier `developer.views.py`, créez la classe `DevDetailVue` et supprimez la
 fonction `detail()`.
-
-<div class="path"> developer/views.py`</div>
 
 ``` python showLineNumbers=false title="developer/views.py" ins={1,5,6,7} del={9,10,11,12}
   from django.views.generic import DetailView 
@@ -39,19 +38,17 @@ fonction `detail()`.
       return render(request, 'developer/detail.html', {'developer': developer})
 ```
 
-* Nous utilisons ici la vue générique : `DetailView`. Cette vue permet l’abstraction des concepts vus pour afficher une page détaillée pour un type particulier d’objet (ici `Developer`).
+* Nous utilisons ici la vue générique : `DetailView`. Cette vue permet l'abstraction des concepts vus pour afficher une page détaillée pour un type particulier d'objet (ici `Developer`).
 
-* Par défaut, la vue générique `DetailView` utilise un gabarit appelé `<nom app>/<nom modèle>_detail.html`. Dans notre cas, elle utiliserait le gabarit "`developer/developer_detail.html`". L’attribut `template_name` est utilisé pour signifier à Django d’utiliser un nom de gabarit spécifique plutôt que le nom de gabarit par défaut. Dans notre cas, nous avons choisi de renommer le gabarit, mais cela n'était pas obligatoire. En revanche, cela le devient si vous devez afficher de deux manières différentes un même modèle.
+* Par défaut, la vue générique `DetailView` utilise un gabarit appelé `<nom app>/<nom modèle>_detail.html`. Dans notre cas, elle utiliserait le gabarit "`developer/developer_detail.html`". L'attribut `template_name` est utilisé pour signifier à Django d'utiliser un nom de gabarit spécifique plutôt que le nom de gabarit par défaut. Dans notre cas, nous avons choisi de renommer le gabarit, mais cela n'était pas obligatoire. En revanche, cela le devient si vous devez afficher de deux manières différentes un même modèle.
 
 * Dans les parties précédentes de ce tutoriel, le gabarit `detail.html` a été renseigné avec un contexte qui contenait la variable de contexte `developer`. Pour `DetailView`, la variable `developer` est fournie automatiquement ; comme nous utilisons un modèle nommé `Developer`, Django sait donner un nom approprié à la variable de contexte.
 
-La vue générique `DetailView` s’attend à ce que la clé primaire capturée dans l’URL s’appelle "pk", nous allons donc changer `developer_id` en `pk` pour la vue générique.
+La vue générique `DetailView` s'attend à ce que la clé primaire capturée dans l'URL s'appelle "pk", nous allons donc changer `developer_id` en `pk` pour la vue générique.
 
 ### URL DevDetailView
 
 Nous l'avions vu, path prend en deuxième paramètre une fonction vue. La transformation de la vue générique vers une vue fonction se fait grâce à l'appel à la méthode `as_view()`.
-
-<div class="path"> developer.urls.py</div>
 
 ``` python showLineNumbers=false title="developer.urls.py" ins={1,8} del={7}
   from .views import DevDetailVue
@@ -66,11 +63,17 @@ Nous l'avions vu, path prend en deuxième paramètre une fonction vue. La transf
   ]
 ```
 
-> ⚠️ Pourquoi y a-t-il les parenthèses après `DevDetailVue.as_view()` et pas après `views.detail` ?
->
-> Réponse :
->
-> Le deuxième paramètre de `path` est une fonction qui sera appelée lorsque l'url coïncidera avec le premier paramètre. Ainsi, dans le cas d'une vue fonction, nous donnons en paramètre la fonction `detail`. Dans le cas d'une vue générique, nous donnons en paramètre le retour de la fonction `as_view()`qui est une fonction !
+<Tabs>
+<TabItem label="Question">
+<Aside type="caution" title="Question">
+Pourquoi y a-t-il les parenthèses après `DevDetailVue.as_view()` et pas après `views.detail` ?
+</Aside>
+
+</TabItem>
+<TabItem label="Réponse">
+Le deuxième paramètre de `path` est une fonction qui sera appelée lorsque l'url coïncidera avec le premier paramètre. Ainsi, dans le cas d'une vue fonction, nous donnons en paramètre la fonction `detail`. Dans le cas d'une vue générique, nous donnons en paramètre le retour de la fonction `as_view()`qui est une fonction !
+</TabItem>
+</Tabs>
 
 ## IndexView
 
@@ -79,8 +82,6 @@ Cela va se compliquer un petit peu. En effet, nous avons un liste des développe
 ### Vue IndexView
 
 Commençons par créer notre classe comme si nous n'avions pas de formulaire.
-
-<div class="path">developer/views.py</div>
 
 ```python showLineNumbers=false title="developer/views.py" ins={2,6,7,8,9} del={1}
   from django.views.generic import DetailView
@@ -107,8 +108,6 @@ Commençons par créer notre classe comme si nous n'avions pas de formulaire.
 Nous avançons, mais nous n'avons pas ajouté notre formulaire dans le contexte. Pour cela, il est nécessaire de réécrire la
 méthode `get_context_data()`.
 
-<div class="path">developer/views.py</div>
-
 ```python showLineNumbers=false title="developer/views.py" del={5,6,7,8,9,10,11} ins={19,20,21,22}
   from django.views.generic import DetailView, ListView
   
@@ -134,19 +133,19 @@ méthode `get_context_data()`.
           return context 
 ```
 
-> *_Parenthèse Python 🐍_*
-> En ☕️ Java, nous écririons `super.getContextData(...)` afin d'appeler la fonction de la classe mère. En python, il est nécessaire de donner la classe en premier paramètre et `self` en second paramètre.
+<Card title="Héritage en Python" icon="seti:python">
+En Java, nous écririons `super.getContextData(...)` afin d'appeler la fonction de la classe mère. En python, il est nécessaire de donner la classe en premier paramètre et `self` en second paramètre.
 
 Ainsi,
 
-1. Nous chargeons dans la variable `context` le contexte tel qu'il était défini précédemment, c'est-à-dire contenant la variable `developers`. 
+1. nous chargeons dans la variable `context` le contexte tel qu'il était défini précédemment, c'est-à-dire contenant la variable `developers`. 
 1. Ensuite, nous ajoutons une clé `form` et le formulaire à utiliser `DeveloperForm`. Nous retournons ensuite le contexte définit au sein de la variable `context`.
+</Card>
+
 
 ### URL `IndexView`
 
 Il est maintenant temps d'associer une url à notre nouvelle classe vue. Rien de plus simple, vous avez fait quelque chose de très similaire avec `DevDetailView`.
-
-<div class="path">developer/urls.py</div>
 
 ``` python showLineNumbers=false title="developer/urls.py" del={2,8} ins={3,9}
   #...

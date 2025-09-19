@@ -2,6 +2,7 @@
 title: Formulaire développeur
 description: /
 ---
+import {Card, Aside} from '@astrojs/starlight/components';
 
 ## Ajout d'un développeur
 
@@ -45,8 +46,6 @@ Un résumé rapide :
 
 Maintenant, nous allons créer une vue Django qui récupère les données envoyées pour nous permettre de les exploiter. D'abord, nous devons ajouter un chemin vers cette nouvelle vue.
 
-<div class="path">developer/urls.py</div>
-
 ``` python showLineNumbers=false title="developer/urls.py" ins={5}
   app_name = 'developer'
   urlpatterns = [
@@ -58,9 +57,7 @@ Maintenant, nous allons créer une vue Django qui récupère les données envoy�
 
 Ajoutez également la vue :
 
-<div class="path">developer/views.py</div>
-
-``` python showLineNumbers=false title="developer/views.py" ins={3,4,8,9,10,11,12,13,14,15,16}
+``` python showLineNumbers=false title="developer/views.py" ins={3,4,8-16}
   #...
 
   from django.http import HttpResponseRedirect
@@ -83,9 +80,9 @@ Ce code contient quelques points encore non abordés dans ce tutoriel :
 
 `request.POST` est un objet similaire à un dictionnaire qui vous permet d’accéder aux données envoyées par leurs clés. Dans ce cas, `request.POST['first_name']` et `request.POST['last_name']` renvoient le prénom et nom du développeur sous forme d’une chaîne de caractères. Les valeurs dans `request.POST` sont toujours des chaînes de caractères. Pensez donc à réaliser une transformation si le type de votre entrée n'est pas de nature `string`.
 
-> *_Parenthèse Python 🐍_*
-> 
-> En Python vous pouvez convertir une chaîne de caractère en un entier grâce à la fonction `int()`. Par exemple : `int("42")`.
+<Card title="Rappel" icon="seti:python">
+En Python vous pouvez convertir une chaîne de caractère en un entier grâce à la fonction `int()`. Par exemple : `int("42")`.
+</Card>
 
 * Notez que Django dispose aussi de `request.GET` pour accéder aux données GET de la même manière – mais nous utilisons explicitement `request.POST` dans notre code, pour s’assurer que les données ne sont modifiées que par des requêtes POST.
 
@@ -103,8 +100,6 @@ Dans le dossier `Developer`, ajoutez un fichier `forms.py`. Dans celui-ci ajoute
 
 #### Créez un formulaire
 
-<div class="path">developer/forms.py</div>
-
 ``` python showLineNumbers=false title="developer/forms.py"
 from django import forms
 
@@ -121,14 +116,13 @@ Nous définissons ainsi une nouvelle classe `DeveloperForm`. Celles-ci possède 
 
 Nous allons maintenant modifier le gabarit afin que celui-ci affiche le formulaire. Enlevez tout ce qui a trait aux champs et ajoutez `{{ form }}`.
 
-> 📃 Vous pouvez mettre le formulaire en forme de différente façon.
->
-> * `{{ form.as_table }}`
-> * `{{ form.as_p }}`
-> * `{{ form.as_ul }}`
+<Aside title="Mise en forme d'un formulaire" >
+Vous pouvez mettre le formulaire en forme de différente façon.
 
-
-<div class="path">developer/index.html</div>
+* `{{ form.as_table }}`
+* `{{ form.as_p }}`
+* `{{ form.as_ul }}`
+</Aside>
 
 ``` html showLineNumbers=false title="developer/index.html" ins={8}
   <form action="{% url 'developer:create' %}" method="post">
@@ -167,8 +161,6 @@ Le gabarit n'est évidement pas en mesure de deviner quel formulaire il doit aff
 
 Nous allons maintenant utiliser ce formulaire afin d'obtenir les données saisies par l'utilisateur.
 
-<div class="path"> developer/views.py`</div>
-
 ``` python showLineNumbers=false title="developer/views.py" ins={4,6,7,8,9,10}
   #...
 
@@ -195,11 +187,11 @@ Notez que nous n'utilisons plus l'instruction `request.POST['xxx']` pour récup�
 
 #### Un formulaire DRY
 
-Vous l'avez peut-être remarqué, mais dans le modèle, les champs avaient une longueur de 200 caractères. Dans le formulaire de 100 💩. Ce type d'incohérence apparaît lorsque nous oublions le principe DRY.
+<Aside type="danger" title="Non respect du principe DRY 💩" >
+Vous l'avez peut-être remarqué, mais dans le modèle, les champs avaient une longueur de 200 caractères. Dans le formulaire de 100. Ce type d'incohérence apparaît lorsque nous oublions le principe DRY.
+</Aside>
 
 Django a prévu une meilleure manière de procéder afin de créer un formulaire sur base d'un modèle.
-
-<div class="path"> developer/forms.py</div>
 
 ``` python showLineNumbers=false title="developer/forms.py" ins={6,9,10,11} del={5,7,8}
   from django import forms

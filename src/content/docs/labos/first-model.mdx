@@ -170,7 +170,9 @@ Notez les points suivants :
 * Ce que vous voyez est adapté à la base de données que vous utilisez. Ainsi, des champs spécifiques à celle-ci comme `auto_increment` (MySQL), `serial` (PostgreSQL) ou `integer primary key autoincrement` (SQLite) sont gérés pour vous automatiquement. Tout comme pour les guillemets autour des noms de champs (simples ou doubles).
 * La ⚠️**commande sqlmigrate n'exécute pas réellement la migration** dans votre base de données - elle se contente de l'afficher à l'écran de façon à vous permettre de voir le code SQL que Django pense nécessaire. C'est utile pour savoir ce que Django s'apprête à faire ou si vous avez des administrateurs de base de données qui exigent des scripts SQL pour faire les modifications.
 
-<Aside type="caution" title="Migration" icon="star">Si vous vérifiez la base de donnée, vous ne verrez aucun changement. En effet, vous n'avez pas encore appliqué la migration.</Aside>    
+<Aside type="caution" title="Migration" icon="seti:db">
+Si vous vérifiez la base de donnée, vous ne verrez aucun changement. En effet, vous n'avez pas encore appliqué la migration.
+</Aside>
 
 ##### Commande migrate
 
@@ -182,7 +184,7 @@ $ python manage.py migrate
 
 La commande migrate sélectionne toutes les migrations qui n'ont pas été appliquées (Django garde la trace des migrations appliquées en utilisant une table spéciale dans la base de données : django_migrations) puis les exécute dans la base de données, ce qui consiste essentiellement à synchroniser les changements des modèles avec le schéma de la base de données.
 
-<Aside icon="seti:todo" title="Exercice">
+<Aside icon="pencil" title="Exercice">
 Vérifiez à nouveau la base de donnée. Quelle(s) table(s) a(ont) été ajoutée(s) ?
 </Aside>
 
@@ -230,8 +232,9 @@ Ici, le QuerySet est vide puisqu'aucun élément n'a été créé.
 ``` python showLineNumbers=false frame="none"
 >>> jlc = Developer(first_name='Jonahtan', last_name='Lechien')
 ```
-
-Nous venons de créer un nouveau développeur. Vérifiez que celui-ci a bien été créé dans la base de donnée ! 🐇⭐️
+<Aside title="Exercice" icon="star">
+Nous venons de créer un nouveau développeur. Vérifiez que celui-ci a bien été créé dans la base de donnée ! 🐇
+</Aside>
 
 Vous vous êtes peut-être fait avoir. Quoiqu'il en soit, vous avez pu vérifier qu'il n'y a aucun nouvel enregistrement. Il est nécessaire de le sauvegarder pour que celui-ci soit enregistré en base de donnée...
 
@@ -279,13 +282,13 @@ Une seconde. `<Developer: Developer object (1)>` n'est pas une représentation t
           return f"{self.title} ({self.description})"
 ```
 
-> *_Parenthèse python 🐍_*
-> 
-> * Vous l'aurez probablement compris, `__str__()` est à Python 🐍 ce que `toString()` est à Java ☕️.
-> * Pour formater du texte, on peut utiliser : 
->   * `'%s %s' % (self.first_name, self.last_name)` 💩 ;
->   * `'{} {}'.format(self.first_name, self.last_name)` 💩 ;
->   * `f"{self.first_name} {self.last_name}" ` (👍 depuis python 3.6).
+<Card title="Rappel" icon="seti:python">
+* Vous l'aurez probablement compris, `__str__()` est à Python ce que `toString()` est à Java.
+* Pour formater du texte, on peut utiliser : 
+   * `'%s %s' % (self.first_name, self.last_name)` 💩 ;
+   * `'{} {}'.format(self.first_name, self.last_name)` 💩 ;
+   * `f"{self.first_name} {self.last_name}" ` (👍 depuis python 3.6).
+</Card>
 
 Vous pouvez **relancer** le shell maintenant.
 

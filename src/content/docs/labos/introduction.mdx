@@ -29,7 +29,7 @@ Quelques sources recommandées.
 
 ## Légende
 
-Différents émojis sont parsemés ici et là, ceux-ci permettent d’attirer votre attention pour différentes raisons.
+Différents émojis sont parsemés ici et là, ceux-ci permettent d'attirer votre attention pour différentes raisons.
 
 |Emoji|Signification|
 |---|---|
@@ -103,7 +103,7 @@ Cette commande a créé un répertoire dans votre répertoire courant. Dans ce d
 <FileTree>
 - mproject/
   - manage.py
-  - mproject/
+  - mproje
     - \_\_init\_\_.py
     - settings.py
     - urls.py
@@ -113,14 +113,14 @@ Cette commande a créé un répertoire dans votre répertoire courant. Dans ce d
 
 Voici quelques explications :
 
-* Le premier répertoire racine `mproject/` est un contenant pour votre projet. Son nom n’a pas d’importance pour Django ; vous pouvez le renommer comme vous voulez.
-* **`manage.py`** : un utilitaire en ligne de commande qui vous permet d’interagir avec ce projet Django de différentes façons. Vous trouverez toutes les informations nécessaires sur `manage.py` dans django-admin et `manage.py`.
-* **Le sous-répertoire `mproject/`** correspond au paquet Python effectif de votre projet. C’est le nom du paquet Python que vous devrez utiliser pour importer ce qu’il contient (par ex. : `mproject.urls`).
+* Le premier répertoire racine `mproject/` est un contenant pour votre projet. Son nom n'a pas d'importance pour Django ; vous pouvez le renommer comme vous voulez.
+* **`manage.py`** : un utilitaire en ligne de commande qui vous permet d'interagir avec ce projet Django de différentes façons. Vous trouverez toutes les informations nécessaires sur `manage.py` dans django-admin et `manage.py`.
+* **Le sous-répertoire `mproject/`** correspond au paquet Python effectif de votre projet. C'est le nom du paquet Python que vous devrez utiliser pour importer ce qu'il contient (par ex. : `mproject.urls`).
 * **mproject/\_\_init\_\_.py** : un fichier vide qui indique à Python que ce répertoire doit être considéré comme un paquet. Si vous êtes débutant en Python, lisez les informations sur les paquets (en) dans la documentation officielle de Python.
 * **mproject/settings.py** : réglages et configuration de ce projet Django. Ce cours de Django vous apprendra tout sur le fonctionnement des réglages (enfin presque tout).
 * **mproject/urls.py** : les déclarations des URL de ce projet Django, une sorte de « table des matières » de votre site Django. Vous pouvez en lire plus sur les URL dans Distribution des URL.
-* **mproject/asgi.py** : un point d’entrée pour les serveurs Web compatibles aSGI pour déployer votre projet. Voir [Comment déployer avec ASGI pour plus de détails](https://docs.djangoproject.com/fr/4.1/howto/deployment/asgi/).
-* **mproject/wsgi.py** : un point d’entrée pour les serveurs Web compatibles WSGI pour déployer votre projet. Voir [Comment déployer avec WSGI pour plus de détails](https://docs.djangoproject.com/fr/4.1/howto/deployment/wsgi/).
+* **mproject/asgi.py** : un point d'entrée pour les serveurs Web compatibles aSGI pour déployer votre projet. Voir [Comment déployer avec ASGI pour plus de détails](https://docs.djangoproject.com/fr/4.1/howto/deployment/asgi/).
+* **mproject/wsgi.py** : un point d'entrée pour les serveurs Web compatibles WSGI pour déployer votre projet. Voir [Comment déployer avec WSGI pour plus de détails](https://docs.djangoproject.com/fr/4.1/howto/deployment/wsgi/).
 
 #### Outils de développement
 
@@ -134,7 +134,7 @@ Django est fourni avec un serveur de développement qui permet de simplifier le 
 
 Vous pouvez le tester en lançant la commande
 
-``` bash showLineNumbers=false frame="none"
+``` sh showLineNumbers=false frame="none"
 $ python manage.py runserver
 ```
 
@@ -156,8 +156,8 @@ Quit the server with CTRL-BREAK.
 
 <Aside>**Note :** À ce stade, vous pouvez ignorer les avertissements liés à la migration de la base de donnée.</Aside>
 
-Maintenant que le serveur tourne, allez à l’adresse http://127.0.0.1:8000 avec votre navigateur Web. Vous verrez une page avec le message « Félicitations ! » ainsi qu’une fusée qui décolle. Ça marche !
+Maintenant que le serveur tourne, allez à l'adresse http://127.0.0.1:8000 avec votre navigateur Web. Vous verrez une page avec le message « Félicitations ! » ainsi qu'une fusée qui décolle. Ça marche !
 
 #### Recharge automatique du serveur
 
-Le serveur de développement recharge automatiquement le code Python lors de chaque requête si nécessaire. Vous ne devez pas redémarrer le serveur pour que les changements de code soient pris en compte. Cependant, certaines actions comme l’ajout de fichiers ne provoquent pas de redémarrage, il est donc nécessaire de redémarrer manuellement le serveur dans ces cas.
+Le serveur de développement recharge automatiquement le code Python lors de chaque requête si nécessaire. Vous ne devez pas redémarrer le serveur pour que les changements de code soient pris en compte. Cependant, certaines actions comme l'ajout de fichiers ne provoquent pas de redémarrage, il est donc nécessaire de redémarrer manuellement le serveur dans ces cas.
