@@ -138,7 +138,7 @@ En Java, nous écririons `super.getContextData(...)` afin d'appeler la fonction 
 
 Ainsi,
 
-1. nous chargeons dans la variable `context` le contexte tel qu'il était défini précédemment, c'est-à-dire contenant la variable `developers`. 
+1. nous chargeons dans la variable `context` le contexte tel qu'il était défini précédemment, c'est-à-dire, contenant la variable `developers`. 
 1. Ensuite, nous ajoutons une clé `form` et le formulaire à utiliser `DeveloperForm`. Nous retournons ensuite le contexte définit au sein de la variable `context`.
 </Card>
 
@@ -164,19 +164,22 @@ Il est maintenant temps d'associer une url à notre nouvelle classe vue. Rien de
 
 ## Vue générique et Mixins
 
-C'est bien gentil tout ça, mais tout cela m'a l'air bien compliqué et je ne sais pas où vous avez été cherché l'information. 😭
+> C'est bien gentil tout ça, mais tout cela m'a l'air bien compliqué et je ne sais pas où trouver l'information. 😭
 
 En réalité, tout cela est relativement simple. Surtout quand on sait où chercher l'information.
 
-Les vues génériques sont basées sur le principe de Mixin. Wikipédia le définit assez simplement ce principe de la manière suivante
+Les vues génériques sont basées sur le principe de Mixin. Wikipédia le définit assez simplement ce principe de la manière suivante :
 
-> *_Concept de Mixin_*
-> "En programmation orientée objet, un mixin ou une classe mixin est une classe destinée à être composée par héritage multiple avec une autre classe pour lui apporter des fonctionnalités. C'est un cas de réutilisation d'implémentation. Chaque mixin représente un service qu'il est possible de greffer aux classes héritières. "
-> [Wikipédia](https://fr.wikipedia.org/wiki/Mixin)
+<Aside title="Mixin" icon="open-book">
+_En programmation orientée objet, un mixin ou une classe mixin est une classe destinée à être composée par héritage multiple avec une autre classe pour lui apporter des fonctionnalités. C'est un cas de réutilisation d'implémentation. Chaque mixin représente un service qu'il est possible de greffer aux classes héritières._
+[Wikipédia](https://fr.wikipedia.org/wiki/Mixin)
+</Aside>
 
-Maintenant que vous savez ce que c'est, il vous suffit de savoir quelle fonctionnalité est greffée à votre classe. Vous trouverez ces informations dans la documentation. Par exemple, pour DetailView vous trouverez les Mixin utilisés et donc les fonctionnalités [ici](https://docs.djangoproject.com/fr/4.1/ref/class-based-views/generic-display/).
+Maintenant que vous savez ce que c'est, il vous suffit de savoir quelle fonctionnalité est greffée à votre classe. Vous trouverez ces informations dans la documentation. 
 
-Quelques exemples :
+Par exemple, pour `DetailView` vous trouverez les Mixin utilisés et donc les fonctionnalités [ici](https://docs.djangoproject.com/fr/4.1/ref/class-based-views/generic-display/).
+
+Autres exemples :
 
 * Comment je sais que le gabarit par défaut pour une classe qui hérite de `ListView`est `<nom_app>/<nom_modèle><suffixe_gabarit>.html` ? Cela est ajouté grâce au [MultipleObjectTemplateResponseMixin](https://docs.djangoproject.com/fr/4.1/ref/class-based-views/mixins-multiple-object/#multipleobjecttemplateresponsemixin) dont hérite la classe `ListView`.
 

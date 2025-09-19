@@ -8,11 +8,11 @@ import { Card, Aside, Icon, FileTree} from '@astrojs/starlight/components';
 
 Nous allons maintenant définir les modèles - essentiellement, le schéma de base de données, avec quelques métadonnées supplémentaires.
 
-> *_Philosophie de Django_*
-> Un modèle est la source d'information unique et définitive pour vos données. Il contient les champs essentiels et le comportement attendu des données que vous stockerez. Django respecte la philosophie DRY (**Don't Repeat Yourself**, « ne vous répétez pas »). Le but est de définir le modèle des données à un seul endroit, et ensuite de dériver automatiquement ce qui est nécessaire à partir de celui-ci.
->
->Ceci inclut les migrations. En effet, les migrations sont entièrement dérivées du fichier des modèles et ne sont au fond qu'un historique que Django peut parcourir pour mettre à jour le schéma de la base de données pour qu'il corresponde aux modèles actuels.
+<Card title="Philosophie DRY de Django">
+Un modèle est la source d'information unique et définitive pour vos données. Il contient les champs essentiels et le comportement attendu des données que vous stockerez. Django respecte la philosophie DRY (**Don't Repeat Yourself**, « ne vous répétez pas »). Le but est de définir le modèle des données à un seul endroit, et ensuite de dériver automatiquement ce qui est nécessaire à partir de celui-ci.
 
+Ceci inclut les migrations. En effet, les migrations sont entièrement dérivées du fichier des modèles et ne sont au fond qu'un historique que Django peut parcourir pour mettre à jour le schéma de la base de données pour qu'il corresponde aux modèles actuels.
+</Card>
 
 ### Migration et base de données
 

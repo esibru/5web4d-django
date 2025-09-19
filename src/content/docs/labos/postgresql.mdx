@@ -2,40 +2,55 @@
 title: PostgreSQL
 description: /
 ---
+import { Card, Aside, FileTree, Steps, Tabs, TabItem, Code } from '@astrojs/starlight/components';
 
 Et si nous changions le SGBD afin d'utiliser PostgreSQL ? 
 
 ## Installation
 
+<Steps>
 1. Installer [PostgreSQL](https://www.postgresql.org/)
-2. Créer une DB (par exemple `mproject`) : `CREATE DATABASE mproject;`
-3. Créer un rôle (dans `psql`): `create role <le rôle> login password '<le mdp>';`
-4. Donner les droits nécessaires à ce nouveau rôle (dans `psql`) : `grant all privileges on database mproject to <le rôle>;`
-5. Installer `psycopg2`: `python -m pip install django psycopg2`.
+2. Créer une DB (par exemple `mproject`) : 
+   ``` sql showLineNumbers=false frame="none" 
+   CREATE DATABASE mproject;
+   ```
+3. Créer un rôle (dans `psql`): 
+   ``` sql showLineNumbers=false frame="none" 
+   create role <le rôle> login password '<le mdp>';
+   ```
+4. Donner les droits nécessaires à ce nouveau rôle (dans `psql`) : 
+   ``` sql showLineNumbers=false frame="none"
+   grant all privileges on database mproject to <le rôle>;
+   ```
+5. Installer `psycopg2`:
+   ``` sh showLineNumbers=false frame="none"
+   python -m pip install django psycopg2
+   ```
 6. Pour éviter la manipulation de [schéma](https://docs.postgresql.fr/10/ddl-schemas.html), nous vous suggérons de définir
-votre rôle comme propriétaire de la base de donnée `mproject` : `alter database mproject owner to <role>;`
+votre rôle comme propriétaire de la base de donnée `mproject` :
+   ``` sql showLineNumbers=false frame="none"
+   alter database mproject owner to <role>;
+   ```
 7. Configurer l'utilisation de la base de données dans `settings.py`
+</Steps>
 
-
-<div class="path">mproject/settings.py</div>
-
-``` python
-- 'default': {
--     'ENGINE': 'django.db.backends.sqlite3',
--     'NAME': BASE_DIR / 'db.sqlite3',
-- },
-+ #'default': {
-+ #    'ENGINE': 'django.db.backends.sqlite3',
-+ #    'NAME': BASE_DIR / 'db.sqlite3',
-+ #},
-+ 'default': {
-+     'ENGINE': 'django.db.backends.postgresql_psycopg2',
-+     'NAME': 'mproject',
-+     'USER': '<le rôle>',
-+     'PASSWORD': '<le mdp>',
-+     'HOST': 'localhost',
-+     'PORT': '',
-+ }
+``` python showLineNumbers=false title=mproject/settings.py del={1-4} ins={5-16}
+  'default': {
+      'ENGINE': 'django.db.backends.sqlite3',
+      'NAME': BASE_DIR / 'db.sqlite3',
+  },
+  #'default': {
+  #    'ENGINE': 'django.db.backends.sqlite3',
+  #    'NAME': BASE_DIR / 'db.sqlite3',
+  #},
+  'default': {
+      'ENGINE': 'django.db.backends.postgresql_psycopg2',
+      'NAME': 'mproject',
+      'USER': '<le rôle>',
+      'PASSWORD': '<le mdp>',
+      'HOST': 'localhost',
+      'PORT': '',
+  }
 ```
 
 Et voilà, tout est fait !
@@ -50,11 +65,11 @@ Imaginons que nous souhaitons ajouter un nouveau champ `username` à notre modè
 
 <div class="path">developer/models.py</div>
 
-```python
+```python showLineNumbers=false title=developer/models.py ins={4}
   class Developer(models.Model):
       first_name = models.CharField("first name", max_length=200)
       last_name = models.CharField(max_length=200)
-+     user_name = models.CharField(max_length=50)
+      user_name = models.CharField(max_length=50)
 
       #...
 ```
@@ -62,7 +77,7 @@ Imaginons que nous souhaitons ajouter un nouveau champ `username` à notre modè
 Saisissez la commande `python manage.py makemigrations` qui va vérifier les changements et générer un nouveau fichier permettant la migration.
 
 Vous devriez avoir ce message : 
-```
+``` sh showLineNumbers=false frame="none"
 You are trying to add a non-nullable field 'user_name' to developer without a default; we can't do that (the database needs something to populate existing rows).
 Please select a fix:
  1) Provide a one-off default now (will be set on all existing rows with a null value for this column)
@@ -74,6 +89,7 @@ La raison est simple. Des données sont potentiellement présentes dans la base 
 
 La procédure que nous allons vous soumettre est un peu radicale, mais nous sommes aux prémices du développement de notre projet. C'est donc satisfaisant comme cela !
 
+<Steps>
 1. Réinitialiser la base de données.
    * Si vous utilisez toujours SQLite, alors supprimez le fichier `db.sqlite3` (ou mieux, faite la configuration nécessaire à l'utilisation de PostgreSQL).
    * Si vous utilisez PostgreSQL comme demandé, nous allons plutôt défaire toutes les migrations réalisées. Lancez la commande : `$ python manage.py migrate developer zero`.
@@ -84,6 +100,7 @@ La procédure que nous allons vous soumettre est un peu radicale, mais nous somm
    1. `python manage.py makemigrations`
    1. `python manage.py migrate`
 
+</Steps>
 Pour vous entraîner, supprimez le champ `user_name` que vous venez de créer, cela va nous gêner par la suite et cela vous permet de vous entraîner avec la procédure ! ⭐️
 
 > 📃 Il est également possible de supprimer la base de donnée et d'en créer une nouvelle. Si vous faites cela, pensez à supprimer les fichiers de migration ! (⚠️ À ne pas faire en production.)
