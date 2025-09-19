@@ -2,15 +2,16 @@
 title: Django - Introduction
 description: Docs intro
 ---
+import { Aside, FileTree, Tabs, TabItem, } from '@astrojs/starlight/components';
 
 ## Objectifs et sources
 
 Les objectifs de ces premiers laboratoires sont multiples.
 
 * Apprendre les fondements de Python :
-  * différentes structures élémentaires ;
-  * Les classes ;
-  * Les modules...
+   * différentes structures élémentaires ;
+   * les classes ;
+   * les modules...
 
 * Découvrir un framework web Python qui partage de nombreuses similitudes avec la suite logiciel Odoo dont vous apprendrez à créer une application.
 
@@ -24,6 +25,7 @@ Quelques sources recommandées.
 
 * **JLC** - [Jonathan Lechien](http://ects.esi-bru.be/online/enseignants/jlc.html)
 * **SDR** - [Sébastien Drobisz](http://ects.esi-bru.be/online/enseignants/sdr.html)
+* **TNI** - [Thibaut Nicodème](https://ects.esi-bru.be/online/enseignants/tni.html)
 
 ## Légende
 
@@ -31,7 +33,6 @@ Différents émojis sont parsemés ici et là, ceux-ci permettent d’attirer vo
 
 |Emoji|Signification|
 |---|---|
-| 🐍 | Parenthèse Python |
 | ☕️ | Lien Java |
 | ✏️ | Il s'agit d'un petit exercice |
 | 🐇 | Execute-toi |
@@ -72,7 +73,9 @@ Pour procéder à l'installation, nous vous conseillons
 > $ python -m pip install Django --user
 > ```
 
-**Optionnellement**, vous pouvez jeter un oeil à [venv](https://docs.python.org/3/tutorial/venv.html) ; ou encore à [Docker](https://www.docker.com/).
+<Aside type="tip">
+Jetez un oeil à [venv](https://docs.python.org/3/tutorial/venv.html) pour une bonne hygiène de développement python.
+</Aside>
 
 ## Introduction
 
@@ -80,24 +83,33 @@ Dans ce cours, vous allez apprendre à créer un site web permettant de gérer l
 
 La première chose à faire est de créer un projet Django.
 
-``` bash showLineNumbers=false frame="none"
-$ django-admin startproject mproject
-```
 
-> 📃 Sur les ordinateurs de l'_esi_, utilisez la commande `python -m django startproject mproject`.
+
+<Tabs>
+  <TabItem label="Linux">
+  ``` bash showLineNumbers=false frame="none"
+  django-admin startproject mproject
+  ```
+  </TabItem>
+  <TabItem label="Windows">
+  ``` bash showLineNumbers=false frame="none"
+  python -m django startproject mproject
+  ```
+  </TabItem>
+</Tabs>
 
 Cette commande a créé un répertoire dans votre répertoire courant. Dans ce dossier, se trouve les fichiers suivants :
 
-``` sh showLineNumbers=false frame="none"
-mproject/
-    manage.py
-    mproject/
-        __init__.py
-        settings.py
-        urls.py
-        asgi.py
-        wsgi.py
-```
+<FileTree>
+- mproject/
+  - manage.py
+  - mproject/
+    - \_\_init\_\_.py
+    - settings.py
+    - urls.py
+    - asgi.py
+    - wsgi.py
+</FileTree>
 
 Voici quelques explications :
 
@@ -142,7 +154,7 @@ Starting development server at http://127.0.0.1:8000/
 Quit the server with CTRL-BREAK.
 ```
 
-**Note :** Vous pouvez ignorer les avertissements liés à la migration de la base de donnée.
+<Aside>**Note :** À ce stade, vous pouvez ignorer les avertissements liés à la migration de la base de donnée.</Aside>
 
 Maintenant que le serveur tourne, allez à l’adresse http://127.0.0.1:8000 avec votre navigateur Web. Vous verrez une page avec le message « Félicitations ! » ainsi qu’une fusée qui décolle. Ça marche !
 
