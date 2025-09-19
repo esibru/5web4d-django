@@ -2,6 +2,7 @@
 title: Inclusion d'un gabarit
 description: /
 ---
+import { Steps } from '@astrojs/starlight/components';
 
 On peut imaginer que pour une utilisation normale de l'application, l'ajout d'un développeur se fait de manière occasionnelle.
 
@@ -103,46 +104,50 @@ Si vous avez bien suivi le tutoriel jusqu'à maintenant, vous avez peut-être ch
 
 Dans Django, il est possible d'ajouter facilement des apps externes. Nous allons illustrer cela par l'ajout d'une app nommée Crispy. Elle permet de rendre un peu plus joli les formulaires.
 
+<Steps>
+
 1. Installez le module. Pour cela, saisissez la commande 
-  ``` bash showLineNumbers=false frame="none"
-  python -m pip install crispy-bootstrap5
-  ```
+
+   ``` bash showLineNumbers=false frame="none"
+   python -m pip install crispy-bootstrap5
+   ```
 2. Ajoutez `crispy-forms` aux applications installées
 
-```python showLineNumbers=false title="mproject/settings.py" ins={6,7,8}
-  INSTALLED_APPS = [                 
-      #...
-      'django.contrib.staticfiles',
-      #My apps
-      'developer.apps.DeveloperConfig',
-      #Third-party app       
-      'crispy_forms',
-      "crispy_bootstrap5",
-  ]
-```
+   ```python showLineNumbers=false title="mproject/settings.py" ins={6,7,8}
+     INSTALLED_APPS = [                 
+         #...
+         'django.contrib.staticfiles',
+         #My apps
+         'developer.apps.DeveloperConfig',
+         #Third-party app       
+         'crispy_forms',
+         "crispy_bootstrap5",
+     ]
+   ```
 3. Configurez le pack à utiliser en ajoutant les variables suivantes à la fin du fichier.
-
-``` python showLineNumbers=false title="mproject/settings.py" ins={3,4,5}
-  # ...
-
-  # CRISPY FORM CONFIGURATION
-  CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
-  CRISPY_TEMPLATE_PACK = 'bootstrap5'
-```
+   
+   ``` python showLineNumbers=false title="mproject/settings.py" ins={3,4,5}
+     # ...
+   
+     # CRISPY FORM CONFIGURATION
+     CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+     CRISPY_TEMPLATE_PACK = 'bootstrap5'
+   ```
 
 4. Modifiez `{{ form }}` ou (`{{ form.as_qqc }}`) par `{{ form|crispy }}` et enfin, chargez le tag crispy dans votre template formulaire. Cela se fait grâce à la balise `{% load %}`.
    
-``` html showLineNumbers=false title="developer/template/developer/_create_dev_modal_.html" ins={1,8} del={7}
-  {% load crispy_forms_tags %}
-  
-  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add-dev-modal">Add user</button>
-  
-  #...
-
-                      {{ form.as_p }}
-                      {{ form|crispy }}
-  
-  #...
-```
+   ``` html showLineNumbers=false title="developer/template/developer/_create_dev_modal_.html" ins={1,8} del={7}
+     {% load crispy_forms_tags %}
+     
+     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add-dev-modal">Add user</button>
+     
+     #...
+   
+                         {{ form.as_p }}
+                         {{ form|crispy }}
+     
+     #...
+   ```
+</Steps>
 
 Votre formulaire propre et réutilisable est terminé.
