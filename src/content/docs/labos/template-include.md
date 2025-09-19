@@ -11,40 +11,38 @@ Nous allons donc vous proposer de cacher ce formulaire dans un _Modal_, mis joli
 
 Un modal est une sorte de boîte de dialogue qui est affichée devant la page courante lorsqu'un évènement survient ou que l'utilisateur en fait la demande. Avant de le rendre réutilisable, ajoutons-le dans le gabarit `index.html`.
 
-<div class="path">developer/index.html</div>
+``` html showLineNumbers=false title="developer/index.html" ins={7-31} del={1,2,3,4,5}
+  <form action="{% url 'developer:create' %}" method="post"> 
+     {% csrf_token %} 
+     {{ form }} 
+     <button type="submit">Create</button>
+  </form>
 
-``` html
-- <form action="{% url 'developer:create' %}" method="post"> 
--    {% csrf_token %} 
--    {{ form }} 
--    <button type="submit">Create</button>
-- </form>
-
-+ <!-- Ajout d'un bouton pour faire apparaître la boîte de dialogue -->
-+ <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-dev-modal">
-+     Add user
-+ </button>
-+
-+ <!-- Ajout du modal contenant le formulaire -->
-+ <div class="modal fade " id="add-dev-modal">
-+     <div class="modal-dialog">
-+         <div class="modal-content">
-+             <div class="modal-header">
-+                 <h4 class="modal-title">New developer</h4>
-+                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-+             </div>
-+             <div class="modal-body">
-+                 <form action="{% url 'developer:create' %}" method="post">
-+                     {% csrf_token %}
-+                     {{ form }}
-+                     <div>
-+                         <button class="btn btn-primary" type="submit">Créer</button>
-+                     </div>
-+                 </form>
-+             </div>
-+         </div>
-+     </div>
-+ </div>
+  <!-- Ajout d'un bouton pour faire apparaître la boîte de dialogue -->
+  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-dev-modal">
+      Add user
+  </button>
+ 
+  <!-- Ajout du modal contenant le formulaire -->
+  <div class="modal fade " id="add-dev-modal">
+      <div class="modal-dialog">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h4 class="modal-title">New developer</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+              </div>
+              <div class="modal-body">
+                  <form action="{% url 'developer:create' %}" method="post">
+                      {% csrf_token %}
+                      {{ form }}
+                      <div>
+                          <button class="btn btn-primary" type="submit">Créer</button>
+                      </div>
+                  </form>
+              </div>
+          </div>
+      </div>
+  </div>
 ```
 
 ## Modal et respect du DRY
@@ -57,9 +55,7 @@ Dans le dossier `developer/templates`, ajoutez un nouveau gabarit `_create_dev_m
 
 Copiez-y tout le code que vous venez d'ajouter dans le fichier `developer/index.html`.
 
-<div class="path">developer/template/developer/_create_dev_modal_.html</div>
-
-``` html
+``` html showLineNumbers=false title="developer/template/developer/_create_dev_modal_.html"
    <!-- Ajout d'un bouton pour faire apparaître la boîte de dialogue  -->
     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-dev-modal">
         Add user
@@ -89,17 +85,15 @@ Copiez-y tout le code que vous venez d'ajouter dans le fichier `developer/index.
 
 Dans `developer/index.html`, remplacez tout ce code par l'inclusion du fichier `developer/_create_dev_modal.html`. L'inclusion se fait grâce à la balise `{% include '<nom du fichier>' %}`.
 
-<div class="path">developer/index.html</div>
-
-```html
+``` html showLineNumbers=false title="developer/index.html" ins={8} del={7}
       #...
       </ul>
       {% else %}
           <p><strong>Il n'y a aucun développeur enregistré !</strong>/p>
       {% endif %}
   
--     <!-- enlever tout le code html lié au modal -->
-+     {% include 'developer/_create_dev_modal.html' %}
+      <!-- enlever tout le code html lié au modal -->
+      {% include 'developer/_create_dev_modal.html' %}
   {% endblock content %}
 ```
 
@@ -110,49 +104,43 @@ Si vous avez bien suivi le tutoriel jusqu'à maintenant, vous avez peut-être ch
 Dans Django, il est possible d'ajouter facilement des apps externes. Nous allons illustrer cela par l'ajout d'une app nommée Crispy. Elle permet de rendre un peu plus joli les formulaires.
 
 1. Installez le module. Pour cela, saisissez la commande 
-  ``` bash 
+  ``` bash showLineNumbers=false frame="none"
   python -m pip install crispy-bootstrap5
   ```
 2. Ajoutez `crispy-forms` aux applications installées
-   
-   <div class="path">mproject/settings.py</div>
 
-```python
+```python showLineNumbers=false title="mproject/settings.py" ins={6,7,8}
   INSTALLED_APPS = [                 
       #...
       'django.contrib.staticfiles',
       #My apps
       'developer.apps.DeveloperConfig',
-+     #Third-party app       
-+     'crispy_forms',
-+     "crispy_bootstrap5",
+      #Third-party app       
+      'crispy_forms',
+      "crispy_bootstrap5",
   ]
 ```
 3. Configurez le pack à utiliser en ajoutant les variables suivantes à la fin du fichier.
 
-<div class="path">mproject/settings.py</div>
-
-``` python
+``` python showLineNumbers=false title="mproject/settings.py" ins={3,4,5}
   # ...
 
-+ # CRISPY FORM CONFIGURATION
-+ CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
-+ CRISPY_TEMPLATE_PACK = 'bootstrap5'
+  # CRISPY FORM CONFIGURATION
+  CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+  CRISPY_TEMPLATE_PACK = 'bootstrap5'
 ```
 
 4. Modifiez `{{ form }}` ou (`{{ form.as_qqc }}`) par `{{ form|crispy }}` et enfin, chargez le tag crispy dans votre template formulaire. Cela se fait grâce à la balise `{% load %}`.
-
-<div class="path">developer/template/developer/_create_dev_modal_.html</div>
    
-```html    
-+ {% load crispy_forms_tags %}
+``` html showLineNumbers=false title="developer/template/developer/_create_dev_modal_.html" ins={1,8} del={7}
+  {% load crispy_forms_tags %}
   
   <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add-dev-modal">Add user</button>
   
   #...
 
--                     {{ form.as_p }}
-+                     {{ form|crispy }}
+                      {{ form.as_p }}
+                      {{ form|crispy }}
   
   #...
 ```

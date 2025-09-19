@@ -15,23 +15,21 @@ Ainsi, sur la page de l'index, nous aurons la liste des développeurs ainsi qu'u
 
 Ajoutez ce morceau de code dans le gabarit `index.html`
 
-<div class="path">developer/templates/developer/index.html</div>
-
-``` html
+``` html showLineNumbers=false title="developer/templates/developer/index.html" ins={6,7,8,9,10,11,12,13,14}
    #...
    {% else %}
        <p><strong>Il n'y a aucune dévelopeur enregistré !</strong>/p>
    {% endif %}
   
-+  <form action="{% url 'developer:create' %}" method="post"> 
-+      {% csrf_token %} 
-+ 
-+      <label for="first_name">First name</label>
-+      <input type="text" id="first_name" name="first_name" required>
-+      <label for="last_name">Last name</label>
-+      <input type="text" id="last_name" name="last_name" required>
-+      <button type="submit">Create</button>
-+  </form>
+   <form action="{% url 'developer:create' %}" method="post"> 
+       {% csrf_token %} 
+  
+       <label for="first_name">First name</label>
+       <input type="text" id="first_name" name="first_name" required>
+       <label for="last_name">Last name</label>
+       <input type="text" id="last_name" name="last_name" required>
+       <button type="submit">Create</button>
+   </form>
   {% endblock content %}
 ```
 
@@ -49,12 +47,12 @@ Maintenant, nous allons créer une vue Django qui récupère les données envoy�
 
 <div class="path">developer/urls.py</div>
 
-``` python
+``` python showLineNumbers=false title="developer/urls.py" ins={5}
   app_name = 'developer'
   urlpatterns = [
       path('', views.index, name='index'),
       path('<int:developer_id>/', views.detail, name='detail'),
-+     path('create/', views.create, name='create'),
+      path('create/', views.create, name='create'),
   ]
 ```
 
@@ -62,23 +60,23 @@ Ajoutez également la vue :
 
 <div class="path">developer/views.py</div>
 
-``` python
+``` python showLineNumbers=false title="developer/views.py" ins={3,4,8,9,10,11,12,13,14,15,16}
   #...
 
-+ from django.http import HttpResponseRedirect
-+ from django.urls import reverse
+  from django.http import HttpResponseRedirect
+  from django.urls import reverse
 
   #...
 
-+ def create(request): 
-+     Developer.objects.create(
-+         first_name=request.POST['first_name'], 
-+         last_name = request.POST['last_name'] 
-+     ) 
-+     # Toujours renvoyer une HTTPResponseRedirect après avoir géré correctement
-+     # les données de la requête POST. Cela empêche les données d'être postée deux
-+     # fois si l'utilisateur clique sur le bouton précédent.
-+     return HttpResponseRedirect(reverse('developer:index'))
+  def create(request): 
+      Developer.objects.create(
+          first_name=request.POST['first_name'], 
+          last_name = request.POST['last_name'] 
+      ) 
+      # Toujours renvoyer une HTTPResponseRedirect après avoir géré correctement
+      # les données de la requête POST. Cela empêche les données d'être postée deux
+      # fois si l'utilisateur clique sur le bouton précédent.
+      return HttpResponseRedirect(reverse('developer:index'))
 ```
 
 Ce code contient quelques points encore non abordés dans ce tutoriel :
@@ -107,7 +105,7 @@ Dans le dossier `Developer`, ajoutez un fichier `forms.py`. Dans celui-ci ajoute
 
 <div class="path">developer/forms.py</div>
 
-```python
+``` python showLineNumbers=false title="developer/forms.py"
 from django import forms
 
 from .models import Developer
@@ -132,7 +130,7 @@ Nous allons maintenant modifier le gabarit afin que celui-ci affiche le formulai
 
 <div class="path">developer/index.html</div>
 
-``` html
+``` html showLineNumbers=false title="developer/index.html" ins={8}
   <form action="{% url 'developer:create' %}" method="post">
       {% csrf_token %}
   
@@ -140,7 +138,7 @@ Nous allons maintenant modifier le gabarit afin que celui-ci affiche le formulai
       <input type="text" name="first_name" required>
       <label for="last_name">Last name</label>
       <input type="text" name="last_name" required>-->
-+     {{ form }}
+      {{ form }}
       <button type="submit">Create</button>
   </form>
 ```
@@ -151,14 +149,14 @@ Le gabarit n'est évidement pas en mesure de deviner quel formulaire il doit aff
 
 <div class="path">developer/views.py</div>
 
-``` python
+``` python showLineNumbers=false title="developer/views.py" ins={2,7}
   #...
-+ from .forms import DeveloperForm
+  from .forms import DeveloperForm
   
   def index(request):
       context = {
           'developers': Developer.objects.all(),
-+         'form': DeveloperForm,  
+          'form': DeveloperForm,  
       }
   
       return render(request, 'developer/index.html', context)
@@ -171,17 +169,17 @@ Nous allons maintenant utiliser ce formulaire afin d'obtenir les données saisie
 
 <div class="path"> developer/views.py`</div>
 
-``` python
+``` python showLineNumbers=false title="developer/views.py" ins={4,6,7,8,9,10}
   #...
 
   def create(request):
-+     form = DeveloperForm(request.POST)
+      form = DeveloperForm(request.POST)
   
-+     if form.is_valid(): 
-+         Developer.objects.create(
-+             first_name=form.cleaned_data['first_name'], 
-+             last_name=form.cleaned_data['last_name'] 
-+         ) 
+      if form.is_valid(): 
+          Developer.objects.create(
+              first_name=form.cleaned_data['first_name'], 
+              last_name=form.cleaned_data['last_name'] 
+          ) 
       # Toujours renvoyer une HTTPResponseRedirect après avoir géré correctement
       # les données de la requête POST. Cela empêche les données d'être postée deux
       # fois si l'utilisateur clique sur le bouton précédent.
@@ -203,18 +201,18 @@ Django a prévu une meilleure manière de procéder afin de créer un formulaire
 
 <div class="path"> developer/forms.py</div>
 
-```python
+``` python showLineNumbers=false title="developer/forms.py" ins={6,9,10,11} del={5,7,8}
   from django import forms
   
   from .models import Developer
   
-- class DeveloperForm(forms.Form):
-+ class DeveloperForm(forms.ModelForm):
--     first_name = forms.CharField(label="First name", max_length=100)
--     last_name = forms.CharField(label='Last name', max_length=100)
-+     class Meta:
-+         model = Developer 
-+         fields = ['first_name', 'last_name'] 
+  class DeveloperForm(forms.Form):
+  class DeveloperForm(forms.ModelForm):
+      first_name = forms.CharField(label="First name", max_length=100)
+      last_name = forms.CharField(label='Last name', max_length=100)
+      class Meta:
+          model = Developer 
+          fields = ['first_name', 'last_name'] 
 ```
 
 Et voilà, nous avons un formulaire basé sur le modèle `Developer`. Et surtout, nous respectons le principe DRY !

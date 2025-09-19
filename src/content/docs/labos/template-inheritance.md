@@ -13,14 +13,12 @@ Pour cela, nous devons d'abord modifier le fichier `settings.py`
 
 Ajoutez le code suivant :
 
-<div class="path">mproject/settings.py</div>
-
-``` python
+``` python showLineNumbers=false title="mproject/settings.py" ins={5} del={4}
   TEMPLATES = [
       {
           'BACKEND': 'django.template.backends.django.DjangoTemplates',
--         'DIRS': [],
-+         'DIRS': [BASE_DIR / 'templates'],
+          'DIRS': [],
+          'DIRS': [BASE_DIR / 'templates'],
           'APP_DIRS': True,
           'OPTIONS': {
               'context_processors': [
@@ -45,9 +43,7 @@ Ce bout de code permet d'ajouter une liste de chemins dans lequel Django peut tr
 
 Dans le fichier `_base.html`, placez-y le code suivant
 
-<div class="path">templates/_base.html</div>
-
-``` html
+``` html showLineNumbers=false title="templates/_base.html"
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -73,9 +69,7 @@ Les balises `{% block %}` permettent de définir des blocs qui peuvent être sur
 
 Modifier maintenant le code du gabarit `detail.html`
 
-<div class="path">developer/detail.html</div>
-
-``` html
+``` html showLineNumbers=false title="developer/detail.html"
 {% extends "_base.html" %}
 {% block title %} Détail - {{ developer.first_name }} {{ developer.last_name }} {% endblock title %}
 {% block content %}
@@ -86,9 +80,7 @@ Modifier maintenant le code du gabarit `detail.html`
 
 Ainsi que le fichier `index.html`
 
-<div class="path">developer/index.html</div>
-
-``` html
+``` html showLineNumbers=false title="developer/index.html"
 {% extends "_base.html" %}
 
 {% block title %} Liste des développeurs {% endblock title %}
@@ -119,27 +111,21 @@ Maintenant que nous avons un gabarit de base, nous allons lui ajouter un peu de 
 
 Dans la balise `<head>` du fichier `_base.html`, nous ajoutons les liens vers un CDN pour le CSS Bootstrap5 ainsi que vers Foot-Awesome`pour agrémenter notre projet de quelques logos.
 
-<div class="path">templates/_base.html</div>
-
-``` html
+``` html showLineNumbers=false title="templates/_base.html"
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 ```
 
 À la fin de la balise `<body>`, le CDN "bundle" pour boostrap.
 
-<div class="path">templates/_base.html</div>
-
-``` html
+``` html showLineNumbers=false title="templates/_base.html"
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 </body>
 ```
 
 Ajoutons un peu de forme pour l'entête du site
 
-<div class="path">templates/_base.html</div>
-
-```html
+```html showLineNumbers=false title="templates/_base.html"
 <div class="p-3 bg-primary">
     <h1 class="display-1">MProject</h1>
     <h2>Un site web de gestion de tâches</h2>
@@ -148,9 +134,7 @@ Ajoutons un peu de forme pour l'entête du site
 
 et ajoutons un menu
 
-<div class="path">templates/_base.html</div>
-
-``` html
+``` html showLineNumbers=false title="templates/_base.html"
 <nav class="navbar navbar-expand-sm bg-primary navbar-dark border-top border-white">
     <ul class="navbar-nav">
         <li id="nav-home" class="nav-item">

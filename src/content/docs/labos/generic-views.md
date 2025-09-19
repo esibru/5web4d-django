@@ -24,19 +24,19 @@ fonction `detail()`.
 
 <div class="path"> developer/views.py`</div>
 
-``` python
-+ from django.views.generic import DetailView 
+``` python showLineNumbers=false title="developer/views.py" ins={1,5,6,7} del={9,10,11,12}
+  from django.views.generic import DetailView 
   
   #...
   
-+ class DevDetailVue(DetailView): 
-+     model = Developer 
-+     template_name = 'developer/detail.html'
+  class DevDetailVue(DetailView): 
+      model = Developer 
+      template_name = 'developer/detail.html'
   
-- def detail(request, developer_id):
--     #developer = Developer.objects.get(pk=developer_id)
--     developer = get_object_or_404(Developer, pk=developer_id)
--     return render(request, 'developer/detail.html', {'developer': developer})
+  def detail(request, developer_id):
+      #developer = Developer.objects.get(pk=developer_id)
+      developer = get_object_or_404(Developer, pk=developer_id)
+      return render(request, 'developer/detail.html', {'developer': developer})
 ```
 
 * Nous utilisons ici la vue générique : `DetailView`. Cette vue permet l’abstraction des concepts vus pour afficher une page détaillée pour un type particulier d’objet (ici `Developer`).
@@ -53,15 +53,15 @@ Nous l'avions vu, path prend en deuxième paramètre une fonction vue. La transf
 
 <div class="path"> developer.urls.py</div>
 
-``` python
-+ from .views import DevDetailVue
+``` python showLineNumbers=false title="developer.urls.py" ins={1,8} del={7}
+  from .views import DevDetailVue
   
   #...
   
   urlpatterns = [
       path('', views.index, name='index'),
--     path('<int:developer_id>/', views.detail, name='detail'),
-+     path('<int:pk>/', DevDetailVue.as_view(), name='detail'),
+      path('<int:developer_id>/', views.detail, name='detail'),
+      path('<int:pk>/', DevDetailVue.as_view(), name='detail'),
       path('create/', views.create, name='create'),
   ]
 ```
@@ -82,16 +82,16 @@ Commençons par créer notre classe comme si nous n'avions pas de formulaire.
 
 <div class="path">developer/views.py</div>
 
-```python
-- from django.views.generic import DetailView
-+ from django.views.generic import DetailView, ListView
+```python showLineNumbers=false title="developer/views.py" ins={2,6,7,8,9} del={1}
+  from django.views.generic import DetailView
+  from django.views.generic import DetailView, ListView
   
   #...
   
-+ class IndexView(ListView): 
-+     model = Developer 
-+     template_name = "developer/index.html"
-+     context_object_name = 'developers'
+  class IndexView(ListView): 
+      model = Developer 
+      template_name = "developer/index.html"
+      context_object_name = 'developers'
 ```
 
 * Nous créons une nouvelle classe qui hérite de `ListView`.
@@ -109,18 +109,18 @@ méthode `get_context_data()`.
 
 <div class="path">developer/views.py</div>
 
-```python
+```python showLineNumbers=false title="developer/views.py" del={5,6,7,8,9,10,11} ins={19,20,21,22}
   from django.views.generic import DetailView, ListView
   
   #...
   
-- def index(request):
--     context = {
--         'developers': Developer.objects.all(),
--         'form': DeveloperForm
--     }
-- 
--     return render(request, 'developer/index.html', context)
+  def index(request):
+      context = {
+          'developers': Developer.objects.all(),
+          'form': DeveloperForm
+      }
+  
+      return render(request, 'developer/index.html', context)
   
   class IndexView(ListView):
       model = Developer
@@ -128,10 +128,10 @@ méthode `get_context_data()`.
       context_object_name = 'developers'
   
   
-+     def get_context_data(self, **kwargs): 
-+         context = super(IndexView, self).get_context_data(**kwargs)
-+         context['form'] = DeveloperForm 
-+         return context 
+      def get_context_data(self, **kwargs): 
+          context = super(IndexView, self).get_context_data(**kwargs)
+          context['form'] = DeveloperForm 
+          return context 
 ```
 
 > *_Parenthèse Python 🐍_*
@@ -148,16 +148,16 @@ Il est maintenant temps d'associer une url à notre nouvelle classe vue. Rien de
 
 <div class="path">developer/urls.py</div>
 
-``` python
+``` python showLineNumbers=false title="developer/urls.py" del={2,8} ins={3,9}
   #...
-- from .views import DevDetailVue
-+ from .views import DevDetailVue, IndexView
+ from .views import DevDetailVue
+  from .views import DevDetailVue, IndexView
   
   #...
 
   urlpatterns = [
--     path('', views.index, name='index'),
-+     path('', IndexView.as_view(), name='index'),
+      path('', views.index, name='index'),
+      path('', IndexView.as_view(), name='index'),
       path('<int:pk>/', DevDetailVue.as_view(), name='detail'),    
       path('create/', views.create, name='create'),
   ]
