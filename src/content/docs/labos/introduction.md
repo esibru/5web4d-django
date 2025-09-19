@@ -46,10 +46,10 @@ Différents émojis sont parsemés ici et là, ceux-ci permettent d’attirer vo
 
 Lorsqu'un code est modifié, la convention suivante est suivie pour mettre en évidence les lignes ajoutées / supprimées.
 
-   ``` python
-     Ceci est une ligne déjà présente
-   + Ceci est une ligne qui doit être ajoutée
-   - Ceci est une ligne qui doit être retirée
+``` python showLineNumbers=false frame="none" ins={2} del={3}
+Ceci est une ligne déjà présente
+Ceci est une ligne qui doit être ajoutée
+Ceci est une ligne qui doit être retirée
    ```
 
 ### Paths
@@ -68,7 +68,7 @@ Pour procéder à l'installation, nous vous conseillons
 >
 > Une version de python est installée sur chacune des machines. Il faut cependant installer pour votre utilisateur courant le module Django. Il vous suffit d'utiliser la commande d'installation suivante qui spécifie que le module doit être installé dans votre répertoire utilisateur : 
 >
-> ```
+> ``` sh showLineNumbers=false frame="none"
 > $ python -m pip install Django --user
 > ```
 
@@ -80,7 +80,7 @@ Dans ce cours, vous allez apprendre à créer un site web permettant de gérer l
 
 La première chose à faire est de créer un projet Django.
 
-``` bash
+``` bash showLineNumbers=false frame="none"
 $ django-admin startproject mproject
 ```
 
@@ -88,7 +88,7 @@ $ django-admin startproject mproject
 
 Cette commande a créé un répertoire dans votre répertoire courant. Dans ce dossier, se trouve les fichiers suivants :
 
-``` bash
+``` sh showLineNumbers=false frame="none"
 mproject/
     manage.py
     mproject/
@@ -122,13 +122,13 @@ Django est fourni avec un serveur de développement qui permet de simplifier le 
 
 Vous pouvez le tester en lançant la commande
 
-``` bash
+``` bash showLineNumbers=false frame="none"
 $ python manage.py runserver
 ```
 
 Vous devriez alors voir le message suivant :
 
-```
+``` sh showLineNumbers=false frame="none"
 Watching for file changes with StatReloader
 Performing system checks...
 

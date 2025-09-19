@@ -43,9 +43,7 @@ Dans le répertoire `templates` que vous venez de créer, créez un autre réper
 
 Lisez et insérez ce code dans le gabarit `developer/index.html`
 
-<div class="path">developer/templates/developer/index.html</div>
-
-```html
+```html showLineNumbers=false title="developer/templates/developer/index.html"
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -72,21 +70,19 @@ Lisez et insérez ce code dans le gabarit `developer/index.html`
 
 Mettez à jour la vue afin de permettre le rendu de ce gabarit.
 
-<div class="path">developer/views.py</div>
-
-``` python
+``` python showLineNumbers=false title="developer/views.py" del={2, 7} ins={4, 8, 9, 10, 12} 
   from django.shortcuts import render
-- from django.http import HttpResponse
+  from django.http import HttpResponse
   
-+ from .models import Developer
+  from .models import Developer
   
   def index(request):
--     return HttpResponse("Hello, world. You're at the developers index.")
-+     context = {
-+         'developers': Developer.objects.all()
-+     }
+      return HttpResponse("Hello, world. You're at the developers index.")
+      context = {
+          'developers': Developer.objects.all()
+      }
   
-+     return render(request, 'developer/index.html', context)
+      return render(request, 'developer/index.html', context)
 ```
 
 Ce code charge le gabarit appelé `developer/index.html` et lui fournit un contexte. Ce contexte est un dictionnaire qui fait correspondre des objets Python (valeurs) à des noms de variables de gabarit (clés).
@@ -109,18 +105,14 @@ Nous allons ajouter une deuxième vue qui va nous permettre d'afficher le détai
 1. Ajout d'une vue
 1. Ajout d'un nouveau gabarit.
 
-<div class="path">developer/urls.py</div>
-
-``` python
+``` python showLineNumbers=false title="developer/urls.py"
   urlpatterns = [
      path('', views.index, name='index'),
-+    path('<int:developer_id>/', views.detail, name='detail'),
+     path('<int:developer_id>/', views.detail, name='detail'),
   ]
 ```
 
-<div class="path">developer/views.py`</div>
-
-``` python
+``` python showLineNumbers=false title="developer/views.py" ins={8, 9, 10}
   def index(request):
       context = {
           'developers': Developer.objects.all(),
@@ -128,14 +120,12 @@ Nous allons ajouter une deuxième vue qui va nous permettre d'afficher le détai
       return render(request, 'developer/index.html', context)
   
   
-+ def detail(request, developer_id):
-+     developer = Developer.objects.get(pk=developer_id)
-+     return render(request, 'developer/detail.html', {'developer': developer})
+  def detail(request, developer_id):
+      developer = Developer.objects.get(pk=developer_id)
+      return render(request, 'developer/detail.html', {'developer': developer})
 ```
 
-<div class="path">developer/templates/developer/detail.html</div>
-
-```html
+```html showLineNumbers=false title="developer/templates/developer/detail.html"
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -159,7 +149,7 @@ Ouvrez votre navigateur à l’adresse « `/developer/3/` ». La méthode `detai
 
 Lorsque quelqu’un demande une page de votre site Web, par exemple `/developer/3/`, Django charge le module Python `mproject.urls` parce qu’il est mentionné dans le réglage `ROOT_URLCONF`. Il trouve la variable nommée `urlpatterns` et parcourt les motifs dans l’ordre. Après avoir trouvé la correspondance `developer/`, il retire le texte correspondant (`developer/`) et passe le texte restant – `3/` – à la configuration d’URL `developer.urls` pour la suite du traitement. Dans le cas présent, c’est `<int:developer_id>/` qui correspond, ce qui aboutit à un appel à la vue `detail()` comme ceci :
 
-``` python
+``` python showLineNumbers=false frame="none"
 detail(request=<HttpRequest object>, developer_id=3)
 ```
 
@@ -173,10 +163,8 @@ Si vous avez bien suivi ce cours jusqu'à maintenant, vous ne devriez pas avoir 
 
 Nous pouvons corriger cela en utilisant la fonction `get_object_or_404`.
 
-<div class="path">developer/views.py</div>
-
-``` python
-+ from django.shortcuts import render, get_object_or_404
+``` python showLineNumbers=false title="developer/views.py" ins={1, 15} del={14}
+  from django.shortcuts import render, get_object_or_404
   from django.http import HttpResponse
   
   from .models import Developer
@@ -189,8 +177,8 @@ Nous pouvons corriger cela en utilisant la fonction `get_object_or_404`.
       return render(request, 'developer/index.html', context)
   
   def detail(request, developer_id):
--     developer = Developer.objects.get(pk=developer_id)
-+     developer = get_object_or_404(Developer, pk=developer_id)
+      developer = Developer.objects.get(pk=developer_id)
+      developer = get_object_or_404(Developer, pk=developer_id)
       return render(request, 'developer/detail.html', {'developer': developer})
 ```
 
@@ -202,16 +190,14 @@ La fonction `get_object_or_404()` prend un modèle Django comme premier paramèt
 Pour passer d'une vue à l'autre, nous allons naturellement utiliser des liens `html` (`<a>`).
 Revenons dans la vue `index` et plus précisément dans le gabarit et ajoutons ces liens.
 
-<div class="path">developer/templates/developer/index.html</div>
-
-``` html
+``` html showLineNumbers=false title="developer/templates/developer/index.html" ins={6, 7} del={5}
   # ...
       {% if developers %}
       <ul>
           {% for dev in developers %}
--         <li>{{ dev.first_name }}</li>
-+         {#<li>{{ dev.first_name }}</li>#} 👈 ceci est commenté !
-+         <li><a href='/developer/{{ dev.id }}'>{{ dev.first_name }}</a></li>
+          <li>{{ dev.first_name }}</li>
+          {#<li>{{ dev.first_name }}</li>#} 👈 ceci est commenté !
+          <li><a href='/developer/{{ dev.id }}'>{{ dev.first_name }}</a></li>
           {% endfor %}
       </ul>
       {% else %}
@@ -227,27 +213,21 @@ Vous pouvez maintenant essayer d'aller sur l'index de votre site et suivre les l
 
 Le problème de cette approche codée en dur et fortement couplée est qu’il devient fastidieux de modifier les URL dans des projets qui ont beaucoup de gabarits. Cependant, comme vous avez défini le paramètre `name` dans les fonctions `path()` du module `developer.urls`, vous pouvez supprimer la dépendance en chemins d’URL spécifiques définis dans les configurations d’URL en utilisant la balise de gabarit `{% url %}` :
 
-<div class="path">developer/templates/developer/index.html</div>
-
-``` python
+``` python showLineNumbers=false title="developer/templates/developer/index.html"
 <li><a href="{% url 'detail' dev.id %}">{{ dev.first_name }}</a></li>
 ```
 
 Le principe de ce fonctionnement est que l’URL est recherchée dans les définitions du module `developer.urls`. Ci-dessous, vous pouvez voir exactement où le nom d’URL "detail" est défini :
 
-<div class="path">developer/urls.py</div>
-
-``` python
+``` python showLineNumbers=false title="developer/urls.py"
 path('<int:developer_id>/', views.detail, name='detail'),
 ```
 
 Si vous souhaitez modifier l’URL de détail des développeurs, par exemple sur le modèle `developer/specifics/12/`, il suffit de faire la modification dans `developer/urls.py`. Il n'est pas nécessaire de modifier un nombre potentiellement grand de gabarit.
 
-<div class="path">developer/urls.py</div>
-
-``` python
-- path('<int:developer_id>/', views.detail, name='detail'),
-+ path('specifics/<int:developer_id>/', views.detail, name='detail'),
+``` python showLineNumbers=false title="developer/urls.py" ins={2} del={1}
+  path('<int:developer_id>/', views.detail, name='detail'),
+  path('specifics/<int:developer_id>/', views.detail, name='detail'),
 ```
 
 #### Espaces de noms et noms d’URL
@@ -256,9 +236,7 @@ Le projet ne contient actuellement qu'une seule application, `developer`. Plus t
 
 La réponse est donnée par l’ajout d’espaces de noms à votre configuration d’URL. Dans le fichier `developer/urls.py`, ajoutez une variable `app_name` pour définir l’espace de nom de l’application :
 
-<div class="path">developer/urls.py</div>
-
-```python
+```python showLineNumbers=false title="developer/urls.py"
 app_name = 'developer' 👈new
 urlpatterns = [
     path('', views.index, name='index'),
@@ -268,9 +246,7 @@ urlpatterns = [
 
 Modifiez maintenant les liens du gabarit `developer/index.html` pour qu’elle pointe vers la vue « detail » à l’espace de nom correspondant.
 
-<div class="path">developer/index.html</div>
-
-``` html
+``` html showLineNumbers=false title="developer/index.html"
 #...
 {% if developers %}
 <ul>

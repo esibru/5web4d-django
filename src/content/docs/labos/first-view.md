@@ -13,13 +13,13 @@ Avant d'écrire une vue à proprement parler, nous allons la faire au sein d'une
 
 Pour créer votre application, assurez-vous d'être dans le même répertoire que `manage.py` et saisissez la commande :
 
-``` bash 
+``` sh showLineNumbers=false frame="none"
 $ python manage.py startapp developer
 ```
 
 Cela va créer un répertoire `developer`, qui est structuré de la façon suivante :
 
-``` bash
+``` sh showLineNumbers=false frame="none"
 developer/
     __init__.py
     admin.py
@@ -35,9 +35,7 @@ developer/
 
 Écrivons la première vue. Ouvrez le fichier `developer/views.py` et placez-y le code Python suivant :
 
-<div class="path">developer/views.py</div>
-
-``` python
+``` python showLineNumbers=true title="developer/views.py"
 from django.http import HttpResponse
 
 def index(request):
@@ -54,7 +52,7 @@ C’est la vue Django la plus simple possible. Pour appeler cette vue, il s’ag
 
 Pour créer un _URLconf_ dans le répertoire `developer`, créez un fichier nommé `urls.py`. Votre répertoire d’application devrait maintenant ressembler à ceci :
 
-``` bash
+``` sh showLineNumbers=false frame="none"
 developer/
     __init__.py
     admin.py
@@ -69,9 +67,7 @@ developer/
 
 Dans le fichier `developer/urls.py`, insérez le code suivant :
 
-<div class="path">developer/urls.py</div>
-
-``` python
+``` python showLineNumbers=true title="developer/urls.py"
 from django.urls import path
 
 from . import views
@@ -89,9 +85,7 @@ urlpatterns = [
 
 L’étape suivante est de faire pointer la configuration d'URL racine vers le module `developer.urls`. Dans `mproject/urls.py`, ajoutez une importation `django.urls.include` et insérez un appel à `include()` dans la liste `urlpatterns`, ce qui donnera :
 
-<div class="path">mproject/urls.py</div>
-
-``` python
+``` python showLineNumbers=true title="mproject/urls.py"
 from django.contrib import admin
 from django.urls import include, path
 
@@ -105,7 +99,7 @@ L’idée derrière `include()` est de faciliter la connexion d’URL. Comme l�
 
 Vous avez maintenant relié une vue index dans la configuration d’URL. Vérifiez qu’elle fonctionne avec la commande suivante :
 
-``` bash
+``` sh showLineNumbers=false frame="none"
 $ python manage.py runserver
 ```
 

@@ -27,9 +27,9 @@ Ajoutez ce morceau de code dans le gabarit `index.html`
 +      {% csrf_token %} 
 + 
 +      <label for="first_name">First name</label>
-+      <input type="text" name="first_name" required>
++      <input type="text" id="first_name" name="first_name" required>
 +      <label for="last_name">Last name</label>
-+      <input type="text" name="last_name" required>
++      <input type="text" id="last_name" name="last_name" required>
 +      <button type="submit">Create</button>
 +  </form>
   {% endblock content %}

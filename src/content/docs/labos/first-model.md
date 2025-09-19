@@ -20,9 +20,7 @@ Ainsi, après avoir saisi la commande donnée, un fichier `db.sqlite3` apparaît
 
 Par défaut, Django utilise une base de donnée _SQLite_. Cela peut facilement être changé en modifiant le fichier `settings`. C'est ce que nous ferons un peu plus tard. Voici la configuration actuelle :
 
-<div class="path">mproject/settings.py</div>
-
-``` python
+``` python showLineNumbers=false title="mproject/settings.py"
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -41,7 +39,7 @@ DATABASES = {
 >
 > Quelles sont les résultats cachés par des points d'interrogation des instructions suivantes ?
 >
-> ``` python
+> ``` python showLineNumbers=false frame="none"
 > >>> trigrammes = {'jlc': 'Jonathan Lechien', 'sdr': 'Sébastien Drobisz'}
 > >>> trigrammes['jlc']
 > ❓
@@ -57,9 +55,7 @@ DATABASES = {
 
 Nous allons maintenant développer notre premier modèle. Dans le fichier `developer/models.py`, copiez le contenu ci-dessous.
 
-<div class="path">developer/models.py</div>
-
-``` python
+``` python showLineNumbers=true title="developer/models.py"
 from django.db import models
 
 class Developer(models.Model):
@@ -97,13 +93,13 @@ Ce petit morceau de code décrivant les modèles fournit beaucoup d’informatio
 * Créer une API Python d’accès aux bases de données pour accéder aux objets `Developer` et `Task`.
 
 Essayons de migrer les changements 🐇. La migration se fait grâce à la commande 
-``` bash
+``` sh showLineNumbers=false frame="none"
 $ python manage.py makemigrations
 ```
 
 Résultat :
 
-``` bash
+``` sh showLineNumbers=false frame="none"
 No changes detected
 ```
 
@@ -113,9 +109,7 @@ Rien ne s'est passé, en réalité, il faut d'abord "installer" l'application de
 
 Pour inclure l’application dans notre projet, nous avons besoin d’ajouter une référence à sa classe de configuration dans le réglage `INSTALLED_APPS` présent dans le fichier `settings.py`. La classe `DeveloperConfig` se trouve dans le fichier `developer/apps.py`, ce qui signifie que son chemin pointé est `developer.apps.DeveloperConfig`. Modifiez le fichier `mproject/settings.py` et ajoutez ce chemin pointé au réglage `INSTALLED_APPS`. Il doit ressembler à ceci :
 
-<div class="path">mproject/settings.py</div>
-
-``` python
+``` python showLineNumbers=false frame="none" ins={9, 10} title="mproject/settings.py"
   INSTALLED_APPS = [
       'django.contrib.admin',
       'django.contrib.auth',
@@ -124,8 +118,8 @@ Pour inclure l’application dans notre projet, nous avons besoin d’ajouter un
       'django.contrib.messages',
       'django.contrib.staticfiles',
   
-+ # My apps
-+     'developer.apps.DeveloperConfig', 
+  # My apps
+      'developer.apps.DeveloperConfig', 
 ```
 
 ##### Commande `makemigrations`
@@ -134,7 +128,7 @@ Maintenant que c'est fait, nous pouvons relancer la commande `python manage.py m
 
 Vous devriez avoir quelque chose de similaire à ceci :
 
-``` 
+``` showLineNumbers=false frame="none" 
 Migrations for 'developer':
   developer\migrations\0001_initial.py
     - Create model Developer
@@ -149,13 +143,13 @@ Les migrations sont le moyen utilisé par Django pour stocker les modifications 
 
 Il existe une commande qui exécute les migrations et gère automatiquement votre schéma de base de données, elle s’appelle `migrate`. Nous y viendrons bientôt, mais tout d’abord, voyons les instructions SQL que la migration produit. La commande `sqlmigrate` accepte des noms de migrations et affiche le code SQL correspondant :
 
-``` bash
+``` sh showLineNumbers=false frame="none"
 $ python manage.py sqlmigrate developer 0001
 ``` 
 
 Vous devriez voir quelque chose de similaire à ceci (remis en forme par souci de lisibilité) :
 
-```sql
+``` sql showLineNumbers=false frame="none"
 BEGIN;
 --
 -- Create model Developer
@@ -198,7 +192,7 @@ Notez les points suivants :
 
 Appliquons maintenant notre migration. Saisissez la commande :
 
-``` bash
+``` sh showLineNumbers=false frame="none"
 $ python manage.py migrate
 ```
 
@@ -224,7 +218,7 @@ Cela pourrait être utile pour vous de revenir en arrière dans ce tutoriel et d
 
 Maintenant, utilisons un shell interactif Python pour jouer avec l’API que Django met à votre disposition. Pour lancer un shell Python, utilisez cette commande :
 
-``` bash
+``` sh showLineNumbers=false frame="none"
 $ python manage.py shell
 ```
 
@@ -234,7 +228,7 @@ Nous utilisons celle-ci au lieu de simplement taper « python », parce que `man
 
 Une fois dans le shell, explorez [l'api de base de donnée](https://docs.djangoproject.com/fr/4.1/topics/db/queries/) 📖.
 
-``` python
+``` python showLineNumbers=false frame="none"
 >>> from developer.models import Developer, Task
 >>> Developer.objects.all()
 <QuerySet []>
@@ -247,7 +241,7 @@ On obtient un _QuerySet_ en utilisant le _Manager_ du modèle. Chaque modèle a 
 
 Ici, le QuerySet est vide puisqu'aucun élément n'a été créé.
 
-``` python
+``` python showLineNumbers=false frame="none"
 >>> jlc = Developer(first_name='Jonahtan', last_name='Lechien')
 ```
 
@@ -255,19 +249,19 @@ Nous venons de créer un nouveau développeur. Vérifiez que celui-ci a bien ét
 
 Vous vous êtes peut-être fait avoir. Quoiqu'il en soit, vous avez pu vérifier qu'il n'y a aucun nouvel enregistrement. Il est nécessaire de le sauvegarder pour que celui-ci soit enregistré en base de donnée...
 
-``` python
+``` python showLineNumbers=false frame="none"
 >>> jlc.save()
 ```
 
 Il est possible de créer un nouvel enregistrement en passant par un manager, il n'est alors pas nécessaire de le sauvegarder. Essayez ! ⭐️
 
-``` python
+``` python showLineNumbers=false frame="none"
 >>> sdr = Developer.objects.create(first_name='Sébastien', last_name='Drobisz')
 ```
 
 Continuons d'explorer
 
-``` python
+``` python showLineNumbers=false frame="none"
 >>> jlc.id
 1
 >>> jlc.first_name
@@ -282,21 +276,21 @@ Continuons d'explorer
 
 Une seconde. `<Developer: Developer object (1)>` n’est pas une représentation très utile de cet objet. On va arranger cela en éditant le modèle `Developer` (dans le fichier developer/models.py) et en ajoutant une méthode `__str__()` à `Developer` et à `Task`:
 
-``` python
+``` python showLineNumbers=true frame="none" ins={5,6, 13, 14}
   class Developer(models.Model):
       first_name = models.CharField("first name", max_length=200)
       last_name = models.CharField(max_length=200)
   
-+     def __str__(self):
-+         return f"{self.first_name} {self.last_name}"
+      def __str__(self):
+          return f"{self.first_name} {self.last_name}"
   
   class Task(models.Model):
       title = models.CharField(max_length=100, unique=True)
       description = models.TextField()
       assignee = models.ForeignKey(Developer, related_name="tasks", on_delete=models.CASCADE, null=True, verbose_name="assignee")
   
-+     def __str__(self):
-+         return f"{self.title} ({self.description})"
+      def __str__(self):
+          return f"{self.title} ({self.description})"
 ```
 
 > *_Parenthèse python 🐍_*
@@ -309,14 +303,14 @@ Une seconde. `<Developer: Developer object (1)>` n’est pas une représentation
 
 Vous pouvez **relancer** le shell maintenant.
 
-```python
+``` python showLineNumbers=false frame="none"
 >>> Developer.objects.all()
 <QuerySet [<Developer: Jonahtan Lechien>, <Developer: Sébastien Drobisz>]>
 ```
 
 Continuons sur notre lancée
 
-```python
+``` python  showLineNumbers=false frame="none"
 >>> Developer.objects.filter(id=1)
 <QuerySet [<Developer: Jonahtan Lechien>]>
 >>> Developer.objects.filter(first_name__startswith='S')
@@ -331,7 +325,7 @@ Continuons sur notre lancée
 
 Si vous avez lu le tuto [ici](https://docs.djangoproject.com/fr/4.1/intro/tutorial02/) vous avez pu remarquer que nous utilisons `tasks` plutôt que `task_set`. Cela nous est possible puisque nous avons défini le paramètre `relative_name` dans notre modèle `Task`.
 
-```python
+``` python  showLineNumbers=false frame="none"
 >>> jlc.tasks.all()   
 <QuerySet [<Task: cours Odoo (Faire le cours sur Odoo)>]>
 >>> jlc_task = jlc.tasks.all()[0] 
