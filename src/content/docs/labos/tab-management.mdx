@@ -5,16 +5,16 @@ description: /
 
 Si vous avez prêté attention, le lien activé dans le menu de navigation reste celui des développeurs. C'est normal puisque nous ne l'avons pas changé.
 
-Deux possibilités :
+**Deux possibilités :**
 
 1. Par le contexte donné aux gabarits. Pour cela, il faut
    * ajouter le nom de l'onglet à activer dans le contexte des vues et
    * vérifier dans le gabarit `_base.html` quel est l'onglet qui doit être actif.
 1. Accéder à l'espace nom accessible dans un gabarit grâce à 
-   ```
+   ``` python showLineNumbers=false
     request.resolver_match.namespaces.0
    ```
-   (✏️ Dans `mproject/_base.html` ajoutez `<p>{{ request.resolver_match }}</p>` et vérifiez son contenu.)
+   (Dans `mproject/_base.html` ajoutez `<p>{{ request.resolver_match }}</p>` et vérifiez son contenu.)
 
 ## Gestion grâce au contexte
 
@@ -24,9 +24,7 @@ Dans cette section, nous allons implémenter grâce à la première option.
 
 #### Application `developer`
 
-<div class="path">developer/views.py</div>
-
-``` python
+``` python showLineNumbers=false title="developer/views.py" ins={8,17-20}
   class IndexView(ListView): 
   
       # ...
@@ -34,7 +32,7 @@ Dans cette section, nous allons implémenter grâce à la première option.
       def get_context_data(self, **kwargs):
           context = super(IndexView, self).get_context_data(**kwargs)
           context['form'] = DeveloperForm      
-+         context['app'] = "developer"
+          context['app'] = "developer"
           return context 
   
   # ...
@@ -43,34 +41,30 @@ Dans cette section, nous allons implémenter grâce à la première option.
       
       # ...
   
-+     def get_context_data(self, **kwargs): 
-+         context = super(DetailView, self).get_context_data(**kwargs)
-+         context['app'] = "developer"
-+         return context 
+      def get_context_data(self, **kwargs): 
+          context = super(DetailView, self).get_context_data(**kwargs)
+          context['app'] = "developer"
+          return context 
 ```
 
 #### Application `task`
 
-<div class="path">task/views.py</div>
-
-``` python
+``` python showLineNumbers=false title="task/views.py" ins={5-8}
   class IndexView(ListView):
   
       # ...
   
-+     def get_context_data(self, **kwargs): 
-+         context = super(IndexView, self).get_context_data(**kwargs)
-+         context['app'] = "task"
-+         return context 
+      def get_context_data(self, **kwargs): 
+          context = super(IndexView, self).get_context_data(**kwargs)
+          context['app'] = "task"
+          return context 
 ```
 
 ### Gabarit `_base`
 
 Maintenant que le contexte a été ajouté dans chacune des vues, il est temps de vérifier quel onglet doit être actif.
 
-<div class="path">templates/_base.html</div>
-
-``` html
+``` html showLineNumbers=false title=templates/_base.html
     <ul class="navbar-nav">
         <li id="nav-home" class="nav-item">
             <a class="nav-link" href="#"><i class="fa fa-home"></i></a>
@@ -88,15 +82,13 @@ Maintenant que le contexte a été ajouté dans chacune des vues, il est temps d
     </ul>
 ```
 
-Essayez chacune de vos vues.
+Vérifiez chacune de vos vues.
 
 ## Information de la requête.
 
 Passons à la deuxième option.
 
-<div class="path">templates/_base.html</div>
-
-``` html
+``` html showLineNumbers=false title="templates/_base.html"
     <ul class="navbar-nav">
         <li id="nav-home" class="nav-item">
             <a class="nav-link" href="#"><i class="fa fa-home"></i></a>
@@ -114,4 +106,4 @@ Passons à la deuxième option.
     </ul>
 ```
 
-Essayez chacune de vos vues.
+Vérifiez chacune de vos vues.

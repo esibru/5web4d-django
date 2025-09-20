@@ -16,9 +16,7 @@ Dans le cas où il n'y a pas de développeur, vous devriez avoir le message `Il 
 
 Nous allons le mettre légèrement en forme.
 
-<div class="path">developer/templates/developer/index.html</div>
-
-``` python
+``` python showLineNumbers=false title="developer/templates/developer/index.html"
 <div class="container m-4">
     <alert class="alert alert-warning">Il n'y a aucun développeur enregistré</alert>
 </div>
@@ -32,9 +30,7 @@ Maintenant ajoutez au moins 2 développeurs.
 
 Modifiez le rendu de ceux-ci.
 
-<div class="path">developer/templates/developer/index.html</div>
-
-``` html
+``` html showLineNumbers=false title="developer/templates/developer/index.html"
 {% if developers %}
     <div class="container-sm l-3 d-flex flex-wrap border">
         {% for dev in developers %}
@@ -65,9 +61,7 @@ Remarquez la ligne
 
 ## Détails des développeurs
 
-<div class="path">developer/detail.html</div>
-
-```html
+```html showLineNumbers=false title="developer/detail.html"
 {% block content %}
     <div class="mt-4 p-5 bg-white rounded">
         <h1>{{ developer.first_name }} {{ developer.last_name }} </h1>
@@ -80,9 +74,7 @@ C'est terminé, ajoutez une tâche à un développeur afin de vérifier que le n
 
 Profitons-en pour afficher les tâches d'un développeur dans la vue détail.
 
-<div class="path">developer/detail.html</div>
-
-```html
+```html showLineNumbers=false title="developer/detail.html"
 #...
 
 <div class="container-sm">
@@ -107,9 +99,7 @@ Profitons-en pour afficher les tâches d'un développeur dans la vue détail.
 
 Tout d'abord, ajoutez le code ci-dessous.
 
-<div class="path">developer/detail.html`</div>
-
-``` html
+``` html showLineNumbers=false title="developer/detail.html"
   <div class="mt-4 p-5 bg-white rounded">
 +     <form action="{% url 'developer:delete' developer.id %}" method="POST"> 
 +         {% csrf_token %} 

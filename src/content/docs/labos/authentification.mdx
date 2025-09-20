@@ -2,6 +2,7 @@
 title: Authentification
 description: /
 ---
+import { Card, Aside} from '@astrojs/starlight/components';
 
 Maintenant que nous avons la capacité de créer des utilisateurs. Nous allons limiter l'accès au site aux utilisateurs connectés et limiter l'accès à certaines fonctionnalités aux utilisateurs qui en ont le droit.
 
@@ -15,26 +16,23 @@ Voici donc la suite du programme :
 
 Pour le moment, `localhost:8000` ne mène vers aucune vue. Autrement dit, nous n'avons pas de page d'accueil. Nous allons créer cette page d'accueil. Celle-ci va être placée dans une application.
 
-Créez l'application `home`, sans oublier de l'installer.
+1. Créez l'application `home`, sans oublier de l'installer.
+1. Ajoutez une vue dans cette nouvelle application qui va pointer vers un gabarit qui aura pour simple rôle de dire bonjour.
 
-Ajoutez une vue dans cette nouvelle application qui va pointer vers un gabarit qui aura pour simple rôle de dire bonjour.
-
-<div class="path">home/views.py</div>
-
-``` python
+``` python showLineNumbers=false title=home/views.py
 from django.views.generic import TemplateView
 
 class HomeView(TemplateView):
     template_name = "home/index.html"
 ```
 
-> 📃 `TemplateView` est une vue très basique qui a pour seul but d'afficher un gabarit donné.
+<Aside title="info">
+`TemplateView` est une vue très basique qui a pour seul but d'afficher un gabarit donné.
+</Aside>
 
 Ajoutez le gabarit associé à cette vue
 
-<div class="path">home/templates/home/index.html</div>
-
-```html
+```html showLineNumbers=false title=home/templates/home/index.html
 {% extends "_base.html" %}
 
 {% block content %}
@@ -44,9 +42,7 @@ Ajoutez le gabarit associé à cette vue
 
 Incluez les URLs de cette application à celle du projet (comme vous avez fait pour les deux autres applications).
 
-<div class="path">mproject/urls.py</div>
-
-``` python
+``` python showLineNumbers=false title=mproject/urls.py ins={5}
   urlpatterns = [
       path('admin/', admin.site.urls),
       path('developer/', include('developer.urls')),
@@ -57,9 +53,7 @@ Incluez les URLs de cette application à celle du projet (comme vous avez fait p
 
 Et enfin, ajoutez le fichier de configuration d'URL dans la nouvelle application.
 
-<div class="path">home/urls.py</div>
-
-``` python
+``` python showLineNumbers=false title=home/urls.py
 from django.urls import path
 
 from .views import HomeView
@@ -75,9 +69,7 @@ Lancez le serveur et testez !
 
 Actuellement, le message est assez impersonnel. Modifiez le gabarit afin qu'il corresponde au code ci-dessous.
 
-<div class="path"> home/templates/home/index.html</div>
-
-``` html
+``` html showLineNumbers=false title=home/templates/home/index.html
 {% extends "_base.html" %}
 
 {% block content %}
@@ -93,15 +85,15 @@ Relancez le serveur si vous l'avez arrêté et testé à nouveau. Si vous avec l
 
 Remarquez que la variable de contexte `user` est automatiquement ajouté par Django dans tous les gabarits.
 
-✏️ Le lien "home" ( 🏠 ) ne fonctionne pas. Corrigez-le et gérez l'effet "actif".
+<Aside type="caution" title="Lien accueil 🏠" icon="pencil">
+Le lien Accueil ne fonctionne pas. Corrigez-le et gérez l'effet "actif".
+</Aside>
 
 ### Affichage des tâches de l'utilisateur
 
 Modifiez le gabarit pour que le nom et prénom de l'utilisateur connecté soit affiché. Ajoutez également les tâches qui lui sont assignées.
 
-<div class="path">home/template/home/index.html</div>
-
-``` html
+``` html showLineNumbers=false title=home/template/home/index.html
 #...
 
 {% if user.is_authenticated %}
@@ -133,19 +125,19 @@ Modifiez le gabarit pour que le nom et prénom de l'utilisateur connecté soit a
 
 Ajoutez une tâche à votre utilisateur pour vérifier le bon fonctionnement. S'il y en avait déjà une, supprimez la.
 
-> 📃 Si vous avez été attentif jusqu'à maintenant, et si vous avez bien fait tout ce qui est demandé il est légitime de se demander si seuls les super utilisateurs peuvent se connecter. En effet, un utilisateur développeur ne peut pas se connecter. Pour permettre à un utilisateur autre qu'un super utilisateur de se connecter à la page d'administration, celui-ci doit faire partie de "l'équipe" (testez en ajoutant la permission "statut équipe" dans le menu de modification d'un utilisateur). 
+<Aside>
+Si vous avez été attentif jusqu'à maintenant, et si vous avez bien fait tout ce qui est demandé il est légitime de se demander si seuls les super utilisateurs peuvent se connecter. En effet, un utilisateur développeur ne peut pas se connecter. Pour permettre à un utilisateur autre qu'un super utilisateur de se connecter à la page d'administration, celui-ci doit faire partie de "l'équipe" (testez en ajoutant la permission "statut équipe" dans le menu de modification d'un utilisateur). 
+</Aside>
 
 Dans la pratique, nous aimerions qu'un utilisateur normal puisse se connecter à notre site. C'est ce que nous allons faire dans la prochaine section.
 
-## URLs d'authentifications
+## URLs de connexion
 
 ### Connexion
 
 La première chose à faire est de définir les URLs qui vont mener aux vues d'authentification. Celles-ci sont déjà définies dans l'application `django.contrib.auth`.
 
-<div class="path">mproject/settings.py</div>
-
-``` python
+``` python showLineNumbers=false title=mproject/settings.py
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',  👈 installée ici
@@ -157,9 +149,7 @@ INSTALLED_APPS = [
 
 Définissons les urls : 
 
-<div class="path">mproject/urls.py</div>
-
-``` python
+``` python showLineNumbers=false title=mproject/urls.py ins={4}
   urlpatterns = [
       path('', include('home.urls')),
       path('admin/', admin.site.urls),
@@ -170,26 +160,22 @@ Définissons les urls :
 
 Et ajoutez un lien pour permettre la connexion.
 
-<div class="path">home/templates/home/index.html</div>
-
-```html
+```html showLineNumbers=false title=home/templates/home/index.html ins={3}
   {% else %}
       <h1>Bienvenue sur mproject</h1>
-+     <a href={% url 'login' %}>Log in</a>
+      <a href={% url 'login' %}>Log in</a>
   {% endif %}
 ```
 
 📃 L'URL "login" fait partie des URLs inclues à l'étape précédente.
 
-🐇 Cliquez pour vous connecter ! Et prenez le temps de lire l'erreur obtenue.
+Cliquez pour vous connecter ! Et prenez le temps de lire l'erreur obtenue.
 
 Cette erreur est simple, le gabarit qui doit permettre de se connecter n'a pas été trouvé. Django s'attend en effet à le trouver dans le répertoire `registration` et celui-ci doit s'appeler `login.html`.
 
 Ajoutez donc le fichier suivant dans le dossier `templates` de votre projet avec l'arborescence attendue.
 
-<div class="path">mproject/templates/registration/login.html</div>
-
-```html
+```html showLineNumbers=false title=mproject/templates/registration/login.html
 {% extends "_base.html" %}
 {% load crispy_forms_tags %}
 {% block title %}GProject - login{% endblock title %}
@@ -207,7 +193,7 @@ Ajoutez donc le fichier suivant dans le dossier `templates` de votre projet avec
 ```
 (Ce gabarit devrait vous sembler naturel maintenant.)
 
-Essayez à nouveau de vous connecter avec les identifiants d'un développeur créé dans votre projet (en dehors de la page admin) et pour lequel vous avez défini un mot de passe ✏️.
+Essayez à nouveau de vous connecter avec les identifiants d'un développeur créé dans votre projet (en dehors de la page admin) et pour lequel vous avez défini un mot de passe.
 
 Une nouvelle fois, vous rencontrez une page d'erreur. Moins évidente cette fois. Pas de panique toutefois ! Après vous êtes connecté, Django cherche à rediriger vers une page de profil qui n'existe pas. Et nous n'allons pas la créer ! Plutôt que de faire cela, nous allons rediriger l'utilisateur qui s'est connecté vers la page d'accueil de notre site.
 
@@ -215,15 +201,15 @@ Dans le fichier `settings.py`, ajoutez cette ligne à la fin.
 
 <div class="path">mproject/settings.py</div>
 
-``` python
+``` python showLineNumbers=false title=mproject/settings.py ins={5}
   # ...
   
   # AUHT CONFIGURATION
   AUTH_USER_MODEL = 'developer.Developer'
-+ LOGIN_REDIRECT_URL = 'home'            
+  LOGIN_REDIRECT_URL = 'home'            
 ```
 
-✏️ Essayez et profitez 😉
+Vérifiez.
 
 ### Déconnexion
 
@@ -232,12 +218,10 @@ Nous allons gérer la déconnexion maintenant, rassurez-vous, le plus dur est fa
 1. Ajouter un lien pour nous déconnecter
 2. Rediriger l'utilisateur vers la page d'accueil.
 
-<div class="path">home/templates/home/index.html</div>
-
-``` html
+``` html showLineNumbers=false title=home/templates/home/index.html ins={3}
   {% if user.is_authenticated %}
   <div class="p-1 m-3 bg-light">
-+     <p class="float-right"><a href={% url 'logout' %}><i class="fa fa-sign-out"></i></a></p>
+      <p class="float-right"><a href={% url 'logout' %}><i class="fa fa-sign-out"></i></a></p>
       <h1>
           {{ user.first_name }} {{ user.last_name }}
       </h1>
@@ -246,15 +230,13 @@ Nous allons gérer la déconnexion maintenant, rassurez-vous, le plus dur est fa
 
 Et on redirige vers notre page d'accueil en ajoutant la constante `LOGOUT_REDIRECT_URL` à notre fichier `settings.py` :
 
-<div class="path">mproject/settings.py</div>
-
-```python
+```python showLineNumbers=false title=mproject/settings.py ins={6}
   #... 
   
   # AUHT CONFIGURATION
   AUTH_USER_MODEL = 'developer.Developer'
   LOGIN_REDIRECT_URL = 'home'
-+ LOGOUT_REDIRECT_URL = 'home'
+  LOGOUT_REDIRECT_URL = 'home'
 ```
 
 La déconnexion est maintenant implémentée !

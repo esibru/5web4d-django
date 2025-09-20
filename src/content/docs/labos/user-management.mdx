@@ -2,6 +2,7 @@
 title: Gestion des utilisateur
 description: /
 ---
+import { Aside} from '@astrojs/starlight/components';
 
 Nous allons maintenant modifier le modèle développeur afin que ceux-ci soient des utilisateurs.
 
@@ -16,31 +17,33 @@ Nous allons suivre ces 4 étapes :
 1. Adapter `UserCreationForm` et `UserChangeForm`.
 1. Ajouter le nouveau modèle à `admin.py`.
 
-> ⚠️ Avant de continuer, supprimez toute migration de votre base de données (`python manage.py migrate <app> zero`) et supprimez les fichiers migrations.
+<Aside type="caution" title="Avant de continuer">
+* Supprimez toute migration de votre base de données 
+   ``` sh showLineNumbers=false frame="none"
+   python manage.py migrate <app> zero
+   ```
+* et supprimez les fichiers migrations.
+</Aside>
 
 #### Configuration du modèle d'utilisateur
 
-<div class="path">developer/models.py</div>
-
-``` python
-+ from django.contrib.auth.models import AbstractUser 
+``` python showLineNumbers=false ins={1,5} del={4}
+  from django.contrib.auth.models import AbstractUser 
   from django.db import models
   
-- class Developer(models.Model):
-+ class Developer(AbstractUser):                      
+  class Developer(models.Model):
+  class Developer(AbstractUser):                      
 ```
 
 Nous allons maintenant ajouter un paramètre `AUTH_USER_MODEL` au bas de notre fichier de configuration afin de demander à notre projet d'utiliser notre modèle plutôt que le modèle d'utilisateur par défaut.
 
-<div class="path">mproject/settings.py</div>
-
-``` python
+``` python showLineNumbers=false title=mproject/settings.py ins={5,6}
   # CRISPY FORM CONFIGURATION
   CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
   CRISPY_TEMPLATE_PACK = 'bootstrap5'
   
-+ # AUTH CONFIGURATION 
-+ AUTH_USER_MODEL = 'developer.Developer'
+  # AUTH CONFIGURATION 
+  AUTH_USER_MODEL = 'developer.Developer'
 ```
 
 #### Formulaire pour le modèle d'utilisateur
@@ -48,9 +51,7 @@ Nous allons maintenant ajouter un paramètre `AUTH_USER_MODEL` au bas de notre f
 On ne va pas y aller par 4 chemins, ici nous allons remplacer notre formulaire, modifier la classe dont elle hérite, et ajouter un formulaire pour
 permettre la modification de notre utilisateur.
 
-<div class="path">developer/forms.py</div>
-
-``` python
+``` python showLineNumbers=false title=developer/forms.py
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django import forms
@@ -75,14 +76,12 @@ Pour cela, il est nécessaire de modifier les champs `add_form` et `form` hérit
 
 La méthode `get_user_model` permet d'importer le modèle d'utilisateur précédemment configuré dans le fichier `settings.py`.
 
-<div class="path">developer/admin.py</div>
-
-``` python
-+ from django.contrib.auth import get_user_model
-+ from django.contrib.auth.admin import UserAdmin
+``` python showLineNumbers=false title=developer/admin.py ins={1,2,5,14-17,19} del={13,18}
+  from django.contrib.auth import get_user_model
+  from django.contrib.auth.admin import UserAdmin
   from django.contrib import admin
   
-+ from .forms import DeveloperForm, DeveloperChangeForm
+  from .forms import DeveloperForm, DeveloperChangeForm
   from .models import Developer
   from task.models import Task
   
@@ -90,13 +89,13 @@ La méthode `get_user_model` permet d'importer le modèle d'utilisateur précéd
       model = Task
       extra = 1
   
-- class DeveloperAdmin(admin.ModelAdmin):
-+ class DeveloperAdmin(UserAdmin):
-+     add_form = DeveloperForm
-+     form = DeveloperChangeForm
-+     model = get_user_model()
--     list_display = ('first_name', 'last_name', 'is_free')
-+     list_display = ('first_name', 'last_name', 'username', 'is_free')
+  class DeveloperAdmin(admin.ModelAdmin):
+  class DeveloperAdmin(UserAdmin):
+      add_form = DeveloperForm
+      form = DeveloperChangeForm
+      model = get_user_model()
+      list_display = ('first_name', 'last_name', 'is_free')
+      list_display = ('first_name', 'last_name', 'username', 'is_free')
       inlines = [TaskInline]
 ```
 
@@ -104,16 +103,14 @@ La méthode `get_user_model` permet d'importer le modèle d'utilisateur précéd
 
 Enfin, un super utilisateur est un utilisateur comme les autres. Il est donc important d'ajouter le prénom et le nom d'un super utilisateur lors de sa création (c'est-à-dire lors de l'appel à `createsuperuser`).
 
-<div class="path">developer/models.py</div>
-
-``` python
+``` python showLineNumbers=false title=developer/models.py ins={7}
   #...
 
   class Developer(AbstractUser):
       first_name = models.CharField("first name", max_length=200)
       last_name = models.CharField(max_length=200)
   
-+     REQUIRED_FIELDS=['first_name', 'last_name'] 
+      REQUIRED_FIELDS=['first_name', 'last_name'] 
   
       def is_free(self):
           return self.tasks.count() == 0
@@ -129,27 +126,23 @@ Si vous essayez de créer un développeur, vous verrez que de nombreux champs se
 
 Ajoutez un formulaire simplifié lié directement au modèle développeur.
 
-<div class="path">developer/forms.py</div>
-
-``` python
+``` python showLineNumbers=false title={developer/forms.py} ins={3,7}
   #...
 
-+ class ShortDeveloperForm(forms.ModelForm):             
-+    class Meta:                                         
-+        model = Developer                               
-+        fields = ['first_name', 'last_name', 'username']
+  class ShortDeveloperForm(forms.ModelForm):             
+     class Meta:                                         
+         model = Developer                               
+         fields = ['first_name', 'last_name', 'username']
 
   #...
 ```
 
 Et enfin, n'oubliez pas que ce formulaire est traité lors de la création d'un développeur et envoyé lorsque la vue `index` des développeurs est demandée. Modifiez la vue afin que le champ `username` soit également considéré.
 
-<div class="path">developer/views.py</div>
-
-``` python
+``` python showLineNumbers=false title=developer/views.py ins={3,15,21,27} del={2, 14,20}
   #...
-- from .forms import DeveloperForm
-+ from .forms import ShortDeveloperForm
+  from .forms import DeveloperForm
+  from .forms import ShortDeveloperForm
   
   #...
   
@@ -160,20 +153,20 @@ Et enfin, n'oubliez pas que ce formulaire est traité lors de la création d'un 
   
       def get_context_data(self, **kwargs):
           context = super(IndexView, self).get_context_data(**kwargs)
--         context['form'] = DeveloperForm
-+         context['form'] = ShortDeveloperForm
+          context['form'] = DeveloperForm
+          context['form'] = ShortDeveloperForm
   
   #...
   
   def create(request):
--     form = DeveloperForm(request.POST)
-+     form = ShortDeveloperForm(request.POST)
+      form = DeveloperForm(request.POST)
+      form = ShortDeveloperForm(request.POST)
   
       if form.is_valid():
           Developer.objects.create(
               first_name=form.cleaned_data['first_name'],
               last_name=form.cleaned_data['last_name'],
-+             username=form.cleaned_data['username'],
+              username=form.cleaned_data['username'],
           )
   #...
 ```
@@ -182,6 +175,6 @@ Testez la création d'un développeur au sein de votre projet (sans passer par l
 
 D'un point de vue utilisateur, votre projet fonctionne comme avant (exception faite du champ `username`). Mais grâce à nos ajouts, nous pouvons maintenant passer à la gestion de la connexion et des permissions.
 
-> 📃
-> Dans la vue, nous avons laissé la création d'un développeur grâce à la fonction
-> `Developer.objects.create(...)`. Si vous souhaitez créer un utilisateur avec tous les champs requis, il est alors nécessaire d'utiliser la fonction `Developer.objects.create_user(...)`.
+<Aside title="Info">
+ Dans la vue, la création d'un développeur se fait grâce à la fonction `Developer.objects.create(...)`. Si vous souhaitez créer un utilisateur avec tous les champs requis, utilisez la fonction `Developer.objects.create_user(...)`.
+</Aside>

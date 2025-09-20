@@ -2,6 +2,7 @@
 title: Sécurité
 description: /
 ---
+import { Card, Aside} from '@astrojs/starlight/components';
 
 Pour terminer notre site, nous allons limiter l'accès à certaines pages aux utilisateurs connectés. Enfin, certains utilisateurs auront certaines permissions pour la gestion des tâches.
 
@@ -14,33 +15,29 @@ Nous allons empêcher aux utilisateurs non connectés d'accéder aux pages
 
 Grâce aux mixins, c'est sans doute l'une des étapes les plus simples. Il suffit que les vues héritent du mixin `LoginRequiredMixin` pour que cela fonctionne comme souhaité.
 
-<div class="path">developer/views.py</div>
-
-``` python
-+ from django.contrib.auth.mixins import LoginRequiredMixin
+``` python showLineNumbers=false title=developer/views.py ins={1,6,11} del={5,10}
+  from django.contrib.auth.mixins import LoginRequiredMixin 
   
   #...
   
-- class IndexView(ListView):
-+ class IndexView(LoginRequiredMixin, ListView):
+  class IndexView(ListView):
+  class IndexView(LoginRequiredMixin, ListView):
   
   #...
   
-- class DevDetailVue(DetailView):
-+ class DevDetailVue(LoginRequiredMixin, DetailView):
+  class DevDetailVue(DetailView):
+  class DevDetailVue(LoginRequiredMixin, DetailView):
   
   #...
 ```
 
-<div class="path">task/views.py</div>
-
-``` python
-+ from django.contrib.auth.mixins import LoginRequiredMixin
+``` python showLineNumbers=false title=task/views.py ins={1,6} del={5}
+  from django.contrib.auth.mixins import LoginRequiredMixin
   
   #...  
   
-- class IndexView(generic.ListView):
-+ class IndexView(LoginRequiredMixin, generic.ListView):
+  class IndexView(generic.ListView):
+  class IndexView(LoginRequiredMixin, generic.ListView):
   
   #...  
 ```
@@ -63,9 +60,7 @@ Cela se fait au niveau des modèles.
 
 Modifiez le modèle `Task` comme ceci
 
-<div class="path">task/models.py`</div>
-
-``` python
+``` python showLineNumbers=false title=task/models.py
 class Task(models.Model):
     #...
 
@@ -84,19 +79,16 @@ Réalisez une migration. ✏️ Dans quelle table trouvez-vous les différentes 
 
 Modifiez la vue index des tâches.
 
-<div class="path">task/views.py</div>
-
-```python
-- from django.contrib.auth.mixins import LoginRequiredMixin
-+ from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+```python showLineNumbers=false title=task/views.py del={1,6} ins={2,7,10}
+  from django.contrib.auth.mixins import LoginRequiredMixin
+  from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
   
   #...
-
-- class IndexView(LoginRequiredMixin, generic.ListView):
-+ class IndexView(LoginRequiredMixin, PermissionRequiredMixin, generic.ListView):
+   class IndexView(LoginRequiredMixin, generic.ListView):
+  class IndexView(LoginRequiredMixin, PermissionRequiredMixin, generic.ListView):
       #...
   
-+     permission_required = 'task.task_management'
+      permission_required = 'task.task_management'
   
       def get_context_data(self, **kwargs):
           # ...
@@ -117,9 +109,7 @@ Créez un autre utilisateur (non super utilisateur). Ne lui accordez pas cette p
 
 Il reste à empêcher d'accéder au bouton d'ajout de tâche dans le détail d'un développeur. Pour cela rien de plus simple, il suffit d'utiliser la variable de contexte `perms`
 
-<div class="path"> task/_create_task_modal.html`</div>
-
-```html
+```html showLineNumbers=false title=task/_create_task_modal.html
 {% load crispy_forms_tags %}
 {% if perms.task.task_management %}
 

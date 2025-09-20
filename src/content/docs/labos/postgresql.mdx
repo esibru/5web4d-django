@@ -53,17 +53,15 @@ votre rôle comme propriétaire de la base de donnée `mproject` :
   }
 ```
 
-Et voilà, tout est fait !
-
-Enfin, n'oubliez pas de migrer 😉. (✏️ Quelle commande allez-vous utiliser pour réaliser la migration ?)
+<Aside title="Migration" icon="seti:db">
+Il ne reste qu'à réaliser la migration, quelle commande allez-vous utiliser  ?
+</Aside>
 
 ## Migrations
 
 Lorsque nous sommes au début du développement d'un logiciel, nous pouvons échapper aux problèmes liés aux migrations. Nous allons cependant voir le minimum afin de gérer les quelques conflits que nous pourrions rencontrer. Si la gestion des migrations vous intéresse, vous trouverez de quoi satisfaire votre curiosité [ici](https://docs.djangoproject.com/fr/4.1/topics/migrations/).
 
 Imaginons que nous souhaitons ajouter un nouveau champ `username` à notre modèle `Developer`.
-
-<div class="path">developer/models.py</div>
 
 ```python showLineNumbers=false title=developer/models.py ins={4}
   class Developer(models.Model):
@@ -77,6 +75,7 @@ Imaginons que nous souhaitons ajouter un nouveau champ `username` à notre modè
 Saisissez la commande `python manage.py makemigrations` qui va vérifier les changements et générer un nouveau fichier permettant la migration.
 
 Vous devriez avoir ce message : 
+
 ``` sh showLineNumbers=false frame="none"
 You are trying to add a non-nullable field 'user_name' to developer without a default; we can't do that (the database needs something to populate existing rows).
 Please select a fix:
@@ -101,6 +100,9 @@ La procédure que nous allons vous soumettre est un peu radicale, mais nous somm
    1. `python manage.py migrate`
 
 </Steps>
-Pour vous entraîner, supprimez le champ `user_name` que vous venez de créer, cela va nous gêner par la suite et cela vous permet de vous entraîner avec la procédure ! ⭐️
+
+<Aside title="Exercice" icon="pencil">
+Pour vous entraîner, supprimez le champ `user_name` que vous venez de créer, cela va nous gêner par la suite et cela vous permet de vous entraîner avec la procédure !
+</Aside>
 
 > 📃 Il est également possible de supprimer la base de donnée et d'en créer une nouvelle. Si vous faites cela, pensez à supprimer les fichiers de migration ! (⚠️ À ne pas faire en production.)
