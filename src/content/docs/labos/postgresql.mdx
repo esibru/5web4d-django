@@ -59,6 +59,12 @@ Et si nous changions le SGBD afin d'utiliser PostgreSQL ?
    docker run --name mypostgres -p 5433:5432 -d mypostgres
    ```
    (`--name` permet de nommer le conteneur)
+
+1. Installer `psycopg2`:
+   ``` sh showLineNumbers=false frame="none"
+   python -m pip install django psycopg2
+   ```
+
 </Steps>
 
 </Card>
