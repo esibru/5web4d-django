@@ -26,13 +26,42 @@ Et si nous changions le SGBD afin d'utiliser PostgreSQL ?
    ``` sh showLineNumbers=false frame="none"
    python -m pip install django psycopg2
    ```
-6. Pour éviter la manipulation de [schéma](https://docs.postgresql.fr/10/ddl-schemas.html), nous vous suggérons de définir
-votre rôle comme propriétaire de la base de donnée `mproject` :
+6. Pour éviter la manipulation de [schéma](https://docs.postgresql.fr/10/ddl-schemas.html), nous vous suggérons de définir votre rôle comme propriétaire de la base de donnée `mproject` :
    ``` sql showLineNumbers=false frame="none"
    alter database mproject owner to <role>;
    ```
 7. Configurer l'utilisation de la base de données dans `settings.py`
 </Steps>
+
+<Card icon="seti:docker" title="Avec Docker">
+
+<Steps>
+
+1. Ajouter un dockerfile avec le contenu suivant
+   ``` text showLineNumbers=false title=Dockerfile
+   # Utilise l'image officielle Postgres
+   FROM postgres:16
+   
+   # Variables d'environnement pour init
+   ENV POSTGRES_USER=g12345
+   ENV POSTGRES_PASSWORD=admin
+   ENV POSTGRES_DB=mproject
+   ```
+1. Créer une image
+
+   ``` text showLineNumbers=false frame=none
+   docker build -t mypostgres .
+   ```
+
+1. Créer un conteneur
+
+   ``` text showLineNumbers=false frame=none
+   docker run --name mypostgres -p 5433:5432 -d mypostgres
+   ```
+   (`--name` permet de nommer le conteneur)
+</Steps>
+
+</Card>
 
 ``` python showLineNumbers=false title=mproject/settings.py del={1-4} ins={5-16}
   'default': {
