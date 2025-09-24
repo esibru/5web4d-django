@@ -218,10 +218,13 @@ Nous allons gérer la déconnexion maintenant, rassurez-vous, le plus dur est fa
 1. Ajouter un lien pour nous déconnecter
 2. Rediriger l'utilisateur vers la page d'accueil.
 
-``` html showLineNumbers=false title=home/templates/home/index.html ins={3}
+``` html showLineNumbers=false title=home/templates/home/index.html ins={3-6}
   {% if user.is_authenticated %}
   <div class="p-1 m-3 bg-light">
-      <p class="float-right"><a href={% url 'logout' %}><i class="fa fa-sign-out"></i></a></p>
+      <form action="{% url 'logout' %}" method="post">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-outline-primary btn-sm"><i class="fa fa-sign-out"></i></button>
+      </form>
       <h1>
           {{ user.first_name }} {{ user.last_name }}
       </h1>
