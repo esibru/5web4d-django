@@ -2,7 +2,7 @@
 title: Authentification
 description: /
 ---
-import { Card, Aside} from '@astrojs/starlight/components';
+import { Card, Aside, Steps} from '@astrojs/starlight/components';
 
 Maintenant que nous avons la capacité de créer des utilisateurs. Nous allons limiter l'accès au site aux utilisateurs connectés et limiter l'accès à certaines fonctionnalités aux utilisateurs qui en ont le droit.
 
@@ -215,31 +215,37 @@ Vérifiez.
 
 Nous allons gérer la déconnexion maintenant, rassurez-vous, le plus dur est fait. Pour cela nous devons
 
+<Steps>
 1. Ajouter un lien pour nous déconnecter
-2. Rediriger l'utilisateur vers la page d'accueil.
+   ``` html showLineNumbers=false title=home/templates/home/index.html ins={3-6}
+     {% if user.is_authenticated %}
+     <div class="p-1 m-3 bg-light">
+         <form action="{% url 'logout' %}" method="post">
+             {% csrf_token %}
+             <button type="submit" class="btn btn-outline-primary btn-sm"><i class="fa fa-sign-out"></i></button>
+         </form>
+         <h1>
+             {{ user.first_name }} {{ user.last_name }}
+         </h1>
+     </div>
+   ```
+   
+   <Aside type="caution" title="Sécurité">
+   Pour des raisons de sécurité (CSRF), il n'est pas possible de se déconnecter via une requête GET. Une requête POST est nécessaire.
+   </Aside>
+2. Rediriger l'utilisateur vers la page d'accueil en ajoutant la constante `LOGOUT_REDIRECT_URL` à notre fichier `settings.py` :
+   
+   ```python showLineNumbers=false title=mproject/settings.py ins={6}
+     #... 
+     
+     # AUHT CONFIGURATION
+     AUTH_USER_MODEL = 'developer.Developer'
+     LOGIN_REDIRECT_URL = 'home'
+     LOGOUT_REDIRECT_URL = 'home'
+   ```
+</Steps>
 
-``` html showLineNumbers=false title=home/templates/home/index.html ins={3-6}
-  {% if user.is_authenticated %}
-  <div class="p-1 m-3 bg-light">
-      <form action="{% url 'logout' %}" method="post">
-          {% csrf_token %}
-          <button type="submit" class="btn btn-outline-primary btn-sm"><i class="fa fa-sign-out"></i></button>
-      </form>
-      <h1>
-          {{ user.first_name }} {{ user.last_name }}
-      </h1>
-  </div>
-```
 
-Et on redirige vers notre page d'accueil en ajoutant la constante `LOGOUT_REDIRECT_URL` à notre fichier `settings.py` :
 
-```python showLineNumbers=false title=mproject/settings.py ins={6}
-  #... 
-  
-  # AUHT CONFIGURATION
-  AUTH_USER_MODEL = 'developer.Developer'
-  LOGIN_REDIRECT_URL = 'home'
-  LOGOUT_REDIRECT_URL = 'home'
-```
 
 La déconnexion est maintenant implémentée !
