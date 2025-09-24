@@ -8,6 +8,43 @@ Et si nous changions le SGBD afin d'utiliser PostgreSQL ?
 
 ## Installation
 
+<Tabs>
+<TabItem label="Postgres sur docker">
+
+<Steps>
+
+1. Ajouter un dockerfile avec le contenu suivant
+   ``` text showLineNumbers=false title=Dockerfile
+   FROM postgres:16
+   
+   ENV POSTGRES_USER=g12345
+   ENV POSTGRES_PASSWORD=admin
+   ENV POSTGRES_DB=mproject
+   ```
+1. Créer une image
+
+   ``` text showLineNumbers=false frame=none
+   docker build -t mypostgres .
+   ```
+
+1. Créer un conteneur
+
+   ``` text showLineNumbers=false frame=none
+   docker run --name mypostgres -p 5433:5432 -d mypostgres
+   ```
+   (`--name` permet de nommer le conteneur)
+
+1. Installer `psycopg2`:
+   ``` sh showLineNumbers=false frame="none"
+   python -m pip install django psycopg2
+   ```
+
+</Steps>
+
+</TabItem>
+
+<TabItem label="Installation machine">
+
 <Steps>
 1. Installer [PostgreSQL](https://www.postgresql.org/)
 2. Créer une DB (par exemple `mproject`) : 
@@ -33,41 +70,8 @@ Et si nous changions le SGBD afin d'utiliser PostgreSQL ?
 7. Configurer l'utilisation de la base de données dans `settings.py`
 </Steps>
 
-<Card icon="seti:docker" title="Avec Docker">
-
-<Steps>
-
-1. Ajouter un dockerfile avec le contenu suivant
-   ``` text showLineNumbers=false title=Dockerfile
-   # Utilise l'image officielle Postgres
-   FROM postgres:16
-   
-   # Variables d'environnement pour init
-   ENV POSTGRES_USER=g12345
-   ENV POSTGRES_PASSWORD=admin
-   ENV POSTGRES_DB=mproject
-   ```
-1. Créer une image
-
-   ``` text showLineNumbers=false frame=none
-   docker build -t mypostgres .
-   ```
-
-1. Créer un conteneur
-
-   ``` text showLineNumbers=false frame=none
-   docker run --name mypostgres -p 5433:5432 -d mypostgres
-   ```
-   (`--name` permet de nommer le conteneur)
-
-1. Installer `psycopg2`:
-   ``` sh showLineNumbers=false frame="none"
-   python -m pip install django psycopg2
-   ```
-
-</Steps>
-
-</Card>
+</TabItem>
+</Tabs>
 
 ``` python showLineNumbers=false title=mproject/settings.py del={1-4} ins={5-16}
   'default': {
