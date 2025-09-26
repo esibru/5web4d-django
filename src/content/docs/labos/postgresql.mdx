@@ -88,12 +88,20 @@ Et si nous changions le SGBD afin d'utiliser PostgreSQL ?
       'USER': '<le rôle>',
       'PASSWORD': '<le mdp>',
       'HOST': 'localhost',
-      'PORT': '',
+      'PORT': '5433',
   }
 ```
 
 <Aside title="Migration" icon="seti:db">
 Il ne reste qu'à réaliser la migration, quelle commande allez-vous utiliser  ?
+</Aside>
+
+<Aside title="Docker - psql" icon="seti:docker">
+Vous pouvez accéder à l'interface en mode texte de postgres (psql) grâce à la commande suivante.
+
+``` sh showLineNumbers=false frame=none
+docker exec -it mypostgres psql -U g12345 -d mproject
+```
 </Aside>
 
 ## Migrations
