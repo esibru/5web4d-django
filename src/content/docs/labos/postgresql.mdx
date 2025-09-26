@@ -97,11 +97,27 @@ Il ne reste qu'à réaliser la migration, quelle commande allez-vous utiliser  ?
 </Aside>
 
 <Aside title="Docker - psql" icon="seti:docker">
-Vous pouvez accéder à l'interface en mode texte de postgres (psql) grâce à la commande suivante.
+Vous pouvez accéder au terminal interactif de postgres [psql](https://docs.postgresql.fr/13/app-psql.html) grâce à la commande
 
-``` sh showLineNumbers=false frame=none
-docker exec -it mypostgres psql -U g12345 -d mproject
-```
+   ``` bash showLineNumbers=false frame=none
+   docker exec -it mypostgres psql -U g12345 -d mproject
+   ```
+Et dès lors,
+* lister les tables existantes :
+   ``` sql showLineNumbers=false frame=none
+   \dt
+   ```
+* décrire une  table :
+   ``` sql showLineNumbers=false frame=none
+   \d developer_developer
+   ```
+  
+* faire toutes les requêtes utiles (en n'oubliant pas le `;`)
+   Ex : 
+   ``` sql showLineNumbers=false frame=none
+   SELECT * FROM developer_developer;
+   ``` 
+* ...
 </Aside>
 
 ## Migrations
