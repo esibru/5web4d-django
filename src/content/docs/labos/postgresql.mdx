@@ -13,7 +13,7 @@ Et si nous changions le SGBD afin d'utiliser PostgreSQL ?
 
 <Steps>
 
-1. Ajouter un dockerfile avec le contenu suivant
+1. Ajouter un dockerfile avec le contenu suivant (adapté avec vos données).
    ``` text showLineNumbers=false title=Dockerfile
    FROM postgres:16
    
@@ -156,7 +156,14 @@ La procédure que nous allons vous soumettre est un peu radicale, mais nous somm
    * Si vous utilisez toujours SQLite, alors supprimez le fichier `db.sqlite3` (ou mieux, faite la configuration nécessaire à l'utilisation de PostgreSQL).
    * Si vous utilisez PostgreSQL comme demandé, nous allons plutôt défaire toutes les migrations réalisées. Lancez la commande : `$ python manage.py migrate developer zero`.
 
-1. Supprimez les fichiers présents dans le dossier `migrations`. Ceux-ci ont généralement la forme : `0001_...`
+1. Supprimez les fichiers présents dans le dossier `migrations`. Ceux-ci ont généralement la forme : `000x_...`.
+   <FileTree>
+   - developer/
+      - migrations/
+         - 0001\_initial.py
+         - ...
+         - 000n\_initial.py
+   </FileTree>
 
 1. Relancez la procédure complète de migration
    1. `python manage.py makemigrations`
