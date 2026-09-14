@@ -97,7 +97,7 @@ urlpatterns = [
 ]
 ```
 
-L'idée derrière `include()` est de faciliter la connexion d'URL. Comme l'application de développeur possède son propre URLconf (`developer/urls.py`), ses URL peuvent être injectées sous `/developer/`, sous `/dev/` ou `sous `/content/dev/` ou tout autre chemin racine sans que cela change quoi que ce soit au fonctionnement de l'application.
+L'idée derrière `include()` est de faciliter la connexion d'URL. Comme l'application de développeur possède son propre URLconf (`developer/urls.py`), ses URL peuvent être injectées sous `/developer/`, sous `/dev/` ou sous `/content/dev/` ou tout autre chemin racine sans que cela change quoi que ce soit au fonctionnement de l'application.
 
 Vous avez maintenant relié une vue index dans la configuration d'URL. Vérifiez qu'elle fonctionne avec la commande suivante :
 
