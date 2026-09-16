@@ -3,7 +3,7 @@ export const teachers = [
     trigram: "NRI",
     firstName: "Nicolas",
     lastName: "Richard",
-    webPage: "http://ects.esi-bru.be/online/enseignants/NRI.html",
+    webPage: "http://ects.esi-bru.be/online/enseignants/nri.html",
     email: "nrichard@he2b.be",
   },
   {

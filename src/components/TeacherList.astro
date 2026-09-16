@@ -2,30 +2,75 @@
 import { teachers } from "../data/teachers.js";
 ---
 
-<ul class="teacher-list">
+<ul>
   {teachers.map((teacher) => (
     <li>
-      
       <a 
-        href={`mailto:${teacher.webPage}`}
-        class="name-link"
+          href={teacher.webPage}
+          class="name-link"
       >
-        <strong>{teacher.firstName} {teacher.lastName} ({teacher.trigram}) </strong>
-      </a>
+        <header>
+          {teacher.trigram}
+        </header>
 
-      <span> – </span>
+        <main>
+          
+          <strong>{teacher.firstName} {teacher.lastName}</strong>
 
-      <a href={`mailto:${teacher.email}`}>
-        {teacher.email}
+          <a href={`mailto:${teacher.email}`}>
+            {teacher.email}
+          </a>
+        </main>
       </a>
     </li>
   ))}
 </ul>
 
 <style>
-  ul.teacher-list {
-
+  ul{
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    list-style-type: none;
     padding-left: 0;
+
+    li {
+      box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+      border-radius: 10px;
+      padding: 10px;
+
+      header {
+        display: flex;
+        align-items: center;
+        margin: auto;
+        justify-content: center;
+        text-align: center;
+        margin-bottom: 10px;
+        width: 3em;
+        height: 3em;
+        font-size: 1.2em;
+        background-color: #333;
+        border: 2px solid transparent;
+        color: #ddd;
+        border-radius: 50%;
+      }
+
+      main {
+        display: flex;
+        text-align: center;
+        flex-direction: column;
+        margin: 0;
+      }
+
+      &:hover {
+        box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+        
+        header {
+          background-color: #666;
+          border-color: #ddd;
+        }
+      }
+    }
 
     a {
       color: inherit;
@@ -36,5 +81,14 @@ import { teachers } from "../data/teachers.js";
       }
     }
 
+    li {
+      transition: box-shadow 500ms;
+      
+      header {
+        transition: 
+          border-color 1000ms,
+          background-color 200ms;
+      }
+    }
   }
 </style>
