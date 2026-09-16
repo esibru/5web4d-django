@@ -1,0 +1,40 @@
+---
+import { teachers } from "../data/teachers.js";
+---
+
+<ul class="teacher-list">
+  {teachers.map((teacher) => (
+    <li>
+      
+      <a 
+        href={`mailto:${teacher.webPage}`}
+        class="name-link"
+      >
+        <strong>{teacher.firstName} {teacher.lastName} ({teacher.trigram}) </strong>
+      </a>
+
+      <span> – </span>
+
+      <a href={`mailto:${teacher.email}`}>
+        {teacher.email}
+      </a>
+    </li>
+  ))}
+</ul>
+
+<style>
+  ul.teacher-list {
+
+    padding-left: 0;
+
+    a {
+      color: inherit;
+      text-decoration: none;
+      
+      &:hover {
+        color: #666;
+      }
+    }
+
+  }
+</style>
