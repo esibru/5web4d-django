@@ -5,89 +5,103 @@ import { teachers } from "../data/teachers.js";
 <ul>
   {teachers.map((teacher) => (
     <li>
-      <a 
-          href={teacher.webPage}
-          class="name-link"
-      >
-        <header>
-          {teacher.trigram}
-        </header>
+      <header>
+        {teacher.trigram}
+      </header>
 
-        <main>
-          
-          <strong>{teacher.firstName} {teacher.lastName}</strong>
-
-          <a href={`mailto:${teacher.email}`}>
-            {teacher.email}
+      <main>
+        <strong>
+          <a
+            href={teacher.webPage}
+            class="name-link"
+          >
+            {teacher.firstName} {teacher.lastName}
           </a>
-        </main>
-      </a>
+        </strong>
+
+        <a class="mail" href={`mailto:${teacher.email}`}>
+          {teacher.email}
+        </a>
+      </main>
     </li>
   ))}
 </ul>
 
 <style>
-  ul{
+  ul {
     display: flex;
     justify-content: space-around;
     flex-wrap: wrap;
-    list-style-type: none;
-    padding-left: 0;
+    gap: 1.5rem;
 
-    li {
-      box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
-      border-radius: 10px;
-      padding: 10px;
+    list-style: none;
+    padding: 0;
+  }
 
-      header {
-        display: flex;
-        align-items: center;
-        margin: auto;
-        justify-content: center;
-        text-align: center;
-        margin-bottom: 10px;
-        width: 3em;
-        height: 3em;
-        font-size: 1.2em;
-        background-color: #333;
-        border: 2px solid transparent;
-        color: #ddd;
-        border-radius: 50%;
-      }
+  ul li {
+    position: relative;
 
-      main {
-        display: flex;
-        text-align: center;
-        flex-direction: column;
-        margin: 0;
-      }
+    padding: 1rem;
 
-      &:hover {
-        box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-        
-        header {
-          background-color: #666;
-          border-color: #ddd;
-        }
-      }
+    border-radius: 10px;
+    box-shadow: rgba(149, 157, 165, 0.2) 0 8px 24px;
+
+    transition: box-shadow 500ms;
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      width: 3em;
+      height: 3em;
+      margin: 0 auto 10px;
+
+      font-size: 1.2em;
+
+      color: #ddd;
+      background-color: #333;
+      border: 2px solid transparent;
+      border-radius: 50%;
+
+      transition:
+        border-color 1000ms,
+        background-color 200ms;
+    }
+
+    main {
+      display: flex;
+      flex-direction: column;
+      text-align: center;
     }
 
     a {
       color: inherit;
       text-decoration: none;
-      
+    }
+
+    .name-link::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+    }
+
+    .mail {
+      position: relative;
+      z-index: 1;
+
       &:hover {
-        color: #666;
+        color: #888;
+        text-decoration: underline;
       }
     }
 
-    li {
-      transition: box-shadow 500ms;
-      
+    &:hover {
+      box-shadow: rgba(100, 100, 111, 0.2) 0 7px 29px 0;
+
       header {
-        transition: 
-          border-color 1000ms,
-          background-color 200ms;
+        background-color: #666;
+        border-color: #ddd;
       }
     }
   }
