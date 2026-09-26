@@ -84,13 +84,13 @@ Ce petit morceau de code décrivant les modèles fournit beaucoup d'informations
 * Créer une API Python d'accès aux bases de données pour accéder aux objets `Developer` et `Task`.
 
 Essayons de migrer les changements 🐇. La migration se fait grâce à la commande 
-``` sh showLineNumbers=false frame="none"
+``` console showLineNumbers=false frame="none"
 $ python manage.py makemigrations
 ```
 
 Résultat :
 
-``` sh showLineNumbers=false frame="none"
+``` text showLineNumbers=false frame="none"
 No changes detected
 ```
 
@@ -119,7 +119,7 @@ Maintenant que c'est fait, nous pouvons relancer la commande `python manage.py m
 
 Vous devriez avoir quelque chose de similaire à ceci :
 
-``` showLineNumbers=false frame="none" 
+``` text showLineNumbers=false frame="none" 
 Migrations for 'developer':
   developer\migrations\0001_initial.py
     - Create model Developer
@@ -134,7 +134,7 @@ Les migrations sont le moyen utilisé par Django pour stocker les modifications 
 
 Il existe une commande qui exécute les migrations et gère automatiquement votre schéma de base de données, elle s'appelle `migrate`. Nous y viendrons bientôt, mais tout d'abord, voyons les instructions SQL que la migration produit. La commande `sqlmigrate` accepte des noms de migrations et affiche le code SQL correspondant :
 
-``` sh showLineNumbers=false frame="none"
+``` console showLineNumbers=false frame="none"
 $ python manage.py sqlmigrate developer 0001
 ``` 
 
@@ -184,7 +184,7 @@ Si vous vérifiez la base de donnée, vous ne verrez aucun changement. En effet,
 
 Appliquons maintenant notre migration. Saisissez la commande :
 
-``` sh showLineNumbers=false frame="none"
+``` console showLineNumbers=false frame="none"
 $ python manage.py migrate
 ```
 
@@ -212,7 +212,7 @@ Cela pourrait être utile pour vous de revenir en arrière dans ce tutoriel et d
 
 Maintenant, utilisons un shell interactif Python pour jouer avec l'API que Django met à votre disposition. Pour lancer un shell Python, utilisez cette commande :
 
-``` sh showLineNumbers=false frame="none"
+``` console showLineNumbers=false frame="none"
 $ python manage.py shell
 ```
 

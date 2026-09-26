@@ -13,7 +13,7 @@ Ils seront définis dans des variables d'environnement, via un fichier `.env` pr
 
 <Steps>
 1. Ajouter `.env` à `.gitignore` afin d'être sûr de ne pas se tirer une balle dans le pied en le versionnant malgré tout :
-   ``` gitignore showLineNumbers=false title=".gitignore" ins={5}
+   ``` text showLineNumbers=false title=".gitignore" ins={5}
    *.sqlite3
    .idea/
    .mypy_cache/
@@ -21,7 +21,7 @@ Ils seront définis dans des variables d'environnement, via un fichier `.env` pr
    .env
    ```
 1. Créer un fichier privé (local, non-versionné) de configuration de l'environnement.
-   ``` sh showLineNumbers=false title=".env"
+   ``` dotenv showLineNumbers=false title=".env"
    POSTGRES_USER=mproject
    # GÉNÉREZ EN UN !
    POSTGRES_PASSWORD=mysecretpassword
@@ -39,7 +39,7 @@ Il reste ensuite à installer PostgreSQL, au choix :
 <Steps>
 
 1. Ajouter un fichier docker compose  avec le contenu suivant.
-   ``` docker showLineNumbers=true title=compose.yaml
+   ``` yaml showLineNumbers=true title=compose.yaml
    services:
      db:
        image: postgres:18
@@ -243,7 +243,7 @@ Et dès lors,
 </TabItem>
 <TabItem label="pgAdmin sur docker compose">
 1. Ajouter un service `pgadmin` au fichier docker compose :
-   ``` docker showLineNumbers=true title=compose.yaml ins={10-16,20}
+   ``` yaml showLineNumbers=true title=compose.yaml ins={10-16,20}
    services:
      db:
        image: postgres:18
@@ -266,7 +266,7 @@ Et dès lors,
      pgadmin_data:
    ```
 1. Ajouter les identifiants du compte administrateur de pgAdmin à votre `.env` :
-   ``` sh showLineNumbers=false title=".env" ins={5-7}
+   ``` dotenv showLineNumbers=false title=".env" ins={5-7}
    POSTGRES_USER=mproject
    # GÉNÉREZ EN UN !
    POSTGRES_PASSWORD=mysecretpassword
@@ -319,7 +319,8 @@ Saisissez la commande `python manage.py makemigrations` qui va vérifier les cha
 
 Vous devriez avoir ce message : 
 
-``` sh showLineNumbers=false frame="none"
+``` console showLineNumbers=false frame="none"
+$ python manage.py makemigrations
 You are trying to add a non-nullable field 'user_name' to developer without a default; we can't do that (the database needs something to populate existing rows).
 Please select a fix:
  1) Provide a one-off default now (will be set on all existing rows with a null value for this column)
