@@ -10,6 +10,9 @@ export default defineConfig({
 		starlight({
 			title: '5WEB4D',
 			social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/esibru/5web4d-django' }],
+			components: {
+				PageFrame: './src/components/PageFrame.astro',
+			},
 			sidebar: [
 				{
 					label: '1. Introduction',

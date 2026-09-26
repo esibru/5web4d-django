@@ -1,0 +1,113 @@
+---
+// Wraps Starlight's PageFrame to make the left sidebar collapsible on
+// desktop. On mobile, Starlight's own menu toggle is left untouched.
+import Default from '@astrojs/starlight/components/PageFrame.astro';
+import { Icon } from '@astrojs/starlight/components';
+
+const { hasSidebar } = Astro.locals.starlightRoute;
+---
+
+{
+	hasSidebar && (
+		<script is:inline>
+			// Restore the state before the sidebar is painted to avoid a flash.
+			try {
+				if (localStorage.getItem('sidebar-collapsed') === 'true') {
+					document.documentElement.dataset.sidebarCollapsed = '';
+				}
+			} catch {}
+		</script>
+	)
+}
+
+<Default>
+	<slot name="header" slot="header" />
+	<slot name="sidebar" slot="sidebar" />
+	<slot />
+</Default>
+
+{
+	hasSidebar && (
+		<button
+			class="sidebar-toggle print:hidden"
+			type="button"
+			aria-controls="starlight__sidebar"
+			aria-expanded="true"
+			aria-label="Masquer le menu"
+		>
+			<Icon name="left-caret" />
+		</button>
+	)
+}
+
+<script>
+	const root = document.documentElement;
+	const button = document.querySelector<HTMLButtonElement>('.sidebar-toggle');
+
+	const render = () => {
+		const collapsed = 'sidebarCollapsed' in root.dataset;
+		button?.setAttribute('aria-expanded', String(!collapsed));
+		button?.setAttribute(
+			'aria-label',
+			collapsed ? 'Afficher le menu' : 'Masquer le menu'
+		);
+	};
+
+	button?.addEventListener('click', () => {
+		const collapsed = root.toggleAttribute('data-sidebar-collapsed');
+		try {
+			localStorage.setItem('sidebar-collapsed', String(collapsed));
+		} catch {}
+		render();
+	});
+	render();
+</script>
+
+<style is:global>
+	.sidebar-toggle {
+		display: none;
+	}
+
+	@media (min-width: 50em) {
+		/* Expanded: a plain icon button in the top right corner of the sidebar,
+		   above the navigation, which is pushed down to make room for it. */
+		.sidebar-toggle {
+			display: flex;
+			align-items: center;
+			justify-content: right;
+			position: fixed;
+			z-index: var(--sl-z-index-menu);
+			inset-block-start: calc(var(--sl-nav-height) );
+			inset-inline-start: calc(
+				var(--sl-sidebar-width) - 1.5rem
+			);
+			width: 1.5rem;
+			height: 1.75rem;
+			padding: 0;
+			border: none;
+			background: none;
+			color: var(--sl-color-gray-2);
+			cursor: pointer;
+		}
+		.sidebar-toggle:hover {
+			color: var(--sl-color-white);
+		}
+
+		/* Collapsed: the button sticks out of the left edge as a tab. */
+		html[data-has-sidebar][data-sidebar-collapsed] {
+			--sl-content-inline-start: 0rem;
+		}
+		html[data-sidebar-collapsed] .sidebar-pane {
+			display: none;
+		}
+		html[data-sidebar-collapsed] .sidebar-toggle {
+			inset-inline-start: 0;
+			width: 1.5rem;
+			height: 1.75rem;
+			justify-content: center;
+		}
+		html[data-sidebar-collapsed] .sidebar-toggle svg {
+			transform: rotate(180deg);
+		}
+	}
+</style>
