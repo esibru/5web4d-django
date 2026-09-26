@@ -98,11 +98,11 @@ Pour plus d'information sur les balises de gabarit, lisez cette [page](https://d
 
 Maintenant que nous avons un gabarit de base, nous allons lui ajouter un peu de style.
 
-Dans la balise `<head>` du fichier `_base.html`, nous ajoutons les liens vers un CDN pour le CSS Bootstrap5 ainsi que vers Foot-Awesome`pour agrémenter notre projet de quelques logos.
+Dans la balise `<head>` du fichier `_base.html`, nous ajoutons les liens vers un CDN pour le CSS Bootstrap5 ainsi que vers Font Awesome pour agrémenter notre projet de quelques logos.
 
 ``` html showLineNumbers=false title="templates/_base.html"
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css" integrity="sha512-QeR2VH+lsBE5LSAe1Q5EnTBbe7XTBubt8dG93Y7gidSgdMCr8nVqKcfKAMyN96SV8KDbZVTDXChatu5G2KQGzg==" crossorigin="anonymous" referrerpolicy="no-referrer">
 ```
 
 À la fin de la balise `<body>`, le CDN "bundle" pour boostrap.
@@ -127,7 +127,7 @@ et ajoutons un menu
 <nav class="navbar navbar-expand-sm bg-primary navbar-dark border-top border-white">
     <ul class="navbar-nav">
         <li id="nav-home" class="nav-item">
-            <a class="nav-link" href="#"><i class="fa fa-home"></i></a>
+            <a class="nav-link" href="#"><i class="fa-solid fa-house"></i></a>
         </li>
         <li id="nav-dev" class="nav-item active">
             <a class="nav-link" href="{% url 'developer:index' %}">Developers</a>

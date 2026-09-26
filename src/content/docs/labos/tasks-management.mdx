@@ -40,7 +40,7 @@ Pour chacune des tâches listées, ajoutez un bouton pour la supprimer.
 <li class="list-group-item">
     <form action="{% url 'task:delete' task.id %}" method="post">
         {% csrf_token %}
-        <button class="close" type="submit"><i class="fa fa-trash"></i></button>
+        <button class="close" type="submit"><i class="fa-solid fa-trash"></i></button>
     </form>
 
     # ... 

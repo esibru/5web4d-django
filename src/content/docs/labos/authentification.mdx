@@ -222,7 +222,7 @@ Nous allons gérer la déconnexion maintenant, rassurez-vous, le plus dur est fa
      <div class="p-1 m-3 bg-light">
          <form action="{% url 'logout' %}" method="post">
              {% csrf_token %}
-             <button type="submit" class="btn btn-outline-primary btn-sm"><i class="fa fa-sign-out"></i></button>
+             <button type="submit" class="btn btn-outline-primary btn-sm"><i class="fa-solid fa-right-from-bracket"></i></button>
          </form>
          <h1>
              {{ user.first_name }} {{ user.last_name }}

@@ -104,7 +104,7 @@ Tout d'abord, ajoutez le code ci-dessous.
 +     <form action="{% url 'developer:delete' developer.id %}" method="POST"> 
 +         {% csrf_token %} 
 +         <button type="submit" class="btn btn-light btn-sm"> 
-+             <i class="fa fa-trash"></i>
++             <i class="fa-solid fa-trash"></i>
 +         </button>
 +     </form>
       <h1>{{ developer.first_name }} {{ developer.last_name }} </h1>
