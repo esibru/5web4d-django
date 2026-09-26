@@ -85,35 +85,14 @@ Modifier maintenant le code du gabarit `detail.html`
 {% endblock content %}
 ```
 
-Ainsi que le fichier `index.html`
-
-``` html showLineNumbers=false title="developer/index.html"
-{% extends "_base.html" %}
-
-{% block title %} Liste des développeurs {% endblock title %}
-
-{% block content %}
- {% if developers %}
- <ul>
-     {% for dev in developers %}
-     {#<li>{{ dev.first_name }}</li>#}
-     <li><a href="{% url 'developer:detail' dev.id %}"> {{ dev.first_name }}</a></li>
-     {% endfor %}
- </ul>
- {% else %}
-     <p><strong>Il n'y a aucun développeur enregistré !</strong></p>
- {% endif %}
-{% endblock content %}
-```
-
-Les gabarits ont été modifiés afin que les morceaux de code soient placés correctement au sein des blocs `title` et `content` défini dans le gabarit de base. Nous avons ajouté la balise `{% extends '_base.html' %}` dans les gabarits `detail.html`et `index.html` afin qu'ils héritent du gabarit de base.
+Le gabarit a été modifié afin que les morceaux de code soient placés correctement au sein des blocs `title` et `content` défini dans le gabarit de base. Nous avons ajouté la balise `{% extends '_base.html' %}` dans le gabarit `detail.html` afin qu'il hérite du gabarit de base.
 
 
 <Aside title="Exercice" icon="pencil">
-Vérifiez que votre site fonctionne toujours aussi bien qu'avant.
+Adaptez également le gabarit `index.html` afin qu'il étende le gabarit de base. Ensuite, vérifiez que votre site fonctionne toujours aussi bien qu'avant.
 </Aside>
 
-Pour plus d'information sur les balises, lisez cette [page](https://docs.djangoproject.com/fr/4.1/ref/templates/builtins/).
+Pour plus d'information sur les balises de gabarit, lisez cette [page](https://docs.djangoproject.com/fr/4.1/ref/templates/builtins/).
 
 ## Un peu de style avec Bootstrap5 et Font-Awesome
 
