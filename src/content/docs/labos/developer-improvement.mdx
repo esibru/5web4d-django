@@ -16,10 +16,13 @@ Dans le cas où il n'y a pas de développeur, vous devriez avoir le message `Il 
 
 Nous allons le mettre légèrement en forme.
 
-``` python showLineNumbers=false title="developer/templates/developer/index.html"
-<div class="container m-4">
-    <alert class="alert alert-warning">Il n'y a aucun développeur enregistré</alert>
-</div>
+``` python showLineNumbers=false title="developer/templates/developer/index.html" del={2} ins={3-5}
+    {% else %}
+        <p><strong>Il n'y a aucun développeur enregistré !</strong></p>
+        <div class="container m-4">
+            <alert class="alert alert-warning">Il n'y a aucun développeur enregistré</alert>
+        </div>
+    {% endif %}
 ```
 
 Vérifiez le résultat.
@@ -30,24 +33,29 @@ Maintenant ajoutez au moins 2 développeurs.
 
 Modifiez le rendu de ceux-ci.
 
-``` html showLineNumbers=false title="developer/templates/developer/index.html"
-{% if developers %}
-    <div class="container-sm l-3 d-flex flex-wrap border">
-        {% for dev in developers %}
-        <div class="card bg-primary m-2 p-1 rounded-lg" style="width:300px">
-            <div class="card-title">
-                {{ dev.first_name }} {{ dev.last_name }}
+``` html showLineNumbers=false title="developer/templates/developer/index.html" del={2-6} ins={7-21}
+    {% if developers %}
+        <ul>
+            {% for dev in developers %}
+            <li><a href="{% url 'developer:detail' dev.id %}"> {{ dev.first_name }}</a></li>
+            {% endfor %}
+        </ul>
+        <div class="container-sm l-3 d-flex flex-wrap border">
+            {% for dev in developers %}
+            <div class="card bg-primary m-2 p-1 rounded-lg" style="width:300px">
+                <div class="card-title">
+                    {{ dev.first_name }} {{ dev.last_name }}
+                </div>
+                <div class="card-body">
+                    {{ dev.tasks.all|length }} tâche{{ dev.tasks.all|length|pluralize }}
+                </div>
+                <div class="card-footer">
+                    <a href="{% url 'developer:detail' dev.id %}" class="btn btn-outline-light">Détails</a>
+                </div>
             </div>
-            <div class="card-body">
-                {{ dev.tasks.all|length }} tâche{{ dev.tasks.all|length|pluralize }}
-            </div>
-            <div class="card-footer">
-                <a href="{% url 'developer:detail' dev.id %}" class="btn btn-outline-light">Détails</a>
-            </div>
+            {% endfor %}
         </div>
-        {% endfor %}
-    </div>
-{% else %}
+    {% else %}
 ```
 
 Remarquez la ligne 
@@ -62,63 +70,65 @@ Remarquez la ligne
 
 ## Détails des développeurs
 
-```html showLineNumbers=false title="developer/detail.html"
+```html showLineNumbers=false title="developer/templates/developer/detail.html" del={2-3} ins={4-7}
 {% block content %}
+    <p><Strong>Prénom : {{ developer.first_name }}</Strong></p>
+    <p><Strong>Nom de famille : {{ developer.last_name }}</Strong></p>
     <div class="mt-4 p-5 bg-white rounded">
         <h1>{{ developer.first_name }} {{ developer.last_name }} </h1>
         <p>{{ developer.tasks.all|length }} tâche{{developer.tasks.all|length|pluralize}} assignée{{developer.tasks.all|length|pluralize}}.</p>
     </div>
 {% endblock content %}
 ```
+C'est terminé !
 
-C'est terminé, ajoutez une tâche à un développeur afin de vérifier que le nombre de tâches assignées est bien amandé.
+<Aside title="Exercice" icon="pencil">
+Ajoutez une tâche à un développeur afin de vérifier que le nombre de tâches assignées est bien amendé.
+</Aside>
 
-Profitons-en pour afficher les tâches d'un développeur dans la vue détail.
+Profitons-en pour afficher les tâches d'un développeur dans la vue `detail`.
 
-```html showLineNumbers=false title="developer/detail.html"
-#...
-
-<div class="container-sm">
-    {% if not developer.is_free %}
-        <ul class="list-group">
-            {% for task in developer.tasks.all %}
-            <li class="list-group-item"> 
-                <strong>{{ task.title }}!</strong> {{ task.description }} 
-            </li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <div class="alert alert-danger">
-            Aucune tâche n'est assignée à {{ developer.first_name }}.
-        </div>
-    {% endif %}
-</div>
+```html showLineNumbers=false title="developer/templates/developer/detail.html" ins={1-15}
+    <div class="container-sm">
+        {% if not developer.is_free %}
+            <ul class="list-group">
+                {% for task in developer.tasks.all %}
+                <li class="list-group-item">
+                    <strong>{{ task.title }}!</strong> {{ task.description }}
+                </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <div class="alert alert-danger">
+                Aucune tâche n'est assignée à {{ developer.first_name }}.
+            </div>
+        {% endif %}
+    </div>
 {% endblock content %}
 ```
 
 ## Suppression des développeurs
 
-Tout d'abord, ajoutez le code ci-dessous.
+Tout d'abord, ajoutez le formulaire ci-dessous.
 
-``` html showLineNumbers=false title="developer/detail.html"
-  <div class="mt-4 p-5 bg-white rounded">
-+     <form action="{% url 'developer:delete' developer.id %}" method="POST"> 
-+         {% csrf_token %} 
-+         <button type="submit" class="btn btn-light btn-sm"> 
-+             <i class="fa fa-trash"></i>
-+         </button>
-+     </form>
-      <h1>{{ developer.first_name }} {{ developer.last_name }} </h1>
-      <p>{{ developer.tasks.all|length }} tâche{{developer.tasks.all|length|pluralize}} assignée{{developer.tasks.all|length|pluralize}}.</p>
-  </div>
+``` html showLineNumbers=false title="developer/templates/developer/detail.html" ins={2-7}
+    <div class="mt-4 p-5 bg-white rounded">
+        <form action="{% url 'developer:delete' developer.pk %}" method="POST">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-light btn-sm">
+                <i class="fa fa-trash"></i>
+            </button>
+        </form>
+        <h1>{{ developer.first_name }} {{ developer.last_name }}</h1>
 ```
 
 Ce code a pour objectif d'ajouter une petite corbeille près du nom d'un développeur afin de permettre sa suppression.
 
 <Aside title="Exercice" icon="pencil">
+Tel quel, la vue détail ne fonctionne pas. En effet, l'action `developer:delete` n'est pas définie.
 1. Inspirez-vous des vues existantes afin de permettre la suppression d'un développeur. Lors de la suppression, redirigez vers l'index des développeurs.
-1. Ajoutez le chemin adéquat
-1. Testez
+1. Ajoutez le chemin adéquat.
+1. Testez.
 </Aside>
 <Aside title="Exercice" icon="pencil">
 Que se passe-t-il pour les tâches qui étaient assignées ? Amendez le code afin qu'une tâche assignée à un développeur ne soit plus supprimée.
