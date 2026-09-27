@@ -50,7 +50,13 @@ class Developer(models.Model):
 class Task(models.Model):
     title = models.CharField(max_length=100, unique=True)
     description = models.TextField()
-    assignee = models.ForeignKey(Developer, related_name="tasks", on_delete=models.CASCADE, null=True, verbose_name="assignee")
+    assignee = models.ForeignKey(
+        Developer,
+        related_name="tasks",
+        on_delete=models.CASCADE,
+        null=True,
+        verbose_name="assignee",
+    )
 ```
 
 * Ici, chaque modèle est représenté par une classe qui hérite de `django.db.models.Model`. Chaque modèle possède des variables de classe, chacune d'entre elles représentant un champ de la base de données pour ce modèle. (En python, l'héritage se fait en mettant le modèle parent entre parenthèse. En java, il se fait avec le mot clé `extends`.)
@@ -65,11 +71,11 @@ class Task(models.Model):
 
 Pour plus d'information sur les champs : 
 
-* [Options des champs](https://docs.djangoproject.com/fr/4.1/ref/models/fields/) 📖 ;
-* [Type des champs](https://docs.djangoproject.com/fr/4.1/ref/models/fields/#field-types) 📖 ;
-* [plusieurs-à-plusieurs](https://docs.djangoproject.com/fr/4.1/topics/db/examples/many_to_many/) 📖 ;
-* [plusieurs-à-un](https://docs.djangoproject.com/fr/4.1/topics/db/examples/many_to_one/) 📖 ;
-* [un-à-un](https://docs.djangoproject.com/fr/4.1/topics/db/examples/one_to_one/) 📖.
+* [Options des champs](https://docs.djangoproject.com/fr/6.1/ref/models/fields/) 📖 ;
+* [Type des champs](https://docs.djangoproject.com/fr/6.1/ref/models/fields/#field-types) 📖 ;
+* [plusieurs-à-plusieurs](https://docs.djangoproject.com/fr/6.1/topics/db/examples/many_to_many/) 📖 ;
+* [plusieurs-à-un](https://docs.djangoproject.com/fr/6.1/topics/db/examples/many_to_one/) 📖 ;
+* [un-à-un](https://docs.djangoproject.com/fr/6.1/topics/db/examples/one_to_one/) 📖.
 
 #### Activation du modèle et migrations
 
@@ -78,13 +84,13 @@ Ce petit morceau de code décrivant les modèles fournit beaucoup d'informations
 * Créer une API Python d'accès aux bases de données pour accéder aux objets `Developer` et `Task`.
 
 Essayons de migrer les changements 🐇. La migration se fait grâce à la commande 
-``` sh showLineNumbers=false frame="none"
+``` console showLineNumbers=false frame="none"
 $ python manage.py makemigrations
 ```
 
 Résultat :
 
-``` sh showLineNumbers=false frame="none"
+``` text showLineNumbers=false frame="none"
 No changes detected
 ```
 
@@ -95,16 +101,16 @@ Rien ne s'est passé, en réalité, il faut d'abord "installer" l'application de
 Pour inclure l'application dans notre projet, nous avons besoin d'ajouter une référence à sa classe de configuration dans le réglage `INSTALLED_APPS` présent dans le fichier `settings.py`. La classe `DeveloperConfig` se trouve dans le fichier `developer/apps.py`, ce qui signifie que son chemin pointé est `developer.apps.DeveloperConfig`. Modifiez le fichier `mproject/settings.py` et ajoutez ce chemin pointé au réglage `INSTALLED_APPS`. Il doit ressembler à ceci :
 
 ``` python showLineNumbers=false frame="none" ins={9, 10} title="mproject/settings.py"
-  INSTALLED_APPS = [
-      'django.contrib.admin',
-      'django.contrib.auth',
-      'django.contrib.contenttypes',
-      'django.contrib.sessions',
-      'django.contrib.messages',
-      'django.contrib.staticfiles',
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
   
-  # My apps
-      'developer.apps.DeveloperConfig', 
+    # My apps
+    'developer.apps.DeveloperConfig',
 ```
 
 ##### Commande `makemigrations`
@@ -113,7 +119,7 @@ Maintenant que c'est fait, nous pouvons relancer la commande `python manage.py m
 
 Vous devriez avoir quelque chose de similaire à ceci :
 
-``` showLineNumbers=false frame="none" 
+``` text showLineNumbers=false frame="none" 
 Migrations for 'developer':
   developer\migrations\0001_initial.py
     - Create model Developer
@@ -128,7 +134,7 @@ Les migrations sont le moyen utilisé par Django pour stocker les modifications 
 
 Il existe une commande qui exécute les migrations et gère automatiquement votre schéma de base de données, elle s'appelle `migrate`. Nous y viendrons bientôt, mais tout d'abord, voyons les instructions SQL que la migration produit. La commande `sqlmigrate` accepte des noms de migrations et affiche le code SQL correspondant :
 
-``` sh showLineNumbers=false frame="none"
+``` console showLineNumbers=false frame="none"
 $ python manage.py sqlmigrate developer 0001
 ``` 
 
@@ -163,8 +169,8 @@ COMMIT;
 Notez les points suivants :
 
 * Ce que vous verrez dépendra de la base de données que vous utilisez. L'exemple ci-dessus est généré pour SQLite.
-* Les noms de tables sont générés automatiquement en combinant le nom de l'application (`developer`) et le nom du modèle en minuscules – `developer` et `task` (Les [meta-options du modèle](https://docs.djangoproject.com/en/4.1/ref/models/options/#db-table) permettent de changer ce comportement).
-* Des clés primaires (ID) sont ajoutées automatiquement ([un autre champ peut-être défini comme clé primaire avec l'option `primary_key=True`](https://docs.djangoproject.com/en/4.1/topics/db/models/#field-options)).
+* Les noms de tables sont générés automatiquement en combinant le nom de l'application (`developer`) et le nom du modèle en minuscules – `developer` et `task` (Les [meta-options du modèle](https://docs.djangoproject.com/en/6.1/ref/models/options/#db-table) permettent de changer ce comportement).
+* Des clés primaires (ID) sont ajoutées automatiquement ([un autre champ peut-être défini comme clé primaire avec l'option `primary_key=True`](https://docs.djangoproject.com/en/6.1/topics/db/models/#field-options)).
 * Par convention, Django ajoute `_id` au nom de champ de la clé étrangère (et oui, vous pouvez aussi changer ça).
 * La relation de clé étrangère est rendue explicite par une contrainte `FOREIGN KEY`.
 * Ce que vous voyez est adapté à la base de données que vous utilisez. Ainsi, des champs spécifiques à celle-ci comme `auto_increment` (MySQL), `serial` (PostgreSQL) ou `integer primary key autoincrement` (SQLite) sont gérés pour vous automatiquement. Tout comme pour les guillemets autour des noms de champs (simples ou doubles).
@@ -178,7 +184,7 @@ Si vous vérifiez la base de donnée, vous ne verrez aucun changement. En effet,
 
 Appliquons maintenant notre migration. Saisissez la commande :
 
-``` sh showLineNumbers=false frame="none"
+``` console showLineNumbers=false frame="none"
 $ python manage.py migrate
 ```
 
@@ -206,7 +212,7 @@ Cela pourrait être utile pour vous de revenir en arrière dans ce tutoriel et d
 
 Maintenant, utilisons un shell interactif Python pour jouer avec l'API que Django met à votre disposition. Pour lancer un shell Python, utilisez cette commande :
 
-``` sh showLineNumbers=false frame="none"
+``` console showLineNumbers=false frame="none"
 $ python manage.py shell
 ```
 
@@ -214,7 +220,7 @@ Nous utilisons celle-ci au lieu de simplement taper « python », parce que `man
 
 📃 Notez que cette API est utilisée plus loin pour la manipulation des modèles. La maîtrise de celle-ci est donc essentiel pour le développement d'application Web avec Django ! ⚠️
 
-Une fois dans le shell, explorez [l'api de base de donnée](https://docs.djangoproject.com/fr/4.1/topics/db/queries/) 📖.
+Une fois dans le shell, explorez [l'api de base de donnée](https://docs.djangoproject.com/fr/6.1/topics/db/queries/) 📖.
 
 ``` python showLineNumbers=false frame="none"
 >>> from developer.models import Developer, Task
@@ -224,8 +230,8 @@ Une fois dans le shell, explorez [l'api de base de donnée](https://docs.djangop
 
 On obtient un _QuerySet_ en utilisant le _Manager_ du modèle. Chaque modèle a au moins un Manager ; il s'appelle _objects_ par défaut.
 
-* [QuerySet](https://docs.djangoproject.com/fr/4.1/ref/models/querysets/#django.db.models.query.QuerySet) 📖
-* [Manager](https://docs.djangoproject.com/fr/4.1/topics/db/managers/#django.db.models.Manager) 📖
+* [QuerySet](https://docs.djangoproject.com/fr/6.1/ref/models/querysets/#django.db.models.query.QuerySet) 📖
+* [Manager](https://docs.djangoproject.com/fr/6.1/topics/db/managers/#django.db.models.Manager) 📖
 
 Ici, le QuerySet est vide puisqu'aucun élément n'a été créé.
 
@@ -263,23 +269,28 @@ Continuons d'explorer
 <QuerySet [<Developer: Developer object (1)>, <Developer: Developer object (2)>]>
 ```
 
-Une seconde. `<Developer: Developer object (1)>` n'est pas une représentation très utile de cet objet. On va arranger cela en éditant le modèle `Developer` (dans le fichier developer/models.py) et en ajoutant une méthode `__str__()` à `Developer` et à `Task`:
+Une seconde. `<Developer: Developer object (1)>` n'est pas une représentation très utile de cet objet. On va arranger cela en éditant le modèle `Developer` (dans le fichier `developer/models.py`) et en ajoutant une méthode `__str__()` à `Developer` et à `Task`:
 
-``` python showLineNumbers=true frame="none" ins={5,6, 13, 14}
-  class Developer(models.Model):
-      first_name = models.CharField("first name", max_length=200)
-      last_name = models.CharField(max_length=200)
+``` python showLineNumbers=false title="developer/models.py" ins={5,6,18,19}
+class Developer(models.Model):
+    first_name = models.CharField("first name", max_length=200)
+    last_name = models.CharField(max_length=200)
   
-      def __str__(self):
-          return f"{self.first_name} {self.last_name}"
+    def __str__(self):
+        return f"{self.first_name} {self.last_name}"
   
-  class Task(models.Model):
-      title = models.CharField(max_length=100, unique=True)
-      description = models.TextField()
-      assignee = models.ForeignKey(Developer, related_name="tasks", on_delete=models.CASCADE, null=True, verbose_name="assignee")
-  
-      def __str__(self):
-          return f"{self.title} ({self.description})"
+class Task(models.Model):
+    title = models.CharField(max_length=100, unique=True)
+    description = models.TextField()
+    assignee = models.ForeignKey(
+        Developer,
+        related_name="tasks",
+        on_delete=models.CASCADE,
+        null=True,
+        verbose_name="assignee",
+    )
+    def __str__(self):
+        return f"{self.title} ({self.description})"
 ```
 
 <Card title="Rappel" icon="seti:python">
@@ -312,7 +323,7 @@ Continuons sur notre lancée
 >>> jlc.tasks.create(title='cours Odoo', description='Faire le cours sur Odoo')
 ```
 
-Si vous avez lu le tuto [ici](https://docs.djangoproject.com/fr/4.1/intro/tutorial02/) vous avez pu remarquer que nous utilisons `tasks` plutôt que `task_set`. Cela nous est possible puisque nous avons défini le paramètre `relative_name` dans notre modèle `Task`.
+Si vous avez lu le tuto [ici](https://docs.djangoproject.com/fr/6.1/intro/tutorial02/) vous avez pu remarquer que nous utilisons `tasks` plutôt que `task_set`. Cela nous est possible puisque nous avons défini le paramètre `relative_name` dans notre modèle `Task`.
 
 ``` python  showLineNumbers=false frame="none"
 >>> jlc.tasks.all()   
@@ -330,5 +341,5 @@ Si vous avez lu le tuto [ici](https://docs.djangoproject.com/fr/4.1/intro/tutori
 
 ##### Toujours plus d'information 📖 :
 
-* [Recherche dans les champs](https://docs.djangoproject.com/fr/4.1/topics/db/queries/#field-lookups-intro).
-* [Référence des objets liés](https://docs.djangoproject.com/fr/4.1/ref/models/relations/).
+* [Recherche dans les champs](https://docs.djangoproject.com/fr/6.1/topics/db/queries/#field-lookups-intro).
+* [Référence des objets liés](https://docs.djangoproject.com/fr/6.1/ref/models/relations/).

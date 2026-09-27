@@ -75,19 +75,19 @@ Lisez et insérez ce code dans le gabarit `developer/index.html`
 
 Mettez à jour la vue afin de permettre le rendu de ce gabarit.
 
-``` python showLineNumbers=false title="developer/views.py" del={2, 7} ins={4, 8, 9, 10, 12} 
-  from django.shortcuts import render
-  from django.http import HttpResponse
+``` python showLineNumbers=false title="developer/views.py" del={2, 7} ins={4, 8, 9, 10, 12}
+from django.shortcuts import render
+from django.http import HttpResponse
   
-  from .models import Developer
+from .models import Developer
   
-  def index(request):
-      return HttpResponse("Hello, world. You're at the developers index.")
-      context = {
-          'developers': Developer.objects.all()
-      }
+def index(request):
+    return HttpResponse("Hello, world. You're at the developers index.")
+    context = {
+        'developers': Developer.objects.all()
+    }
   
-      return render(request, 'developer/index.html', context)
+    return render(request, 'developer/index.html', context)
 ```
 
 Ce code charge le gabarit appelé `developer/index.html` et lui fournit un contexte. Ce contexte est un dictionnaire qui fait correspondre des objets Python (valeurs) à des noms de variables de gabarit (clés).
@@ -110,25 +110,25 @@ Nous allons ajouter une deuxième vue qui va nous permettre d'afficher le détai
 
 1. Ajout d'une URL qui pointe vers la nouvelle vue
 
-   ``` python showLineNumbers=false title="developer/urls.py"
-     urlpatterns = [
-        path('', views.index, name='index'),
-        path('<int:developer_id>/', views.detail, name='detail'),
-     ]
+   ``` python showLineNumbers=false title="developer/urls.py" ins={3}
+   urlpatterns = [
+      path('', views.index, name='index'),
+      path('<int:developer_id>/', views.detail, name='detail'),
+   ]
    ```
 1. Ajout d'une vue
 
    ``` python showLineNumbers=false title="developer/views.py" ins={8, 9, 10}
-     def index(request):
-         context = {
-             'developers': Developer.objects.all(),
-         }
-         return render(request, 'developer/index.html', context)
+   def index(request):
+       context = {
+           'developers': Developer.objects.all(),
+       }
+       return render(request, 'developer/index.html', context)
      
      
-     def detail(request, developer_id):
-         developer = Developer.objects.get(pk=developer_id)
-         return render(request, 'developer/detail.html', {'developer': developer})
+   def detail(request, developer_id):
+       developer = Developer.objects.get(pk=developer_id)
+       return render(request, 'developer/detail.html', {'developer': developer})
    ```
 1. Ajout d'un nouveau gabarit.
 
@@ -165,7 +165,7 @@ detail(request=<HttpRequest object>, developer_id=3)
 
 La partie `developer_id=3` vient de `<int:developer_id>`. En utilisant des chevrons, cela « capture » une partie de l'URL l'envoie en tant que paramètre nommé à la fonction de vue ; la partie `:developer_id>` de la chaîne définit le nom qui va être utilisé pour identifier le motif trouvé, et la partie `<int:` est un convertisseur qui détermine ce à quoi les motifs doivent correspondre dans cette partie du chemin d'URL.
 
-Pour plus d'info sur la distribution d'URL, cela se passe [ici](https://docs.djangoproject.com/fr/4.1/topics/http/urls/). 📖
+Pour plus d'info sur la distribution d'URL, cela se passe [ici](https://docs.djangoproject.com/fr/6.1/topics/http/urls/). 📖
 
 ### Erreur 404
 
@@ -200,20 +200,18 @@ La fonction `get_object_or_404()` prend un modèle Django comme premier paramèt
 Pour passer d'une vue à l'autre, nous allons naturellement utiliser des liens `html` (`<a>`).
 Revenons dans la vue `index` et plus précisément dans le gabarit et ajoutons ces liens.
 
-``` html showLineNumbers=false title="developer/templates/developer/index.html" ins={6, 7} del={5}
-  # ...
-      {% if developers %}
-      <ul>
-          {% for dev in developers %}
-          <li>{{ dev.first_name }}</li>
-          {#<li>{{ dev.first_name }}</li>#} 👈 ceci est commenté !
-          <li><a href='/developer/{{ dev.id }}'>{{ dev.first_name }}</a></li>
-          {% endfor %}
-      </ul>
-      {% else %}
-          <p><strong>Il n'y a aucun développeur enregistré !</strong>/p>
-      {% endif %}
-  # ...
+``` html showLineNumbers=false title="developer/templates/developer/index.html" ins={5-6} del={4}
+    {% if developers %}
+    <ul>
+        {% for dev in developers %}
+        <li>{{ dev.first_name }}</li>
+        {#<li>{{ dev.first_name }}</li>#}{# 👈 ceci est commenté ! #}
+        <li><a href='/developer/{{ dev.id }}'>{{ dev.first_name }}</a></li>
+        {% endfor %}
+    </ul>
+    {% else %}
+        <p><strong>Il n'y a aucun développeur enregistré !</strong>/p>
+    {% endif %}
 </body>
 ```
 
@@ -236,8 +234,8 @@ path('<int:developer_id>/', views.detail, name='detail'),
 Si vous souhaitez modifier l'URL de détail des développeurs, par exemple sur le modèle `developer/specifics/12/`, il suffit de faire la modification dans `developer/urls.py`. Il n'est pas nécessaire de modifier un nombre potentiellement grand de gabarit.
 
 ``` python showLineNumbers=false title="developer/urls.py" ins={2} del={1}
-  path('<int:developer_id>/', views.detail, name='detail'),
-  path('specifics/<int:developer_id>/', views.detail, name='detail'),
+    path('<int:developer_id>/', views.detail, name='detail'),
+    path('specifics/<int:developer_id>/', views.detail, name='detail'),
 ```
 
 #### Espaces de noms et noms d'URL
@@ -246,23 +244,24 @@ Le projet ne contient actuellement qu'une seule application, `developer`. Plus t
 
 La réponse est donnée par l'ajout d'espaces de noms à votre configuration d'URL. Dans le fichier `developer/urls.py`, ajoutez une variable `app_name` pour définir l'espace de nom de l'application :
 
-```python showLineNumbers=false title="developer/urls.py"
-app_name = 'developer' 👈new
+```python showLineNumbers=false title="developer/urls.py" ins={1}
+app_name = 'developer'
 urlpatterns = [
     path('', views.index, name='index'),
     path('<int:developer_id>/', views.detail, name='detail'),
 ]
 ```
 
-Modifiez maintenant les liens du gabarit `developer/index.html` pour qu'elle pointe vers la vue « detail » à l'espace de nom correspondant.
+Modifiez maintenant les liens du gabarit `developer/index.html` pour qu'elle pointe vers la vue « detail » à l'espace de nom correspondant.
 
-``` html showLineNumbers=false title="developer/index.html"
+``` html showLineNumbers=false title="developer/index.html" ins={7} del={6}
 #...
 {% if developers %}
 <ul>
     {% for dev in developers %}
     {#<li>{{ dev.first_name }}</li>#}
-    <li><a href="{% url 'developer:detail' dev.id %}">{{ dev.first_name }}</a></li> <!--👈 ajout de "developer:" -->
+    <li><a href='/developer/{{ dev.id }}'>{{ dev.first_name }}</a></li>
+    <li><a href="{% url 'developer:detail' dev.id %}">{{ dev.first_name }}</a></li>
     {% endfor %}
 </ul>
 #...

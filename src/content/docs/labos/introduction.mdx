@@ -18,8 +18,8 @@ Les objectifs de ces premiers laboratoires sont multiples.
 
 Quelques sources recommandées.
 
- * Le [tutoriel Django](https://docs.djangoproject.com/fr/4.1/intro/tutorial01/)
- * La [documentation Django](https://docs.djangoproject.com/en/4.1/)
+ * Le [tutoriel Django](https://docs.djangoproject.com/fr/6.1/intro/tutorial01/)
+ * La [documentation Django](https://docs.djangoproject.com/en/6.1/)
  * [Django for professionals](https://djangoforprofessionals.com/)
 
 ## Enseignants
@@ -118,8 +118,8 @@ Voici quelques explications :
 * **mproject/\_\_init\_\_.py** : un fichier vide qui indique à Python que ce répertoire doit être considéré comme un paquet. Si vous êtes débutant en Python, lisez les informations sur les paquets (en) dans la documentation officielle de Python.
 * **mproject/settings.py** : réglages et configuration de ce projet Django. Ce cours de Django vous apprendra tout sur le fonctionnement des réglages (enfin presque tout).
 * **mproject/urls.py** : les déclarations des URL de ce projet Django, une sorte de « table des matières » de votre site Django. Vous pouvez en lire plus sur les URL dans Distribution des URL.
-* **mproject/asgi.py** : un point d'entrée pour les serveurs Web compatibles aSGI pour déployer votre projet. Voir [Comment déployer avec ASGI pour plus de détails](https://docs.djangoproject.com/fr/4.1/howto/deployment/asgi/).
-* **mproject/wsgi.py** : un point d'entrée pour les serveurs Web compatibles WSGI pour déployer votre projet. Voir [Comment déployer avec WSGI pour plus de détails](https://docs.djangoproject.com/fr/4.1/howto/deployment/wsgi/).
+* **mproject/asgi.py** : un point d'entrée pour les serveurs Web compatibles aSGI pour déployer votre projet. Voir [Comment déployer avec ASGI pour plus de détails](https://docs.djangoproject.com/fr/6.1/howto/deployment/asgi/).
+* **mproject/wsgi.py** : un point d'entrée pour les serveurs Web compatibles WSGI pour déployer votre projet. Voir [Comment déployer avec WSGI pour plus de détails](https://docs.djangoproject.com/fr/6.1/howto/deployment/wsgi/).
 
 #### Outils de développement
 
@@ -133,13 +133,13 @@ Django est fourni avec un serveur de développement qui permet de simplifier le 
 
 Vous pouvez le tester en lançant la commande
 
-``` sh showLineNumbers=false frame="none"
+``` console showLineNumbers=false frame="none"
 $ python manage.py runserver
 ```
 
-Vous devriez alors voir le message suivant :
+Vous devriez alors voir un message similaire à :
 
-``` sh showLineNumbers=false frame="none"
+``` console showLineNumbers=false frame="none" wrap
 Watching for file changes with StatReloader
 Performing system checks...
 
@@ -147,10 +147,13 @@ System check identified no issues (0 silenced).
 
 You have 18 unapplied migration(s). Your project may not work properly until you apply the migrations for app(s): admin, auth, contenttypes, sessions.
 Run 'python manage.py migrate' to apply them.
-October 02, 2022 - 10:55:24
-Django version 4.1.1, using settings 'mproject.settings'
-Starting development server at http://127.0.0.1:8000/
-Quit the server with CTRL-BREAK.
+September 14, 2026 - 13:37:42
+Django version 6.1.1, using settings 'mproject.settings'
+Starting WSGI development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/6.1/howto/deployment/
 ```
 
 <Aside>**Note :** À ce stade, vous pouvez ignorer les avertissements liés à la migration de la base de donnée.</Aside>

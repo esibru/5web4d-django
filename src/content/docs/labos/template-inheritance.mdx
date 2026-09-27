@@ -41,7 +41,7 @@ Le nom de ce fichier est arbitraire, toutefois, nous précédons le nom par un u
 </Aside>
 
 <Card title="Rappel" icon="seti:python">
-`BASE_DIR / 'templates'` désigne la concaténation d'un chemin (`BASE_DIR`) qui est défini dans le fichier `settings.py` avec `templates`.
+`BASE_DIR / 'templates'` désigne la concaténation d'un chemin `BASE_DIR` (qui est défini dans le fichier `settings.py`) avec `templates`.
 </Card>
 
 ## Gabarit de base
@@ -69,7 +69,7 @@ Dans le fichier `_base.html`, placez-y le code suivant
 Les balises `{% block %}` permettent de définir des blocs qui peuvent être surchargés par les gabarits enfants.
 
 <Aside title="{% endblock %}" >
-Il n'est pas obligatoire de nommer le bloc fermé (`{% endblock content %`), mais nous préférons par soucis de lisibilité.
+On pourrait simplement fermer le bloc avec `{% endblock %}`. Il est toutefois possible de préciser le nom du bloc (`{% endblock content %}`), ce que nous préférons faire par souci de lisibilité.
 </Aside>
 
 ## Héritage du gabarit de base
@@ -92,7 +92,7 @@ Le gabarit a été modifié afin que les morceaux de code soient placés correct
 Adaptez également le gabarit `index.html` afin qu'il étende le gabarit de base. Ensuite, vérifiez que votre site fonctionne toujours aussi bien qu'avant.
 </Aside>
 
-Pour plus d'information sur les balises de gabarit, lisez cette [page](https://docs.djangoproject.com/fr/4.1/ref/templates/builtins/).
+Pour plus d'information sur les balises de gabarit, lisez cette [page](https://docs.djangoproject.com/fr/6.1/ref/templates/builtins/).
 
 ## Un peu de style avec Bootstrap5 et Font-Awesome
 
@@ -107,7 +107,7 @@ Dans la balise `<head>` du fichier `_base.html`, nous ajoutons les liens vers un
 
 À la fin de la balise `<body>`, le CDN "bundle" pour boostrap.
 
-``` html showLineNumbers=false title="templates/_base.html"
+``` html showLineNumbers=false title="templates/_base.html" ins={1}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 </body>
 ```
@@ -139,7 +139,7 @@ et ajoutons un menu
 </nav>
 ```
 
-Nous n'avons pas ajouté de fonctionnalité, mais notre site est maintenant un peu plus habillé. Passez de la vue `detail` à la vue `index` et profiter du site mis en style.
+Nous n'avons pas ajouté de fonctionnalité, mais notre site est maintenant un peu plus habillé. Passez de la vue `detail` à la vue `index` et profitez du site mis en style.
 
 <Aside title="Question" icon="pencil">
 Quel bout de code permet de revenir à la liste des développeurs lorsque je clique sur le menu `Developers` ?

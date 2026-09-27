@@ -16,10 +16,9 @@ Ainsi, sur la page de l'index, nous aurons la liste des développeurs ainsi qu'u
 
 Ajoutez ce morceau de code dans le gabarit `index.html`
 
-``` html showLineNumbers=false title="developer/templates/developer/index.html" ins={6,7,8,9,10,11,12,13,14}
-   #...
+``` html showLineNumbers=false title="developer/templates/developer/index.html" ins={5-13}
    {% else %}
-       <p><strong>Il n'y a aucune dévelopeur enregistré !</strong>/p>
+       <p><strong>Il n'y a aucun développeur enregistré !</strong>/p>
    {% endif %}
   
    <form action="{% url 'developer:create' %}" method="post"> 
@@ -38,7 +37,7 @@ Un résumé rapide :
 
 * Ce gabarit affiche maintenant un formulaire avec deux champs texte et un bouton de création. Notez que dans ce formulaire, nous avons nommé les deux entrées `first_name` et `last_name`. Ce sont les concepts de base des formulaires HTML.
 
-* Nous avons défini `{% url 'developer:create' %}` comme attribut action du formulaire, et nous avons précisé `method="post"`. L’utilisation de `method="post"` (par opposition à `method="get"`) est très importante, puisque le fait de valider ce formulaire va entraîner des modifications de données sur le serveur. À chaque fois qu’un formulaire modifie des données sur le serveur, vous devez utiliser `method="post"`. Cela ne concerne pas uniquement Django ; c’est une bonne pratique à adopter en tant que développeur Web.
+* Nous avons défini `{% url 'developer:create' %}` comme attribut action du formulaire, et nous avons précisé `method="post"`. L’utilisation de `method="post"` (par opposition à `method="get"`) est très importante, puisque le fait de valider ce formulaire va entraîner des modifications de données sur le serveur. À chaque fois qu’un formulaire modifie des données sur le serveur, vous devez utiliser `method="post"`. Cela ne concerne pas uniquement Django ; c’est une bonne pratique à adopter en tant que développeur Web.
 
 * Comme nous créons un formulaire POST (qui modifie potentiellement des données), il faut se préoccuper des attaques inter-sites. Heureusement, Django met à notre disposition un moyen simple pour s’en protéger. En bref, tous les formulaires POST destinés à des URL internes doivent utiliser la balise de gabarit `{% csrf_token %}`.
 
@@ -47,36 +46,35 @@ Un résumé rapide :
 Maintenant, nous allons créer une vue Django qui récupère les données envoyées pour nous permettre de les exploiter. D'abord, nous devons ajouter un chemin vers cette nouvelle vue.
 
 ``` python showLineNumbers=false title="developer/urls.py" ins={5}
-  app_name = 'developer'
-  urlpatterns = [
-      path('', views.index, name='index'),
-      path('<int:developer_id>/', views.detail, name='detail'),
-      path('create/', views.create, name='create'),
-  ]
+app_name = 'developer'
+urlpatterns = [
+    path('', views.index, name='index'),
+    path('<int:developer_id>/', views.detail, name='detail'),
+    path('create/', views.create, name='create'),
+]
 ```
 
 Ajoutez également la vue :
 
-``` python showLineNumbers=false title="developer/views.py" ins={3,4,8-16}
-  #...
+``` python showLineNumbers=false title="developer/views.py" ins={1,3,7-15}
+from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404, render
+from django.urls import reverse
 
-  from django.http import HttpResponseRedirect
-  from django.urls import reverse
+#...
 
-  #...
-
-  def create(request): 
-      Developer.objects.create(
-          first_name=request.POST['first_name'], 
-          last_name = request.POST['last_name'] 
-      ) 
-      # Toujours renvoyer une HTTPResponseRedirect après avoir géré correctement
-      # les données de la requête POST. Cela empêche les données d'être postée deux
-      # fois si l'utilisateur clique sur le bouton précédent.
-      return HttpResponseRedirect(reverse('developer:index'))
+def create(request):
+    Developer.objects.create(
+        first_name=request.POST['first_name'],
+        last_name=request.POST['last_name']
+    )
+    # Toujours renvoyer une HTTPResponseRedirect après avoir géré correctement
+    # les données de la requête POST. Cela empêche les données d'être postée deux
+    # fois si l'utilisateur clique sur le bouton précédent.
+    return HttpResponseRedirect(reverse('developer:index'))
 ```
 
-Ce code contient quelques points encore non abordés dans ce tutoriel :
+Ce code contient quelques points encore non abordés dans ce tutoriel :
 
 `request.POST` est un objet similaire à un dictionnaire qui vous permet d’accéder aux données envoyées par leurs clés. Dans ce cas, `request.POST['first_name']` et `request.POST['last_name']` renvoient le prénom et nom du développeur sous forme d’une chaîne de caractères. Les valeurs dans `request.POST` sont toujours des chaînes de caractères. Pensez donc à réaliser une transformation si le type de votre entrée n'est pas de nature `string`.
 
@@ -86,7 +84,7 @@ En Python vous pouvez convertir une chaîne de caractère en un entier grâce à
 
 * Notez que Django dispose aussi de `request.GET` pour accéder aux données GET de la même manière – mais nous utilisons explicitement `request.POST` dans notre code, pour s’assurer que les données ne sont modifiées que par des requêtes POST.
 
-* Après la création d'un développeur, le code renvoie une `HttpResponseRedirect` plutôt qu’une `HttpResponse` normale. `HttpResponseRedirect` prend un seul paramètre : l’URL vers laquelle l’utilisateur va être redirigé (voir le point suivant pour la manière de construire cette URL dans ce cas).
+* Après la création d'un développeur, le code renvoie une `HttpResponseRedirect` plutôt qu’une `HttpResponse` normale. `HttpResponseRedirect` prend un seul paramètre : l’URL vers laquelle l’utilisateur va être redirigé (voir le point suivant pour la manière de construire cette URL dans ce cas).
 
 * Comme le commentaire Python l’indique, vous devez systématiquement renvoyer une HttpResponseRedirect après avoir correctement traité les données POST. Ceci n’est pas valable uniquement avec Django, c’est une bonne pratique du développement Web.
 
@@ -103,8 +101,7 @@ Dans le dossier `Developer`, ajoutez un fichier `forms.py`. Dans celui-ci ajoute
 ``` python showLineNumbers=false title="developer/forms.py"
 from django import forms
 
-from .models import Developer
- 
+
 class DeveloperForm(forms.Form):
     first_name = forms.CharField(label="First name", max_length=100)
     last_name = forms.CharField(max_length=100)
@@ -124,58 +121,55 @@ Vous pouvez mettre le formulaire en forme de différente façon.
 * `{{ form.as_ul }}`
 </Aside>
 
-``` html showLineNumbers=false title="developer/index.html" ins={8}
-  <form action="{% url 'developer:create' %}" method="post">
-      {% csrf_token %}
+``` html showLineNumbers=false title="developer/templates/developer/index.html" ins={8} del={4-7}
+    <form action="{% url 'developer:create' %}" method="post">
+        {% csrf_token %}
   
-      <!--<label for="first_name">First name</label>
-      <input type="text" name="first_name" required>
-      <label for="last_name">Last name</label>
-      <input type="text" name="last_name" required>-->
-      {{ form }}
-      <button type="submit">Create</button>
-  </form>
+        <label for="first_name">First name</label>
+        <input type="text" name="first_name" required>
+        <label for="last_name">Last name</label>
+        <input type="text" name="last_name" required>
+        {{ form }}
+        <button type="submit">Create</button>
+    </form>
 ```
 
 #### Envoyez le formulaire au gabarit
 
 Le gabarit n'est évidement pas en mesure de deviner quel formulaire il doit afficher. Il est de la responsabilité de la vue d'ajouter le formulaire au contexte.
 
-``` python showLineNumbers=false title="developer/views.py" ins={2,7}
-  #...
-  from .forms import DeveloperForm
+``` python showLineNumbers=false title="developer/views.py" ins={2,8}
+from .forms import DeveloperForm
+from .models import Developer
+
+
+def index(request):
+    context = {
+        'developers': Developer.objects.all(),
+        'form': DeveloperForm,
+    }
   
-  def index(request):
-      context = {
-          'developers': Developer.objects.all(),
-          'form': DeveloperForm,  
-      }
-  
-      return render(request, 'developer/index.html', context)
-  #...
+    return render(request, 'developer/index.html', context)
 ```
 
 #### Valider le formulaire
 
 Nous allons maintenant utiliser ce formulaire afin d'obtenir les données saisies par l'utilisateur.
 
-``` python showLineNumbers=false title="developer/views.py" ins={4,6,7,8,9,10}
-  #...
+``` python showLineNumbers=false title="developer/views.py" ins={2,4-8}
+def create(request):
+    form = DeveloperForm(request.POST)
 
-  def create(request):
-      form = DeveloperForm(request.POST)
-  
-      if form.is_valid(): 
-          Developer.objects.create(
-              first_name=form.cleaned_data['first_name'], 
-              last_name=form.cleaned_data['last_name'] 
-          ) 
-      # Toujours renvoyer une HTTPResponseRedirect après avoir géré correctement
-      # les données de la requête POST. Cela empêche les données d'être postée deux
-      # fois si l'utilisateur clique sur le bouton précédent.
-      return HttpResponseRedirect(reverse('developer:index'))
+    if form.is_valid():
+        Developer.objects.create(
+            first_name=form.cleaned_data['first_name'],
+            last_name=form.cleaned_data['last_name']
+        )
 
-  #...
+    # Toujours renvoyer une HTTPResponseRedirect après avoir géré correctement
+    # les données de la requête POST. Cela empêche les données d'être postée deux
+    # fois si l'utilisateur clique sur le bouton précédent.
+    return HttpResponseRedirect(reverse('developer:index'))
 ```
 
 Notez que nous n'utilisons plus l'instruction `request.POST['xxx']` pour récupérer la donnée associée à un champ, mais `form.cleaned_data['first_name'], `. Cela a plusieurs impacts.
@@ -186,23 +180,24 @@ Notez que nous n'utilisons plus l'instruction `request.POST['xxx']` pour récup�
 #### Un formulaire DRY
 
 <Aside type="danger" title="Non respect du principe DRY 💩" >
-Vous l'avez peut-être remarqué, mais dans le modèle, les champs avaient une longueur de 200 caractères. Dans le formulaire de 100. Ce type d'incohérence apparaît lorsque nous oublions le principe DRY.
+Vous l'avez peut-être remarqué, mais dans le modèle, les champs avaient une longueur de 200 caractères, contre 100 dans le formulaire. Ce type d'incohérence apparaît lorsque nous oublions le principe DRY.
 </Aside>
 
 Django a prévu une meilleure manière de procéder afin de créer un formulaire sur base d'un modèle.
 
-``` python showLineNumbers=false title="developer/forms.py" ins={6,9,10,11} del={5,7,8}
-  from django import forms
+``` python showLineNumbers=false title="developer/forms.py" ins={3,7,10-12} del={6,8-9}
+from django import forms
   
-  from .models import Developer
-  
-  class DeveloperForm(forms.Form):
-  class DeveloperForm(forms.ModelForm):
-      first_name = forms.CharField(label="First name", max_length=100)
-      last_name = forms.CharField(label='Last name', max_length=100)
-      class Meta:
-          model = Developer 
-          fields = ['first_name', 'last_name'] 
+from .models import Developer
+
+
+class DeveloperForm(forms.Form):
+class DeveloperForm(forms.ModelForm):
+    first_name = forms.CharField(label="First name", max_length=100)
+    last_name = forms.CharField(label='Last name', max_length=100)
+    class Meta:
+        model = Developer
+        fields = ['first_name', 'last_name']
 ```
 
 Et voilà, nous avons un formulaire basé sur le modèle `Developer`. Et surtout, nous respectons le principe DRY !

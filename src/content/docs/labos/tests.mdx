@@ -7,48 +7,52 @@ import { Aside } from '@astrojs/starlight/components';
 
 Avant d'aller plus loin, il est temps de procéder à la rédaction de tests.
 
-Si vous vous posez la question de ce qu'est des tests automatisés, quelle est leur utilité ou encore quelle stratégie mettre en œuvre pour élaborer les tests. Alors commencez par lire l'introduction de [ce tutoriel](https://docs.djangoproject.com/fr/4.1/intro/tutorial05/).
+Si vous vous posez la question de ce qu'est des tests automatisés, quelle est leur utilité ou encore quelle stratégie mettre en œuvre pour élaborer les tests. Alors commencez par lire l'introduction de [ce tutoriel](https://docs.djangoproject.com/fr/6.1/intro/tutorial05/).
 
 ## Tests du modèle
 
 Avant de commencer les tests, nous allons ajouter un brin de matière à tester.
 
-Dans `developer.models.py`, ajoutez une méthode qui permet de vérifier si un développeur est libre de toute tâche.
+Dans `developer/models.py`, ajoutez une méthode qui permet de vérifier si un développeur est libre de toute tâche.
 
 ``` python showLineNumbers=false title="developer/models.py" ins={5,6}
-  class Developer(models.Model):
-     first_name = models.CharField("first name", max_length=200)
-     last_name = models.CharField(max_length=200)
-  
-     def is_free(self):                
-         return self.tasks.count() == 0
-  
-     def __str__(self):
-         return f"{self.first_name} {self.last_name}"
+class Developer(models.Model):
+   first_name = models.CharField("first name", max_length=200)
+   last_name = models.CharField(max_length=200)
+
+   def is_free(self):
+       return self.tasks.count() == 0
+
+   def __str__(self):
+       return f"{self.first_name} {self.last_name}"
 ```
 ### `tests.py`
 
-Un endroit conventionnel pour placer les tests d'une application est le fichier tests.py dans le répertoire de l'application. Cependant, le système de test va automatiquement trouver les tests dans tout fichier dont le nom commence par test.
+Un endroit conventionnel pour placer les tests d'une application est le fichier `tests.py` dans le répertoire de l'application. Cependant, le système de test va automatiquement trouver les tests dans tout fichier dont le nom commence par test.
 
 Placez ce qui suit **dans une classe** `DeveloperModelTests` qui hérite de la classe `TestCase` déjà importée dans le fichier `tests.py` de l'application `developer` :
 
 ``` python showLineNumbers=false title="developer/tests.py"
-def test_is_free_with_no_tasks(self):
-    """
-    is_free() returns True for developer with no tasks.
-    """
+    def test_is_free_with_no_tasks(self):
+        """
+        is_free() returns True for a developer with no tasks.
+        """
 
-    dev = Developer.objects.create(first_name="Sébastien", last_name="Drobisz")
-    self.assertIs(dev.is_free(), True)
+        dev = Developer.objects.create(
+            first_name="Sébastien",
+            last_name="Drobisz")
+        self.assertIs(dev.is_free(), True)
 
-def test_is_free_with_one_tasks(self):
-    """
-    is_free() returns False for developer with at least one tasks.
-    """
+    def test_is_free_with_one_tasks(self):
+        """
+        is_free() returns False for a developer with at least one task.
+        """
 
-    dev = Developer.objects.create(first_name="Sébastien", last_name="Drobisz")
-    dev.tasks.create(title="cours Django", description="Faire le cours sur Django")
-    self.assertIs(dev.is_free(), False)
+        dev = Developer.objects.create(
+            first_name="Sébastien",
+            last_name="Drobisz")
+        dev.tasks.create(title="todo1", description="Une description.")
+        self.assertIs(dev.is_free(), False)
 ```
 
 Nous venons ici de créer une sous-classe de `django.test.TestCase` contenant 
@@ -56,9 +60,9 @@ Nous venons ici de créer une sous-classe de `django.test.TestCase` contenant
 * Une seconde méthode qui crée une même instance de `Developer`. Nous lui assignons cette fois-ci la tâche d'écrire le cours sur Django. Enfin, nous vérifions le résultat de la méthode `is_free()` qui devrait cette fois-ci valoir `False`.
 
 
-**Après avoir importé les modèles** `Developer` et `Task`, lancez les tests.
+**Après avoir importé le modèle** `Developer` dans les tests, lancez les.
 
-``` sh showLineNumbers=false title="developer/views.py" ins={2,7}
+``` console showLineNumbers=false frame="none"
 $ python manage.py test developer
 ```
 
@@ -67,7 +71,7 @@ Voici ce qui s'est passé :
 1. La commande `manage.py test developer` a cherché des tests dans l'application `developer` ;
 1. elle a trouvé une sous-classe de `django.test.TestCase` ;
 1. elle a créé une base de données spéciale uniquement pour les tests ⚠️ ;
-1. elle a recherché des méthodes de test, celles dont le nom commence par test ;
+1. elle a recherché des méthodes de test : celles dont le nom commence par test ;
 1. dans `test_is_free_with_no_tasks`, elle a créé une instance de `Developer` ;
 1. et à l'aide de la méthode `assertIs()`, elle a pu vérifier son bon fonctionnement.
 
@@ -79,21 +83,27 @@ Vous pouvez initialiser certains éléments avant de réaliser les tests. Cela �
 
 Cela se fait grâce à la méthode `setUp()`.
 
-``` python showLineNumbers=false title="developer/tests.py" ins={1,2, 6,11} del={5,10}
-  def setUp(self):                                                           
-      Developer.objects.create(first_name="Sébastien", last_name="Drobisz")  
-  
-  def test_is_free_with_no_tasks(self):
-      dev = Developer.objects.create(first_name="Sébastien", last_name="Drobisz")
-      dev = Developer.objects.get(first_name="Sébastien")
-      self.assertIs(dev.is_free(), True)
-  
-  def test_is_free_with_one_tasks(self):
-      dev = Developer.objects.create(first_name="Sébastien", last_name="Drobisz")
-      dev = Developer.objects.get(first_name="Sébastien")
+``` python showLineNumbers=false title="developer/tests.py" ins={1,2,8,15} del={5-7,12-14}
+    def setUp(self):
+        Developer.objects.create(first_name="Sébastien", last_name="Drobisz")
+
+    def test_is_free_with_no_tasks(self):
+        dev = Developer.objects.create(
+            first_name="Sébastien",
+            last_name="Drobisz")
+        dev = Developer.objects.get(first_name="Sébastien")
+        self.assertIs(dev.is_free(), True)
+
+    def test_is_free_with_one_task(self):
+        dev = Developer.objects.create(
+            first_name="Sébastien",
+            last_name="Drobisz")
+        dev = Developer.objects.get(first_name="Sébastien")
+        dev.tasks.create(title="todo1", description="Une descripton.")
+        self.assertIs(dev.is_free(), False)
 ```
 
-Pour plus d'informations sur la configuration des tests, vous pouvez lire [ce lien](https://docs.djangoproject.com/fr/4.1/topics/testing/overview/).
+Pour plus d'informations sur la configuration des tests, vous pouvez lire [ce lien](https://docs.djangoproject.com/fr/6.1/topics/testing/overview/).
 
 ## Tests de la vue
 
@@ -105,7 +115,7 @@ Nous commencerons encore une fois par le shell, **où nous devons faire quelques
 
 #### Mise en place de l'environnement de test
 
-``` sh showLineNumbers=false frame="none"
+``` python showLineNumbers=false frame="none"
 >>> from django.test.utils import setup_test_environment
 >>> setup_test_environment()
 ```
@@ -113,27 +123,27 @@ Nous commencerons encore une fois par le shell, **où nous devons faire quelques
 `setup_test_environment()` installe un moteur de rendu de gabarit qui va nous permettre d'examiner certains attributs supplémentaires des réponses, tels que `response.context` qui n'est normalement pas disponible. Notez que cette méthode ne crée pas de base de données de test, ce qui signifie que ce qui suit va être appliqué à la base de données existante et que par conséquent, le résultat peut légèrement différer en fonction des développeurs que vous avez déjà créées.
 
 <Aside title="Erreur courante" >
-Si vous obtenez une erreur étrange du style "Invalid HTTP_HOST header: 'testserver'. You may need to add 'testserver' to ALLOWED_HOSTS.". Alors vous avez probablement oublié la mise en place de l'environnement de test
+Si vous obtenez une erreur étrange du style `Invalid HTTP_HOST header: 'testserver'. You may need to add 'testserver' to ALLOWED_HOSTS.`. Alors vous avez probablement oublié la mise en place de l'environnement de test
 </Aside>
 
 #### Import d'un client de test
 
 Ensuite, il est nécessaire d'importer la classe Client de test ( ⚠️ plus loin dans `tests.py`, nous utiliserons la classe `django.test.TestCase` qui apporte son propre client, ce qui évitera cette étape) 
 
-``` sh showLineNumbers=false frame="none"
+``` python showLineNumbers=false frame="none"
 >>> from django.test import Client
 >>> client = Client()
 ```
 
 Nous pouvons maintenant demander au client de faire certaines tâches pour nous :
 
-``` sh showLineNumbers=false frame="none"
+``` python showLineNumbers=false frame="none"
 >>> response = client.get('/')
 Not Found: /
 # Investiguons.
 >>> response.status_code
 404 # la page n'a pas été trouvée (https://www.rfc-editor.org/rfc/rfc2616).
-from django.urls import reverse
+>>> from django.urls import reverse
 >>> response = client.get(reverse('developer:index'))
 >>> response.status_code
 200
@@ -168,25 +178,22 @@ Les tests sont faits dans un ordre logique permettant de déterminer directement
 Dans le second test, nous vérifions que le prénom du développeur est bien affiché.
 
 ``` python showLineNumbers=false title=developer/tests.py
-def test_one_developer(self):
-    """
-    A developer is displayed on the index page.
-    """
-    dev = Developer.objects.create(
-        first_name="Jonathan",
-        last_name="Lechien")
-    response = self.client.get(reverse('developer:index'))
-    self.assertEqual(response.status_code, 200)
-    self.assertQuerySetEqual(response.context['developers'],
-        [dev])
-    self.assertContains(response, dev.first_name)
+    def test_one_developer(self):
+        """
+        A developer is displayed on the index page.
+        """
+        dev = Developer.objects.create(first_name="Foo", last_name="Bar")
+        response = self.client.get(reverse('developer:index'))
+        self.assertEqual(response.status_code, 200)
+        self.assertQuerySetEqual(response.context['developers'], [dev])
+        self.assertContains(response, dev.first_name)
 ```
 
 #### Tests de `DevDetailView`
 
 Nous allons faire deux tests afin de vérifier la vue d'un développeur.
 
-1. Un premier qui permet de vérifier que le nom et le prénom d'un développeur est bien affiché
+1. Un premier qui permet de vérifier que le nom et le prénom d'un développeur est bien affiché.
 2. Un deuxième qui permet de vérifier qu'une page 404 est proposée si le développeur recherché n'existe pas.
 
 ```python showLineNumbers=false title=developer/tests.py
@@ -195,9 +202,7 @@ class DevDetailView(TestCase):
         """
         The detail view of a developer displays the developer's text.
         """
-        dev = Developer.objects.create(
-            first_name="Jonathan",
-            last_name="Lechien")
+        dev = Developer.objects.create(first_name="Foo", last_name="Bar")
         url = reverse('developer:detail', args=(dev.id,))
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
@@ -207,9 +212,11 @@ class DevDetailView(TestCase):
 
     def test_non_existing_developer(self):
         """
-        The detail view of a non existing developer should return 404 status_code response.
+        The detail view of a non-existing developer should return a 404.
         """
         url = reverse('developer:detail', args=(1,))
         response = self.client.get(url)
         self.assertEqual(response.status_code, 404)
 ```
+
+Pensez à relancer vos tests, afin de vérifier que tout se passe bien.

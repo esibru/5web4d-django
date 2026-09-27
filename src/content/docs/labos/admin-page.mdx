@@ -13,7 +13,7 @@ pu le décrire plus tôt, mais vous auriez trop vite délaissé le `shell`.
 
 Nous allons donc commencer par créer un super utilisateur. Saisissez la commande suivante et remplissez le formulaire.
 
-``` sh frame="none" showLineNumbers=false
+``` console frame="none" showLineNumbers=false
 $ python manage.py createsuperuser
 ```
 
@@ -40,7 +40,7 @@ Retournez sur la page administration et vérifiez l'ajout de l'administration de
 <Aside title="Info">
 * Le formulaire est généré automatiquement à partir des modèles `Developer` et `Task`.
 
-* Les différents types de champs du modèle (`DateTimeField`, `CharField`) correspondent au composant graphique d'entrée HTML approprié. Chaque type de champ possède son propre [widget](https://docs.djangoproject.com/fr/4.1/ref/forms/widgets/) dans l'interface d'administration de Django.
+* Les différents types de champs du modèle (`DateTimeField`, `CharField`) correspondent au composant graphique d'entrée HTML approprié. Chaque type de champ possède son propre [widget](https://docs.djangoproject.com/fr/6.1/ref/forms/widgets/) dans l'interface d'administration de Django.
 </Aside>
 
 La partie inférieure de la page vous propose une série d'opérations :
@@ -134,9 +134,9 @@ Nous avons modifié le minimum de la page d'administration, mais vous pouvez con
 ```
 
 <Aside type="tip" icon="open-book" title="Un peu de lecture">
-* [Tutoriel admin](https://docs.djangoproject.com/fr/4.1/intro/tutorial07/)
-* [Doc admin](https://docs.djangoproject.com/fr/4.1/ref/contrib/admin/)
-* [Action admin](https://docs.djangoproject.com/fr/4.1/ref/contrib/admin/actions/)
+* [Tutoriel admin](https://docs.djangoproject.com/fr/6.1/intro/tutorial07/)
+* [Doc admin](https://docs.djangoproject.com/fr/6.1/ref/contrib/admin/)
+* [Action admin](https://docs.djangoproject.com/fr/6.1/ref/contrib/admin/actions/)
 </Aside>
 
 <Aside type="caution" title="exercice" icon="pencil">

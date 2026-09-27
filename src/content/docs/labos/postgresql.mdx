@@ -8,36 +8,67 @@ Et si nous changions le SGBD afin d'utiliser PostgreSQL ?
 
 ## Installation
 
-<Tabs>
+Les identifiants de la base de données (utilisateur, mot de passe) ne doivent se trouver dans aucun fichier versionné.
+Ils seront définis dans des variables d'environnement, via un fichier `.env` propre à chaque déploiement (dev/production) de l'application.
+
+<Steps>
+1. Ajouter `.env` à `.gitignore` afin d'être sûr de ne pas se tirer une balle dans le pied en le versionnant malgré tout :
+   ``` text showLineNumbers=false title=".gitignore" ins={5}
+   *.sqlite3
+   .idea/
+   .mypy_cache/
+   .venv/
+   .env
+   ```
+1. Créer un fichier privé (local, non-versionné) de configuration de l'environnement.
+   ``` dotenv showLineNumbers=false title=".env"
+   POSTGRES_USER=mproject
+   # GÉNÉREZ EN UN !
+   POSTGRES_PASSWORD=mysecretpassword
+   # POSTGRES_DB=... # La valeur par défaut est $POSTGRES_USER
+   ```
+   Générez un mot de passe généré de manière unique pour le mot de passe de l'utilisateur `mproject`.
+   Vous n'avez pas besoin de retenir ce mot de passe, il est dans ce fichier, vous n'aurez pas à le rentrer régulièrement ailleurs.
+</Steps>
+
+Il reste ensuite à installer PostgreSQL, au choix :
+
+<Tabs syncKey="postgres-install">
+<TabItem label="Postgres sur docker compose">
+
+<Steps>
+
+1. Ajouter un fichier docker compose  avec le contenu suivant.
+   ``` yaml showLineNumbers=true title=compose.yaml
+   services:
+     db:
+       image: postgres:18
+       env_file: .env
+       ports:
+         - "5432:5432"
+       volumes:
+         - postgres_data:/var/lib/postgresql
+
+   volumes:
+     postgres_data:
+   ```
+1. Démarrer le conteneur grâce à docker compose
+   ``` text showLineNumbers=false frame=none
+   docker compose up
+   ```
+   Ajoutez `-d` pour le démarrer directement en mode détaché, utilisez alors `docker compose down` pour le stopper.
+   Si vous voulez supprimer la base de données pour repartir de zéro, utilisez `docker compose down db -v` pour supprimer le volume du service `db`.
+</Steps>
+</TabItem>
 <TabItem label="Postgres sur docker">
 
 <Steps>
 
-1. Ajouter un dockerfile avec le contenu suivant (adapté avec vos données).
-   ``` text showLineNumbers=false title=Dockerfile
-   FROM postgres:16
-   
-   ENV POSTGRES_USER=g12345
-   ENV POSTGRES_PASSWORD=admin
-   ENV POSTGRES_DB=mproject
-   ```
-1. Créer une image
-
+1. Créer un conteneur à partir de l'image officielle de PostgreSQL, configuré par le fichier `.env` :
    ``` text showLineNumbers=false frame=none
-   docker build -t mypostgres .
-   ```
-
-1. Créer un conteneur
-
-   ``` text showLineNumbers=false frame=none
-   docker run --name mypostgres -p 5433:5432 -d mypostgres
+   docker run --name mypostgres --env-file .env -p 5432:5432 -d postgres:18
    ```
    (`--name` permet de nommer le conteneur)
-
-1. Installer `psycopg2`:
-   ``` sh showLineNumbers=false frame="none"
-   python -m pip install django psycopg2
-   ```
 
 </Steps>
 
@@ -47,82 +78,231 @@ Et si nous changions le SGBD afin d'utiliser PostgreSQL ?
 
 <Steps>
 1. Installer [PostgreSQL](https://www.postgresql.org/)
-2. Créer une DB (par exemple `mproject`) : 
-   ``` sql showLineNumbers=false frame="none" 
+2. Créer une DB portant le nom `POSTGRES_DB` de votre `.env` (par défaut, `POSTGRES_USER`, donc `mproject`) :
+   ``` sql showLineNumbers=false frame="none"
    CREATE DATABASE mproject;
    ```
-3. Créer un rôle (dans `psql`): 
-   ``` sql showLineNumbers=false frame="none" 
-   create role <le rôle> login password '<le mdp>';
-   ```
-4. Donner les droits nécessaires à ce nouveau rôle (dans `psql`) : 
+3. Créer un rôle (dans `psql`) avec l'utilisateur et le mot de passe de votre `.env` :
    ``` sql showLineNumbers=false frame="none"
-   grant all privileges on database mproject to <le rôle>;
+   create role mproject login password '<POSTGRES_PASSWORD>';
    ```
-5. Installer `psycopg2`:
-   ``` sh showLineNumbers=false frame="none"
-   python -m pip install django psycopg2
-   ```
-6. Pour éviter la manipulation de [schéma](https://docs.postgresql.fr/10/ddl-schemas.html), nous vous suggérons de définir votre rôle comme propriétaire de la base de donnée `mproject` :
+4. Donner les droits nécessaires à ce nouveau rôle (dans `psql`) :
    ``` sql showLineNumbers=false frame="none"
-   alter database mproject owner to <role>;
+   grant all privileges on database mproject to mproject;
    ```
-7. Configurer l'utilisation de la base de données dans `settings.py`
+5. Pour éviter la manipulation de [schéma](https://docs.postgresql.fr/10/ddl-schemas.html), nous vous suggérons de définir votre rôle comme propriétaire de la base de donnée `mproject` :
+   ``` sql showLineNumbers=false frame="none"
+   alter database mproject owner to mproject;
+   ```
 </Steps>
 
 </TabItem>
 </Tabs>
 
-``` python showLineNumbers=false title=mproject/settings.py del={1-4} ins={5-16}
-  'default': {
-      'ENGINE': 'django.db.backends.sqlite3',
-      'NAME': BASE_DIR / 'db.sqlite3',
-  },
-  #'default': {
-  #    'ENGINE': 'django.db.backends.sqlite3',
-  #    'NAME': BASE_DIR / 'db.sqlite3',
-  #},
-  'default': {
-      'ENGINE': 'django.db.backends.postgresql_psycopg2',
-      'NAME': 'mproject',
-      'USER': '<le rôle>',
-      'PASSWORD': '<le mdp>',
-      'HOST': 'localhost',
-      'PORT': '5433',
-  }
+## Configuration de Django
+
+<Steps>
+1. Installer `psycopg` (psycopg 3), ainsi que `python-dotenv` qui charge le contenu du fichier `.env` dans les variables d'environnement :
+   ``` sh showLineNumbers=false frame="none"
+   python -m pip install "psycopg[binary]" python-dotenv
+   ```
+   La variante `psycopg[binary]` convient pour le développement.
+   En production, la [documentation de psycopg](https://www.psycopg.org/psycopg3/docs/basic/install.html) recommande plutôt `psycopg[c]`.
+1. Configurer l'utilisation de la base de données dans `settings.py`.
+   PostgreSQL devient la base par défaut, et l'ancienne base SQLite reste disponible sous l'alias `sqlite` :
+   ``` python showLineNumbers=false title=mproject/settings.py ins={1,3,8,13-20,22} del={21}
+   import os
+   from pathlib import Path
+   from dotenv import load_dotenv
+
+   # Build paths inside the project like this: BASE_DIR / 'subdir'.
+   BASE_DIR = Path(__file__).resolve().parent.parent
+
+   load_dotenv(BASE_DIR / '.env')
+
+   # ...
+
+   DATABASES = {
+       'default': {
+           'ENGINE': 'django.db.backends.postgresql',
+           'NAME': os.environ.get('POSTGRES_DB', os.environ['POSTGRES_USER']),
+           'USER': os.environ['POSTGRES_USER'],
+           'PASSWORD': os.environ['POSTGRES_PASSWORD'],
+           'HOST': 'localhost',
+           'PORT': '5432',
+       },
+       'default': {
+       'sqlite': {
+           'ENGINE': 'django.db.backends.sqlite3',
+           'NAME': BASE_DIR / 'db.sqlite3',
+       },
+   }
+   ```
+</Steps>
+
+<Aside title="Utiliser SQLite sans démarrer PostgreSQL" icon="seti:db">
+Pour que Django utilise la base SQLite à la place de PostgreSQL (par exemple pour tester rapidement sans démarrer le serveur PostgreSQL), ajoutez ceci à la suite de `DATABASES` dans `settings.py` :
+
+   ``` python showLineNumbers=false title=mproject/settings.py
+   if os.environ.get('DJANGO_DB') == 'sqlite':
+       DATABASES['default'] = DATABASES['sqlite']
+   ```
+Ajoutez ensuite la ligne `DJANGO_DB=sqlite` à votre `.env`, et retirez-la pour revenir à PostgreSQL.
+</Aside>
+
+<details>
+<summary>Transférer les données entre SQLite et PostgreSQL (optionnel)</summary>
+
+La commande `dumpdata` exporte le contenu d'une base de données dans un fichier JSON, et `loaddata` l'importe dans une autre.
+L'option `--database` choisit la base utilisée, `default` (PostgreSQL, sans `DJANGO_DB=sqlite` dans le `.env`) si elle est omise.
+La base de destination doit être fraîchement migrée.
+
+**De SQLite vers PostgreSQL :**
+``` sh showLineNumbers=false frame="none"
+python manage.py migrate
+python manage.py dumpdata --database=sqlite --natural-foreign --natural-primary -e contenttypes -e auth.Permission -o data.json
+python manage.py loaddata data.json
 ```
+
+**De PostgreSQL vers SQLite :**
+``` sh showLineNumbers=false frame="none"
+python manage.py migrate --database=sqlite
+python manage.py dumpdata --natural-foreign --natural-primary -e contenttypes -e auth.Permission -o data.json
+python manage.py loaddata --database=sqlite data.json
+```
+
+Les tables `contenttypes` et `auth.Permission` sont exclues, car `migrate` les remplit déjà dans la base de destination.
+`--natural-foreign` et `--natural-primary` font référencer ces lignes par leur nom plutôt que par leur identifiant, qui peut différer d'une base à l'autre.
+
+`data.json` contient toutes vos données, y compris les mots de passe hachés des utilisateurs : ne le versionnez pas, et supprimez-le une fois le transfert terminé.
+</details>
 
 <Aside title="Migration" icon="seti:db">
 Il ne reste qu'à réaliser la migration, quelle commande allez-vous utiliser  ?
 </Aside>
 
-<Aside title="Docker - psql" icon="seti:docker">
-Vous pouvez accéder au terminal interactif de postgres [psql](https://docs.postgresql.fr/13/app-psql.html) grâce à la commande
+<details>
+<summary>Accéder directement à la base de données (optionnel)</summary>
 
-   ``` bash showLineNumbers=false frame=none
-   docker exec -it mypostgres psql -U g12345 -d mproject
-   ```
+Il peut être utile de consulter directement le contenu de la base de données, par exemple pour vérifier le résultat d'une migration.
+Les outils graphiques ci-dessous demandent tous les mêmes paramètres de connexion :
+* hôte : `localhost` ;
+* port : `5432` ;
+* utilisateur et mot de passe : `POSTGRES_USER` et `POSTGRES_PASSWORD` de votre `.env` ;
+* base de données : `POSTGRES_DB` de votre `.env` (par défaut, `POSTGRES_USER`, donc `mproject`).
+
+**psql**
+
+[psql](https://docs.postgresql.fr/13/app-psql.html) est le terminal interactif de PostgreSQL.
+Selon votre installation :
+
+<Tabs syncKey="postgres-install">
+<TabItem label="Postgres sur docker compose">
+``` sh showLineNumbers=false frame=none
+docker compose exec db psql -U mproject
+```
+</TabItem>
+<TabItem label="Postgres sur docker">
+``` sh showLineNumbers=false frame=none
+docker exec -it mypostgres psql -U mproject -d mproject
+```
+</TabItem>
+<TabItem label="Installation machine">
+``` sh showLineNumbers=false frame=none
+psql -h localhost -U mproject -d mproject
+```
+Le mot de passe de votre `.env` vous sera demandé.
+</TabItem>
+</Tabs>
+
 Et dès lors,
 * lister les tables existantes :
    ``` sql showLineNumbers=false frame=none
    \dt
    ```
-* décrire une  table :
+* décrire une table :
    ``` sql showLineNumbers=false frame=none
    \d developer_developer
    ```
-  
-* faire toutes les requêtes utiles (en n'oubliant pas le `;`)
-   Ex : 
+* faire toutes les requêtes utiles (en n'oubliant pas le `;`), par exemple :
    ``` sql showLineNumbers=false frame=none
    SELECT * FROM developer_developer;
-   ``` 
-* ...
-</Aside>
+   ```
+   Ces requêtes fonctionnent aussi dans l'éditeur de requêtes des outils graphiques ci-dessous.
+
+**pgAdmin**
+
+[pgAdmin](https://www.pgadmin.org/) est l'outil graphique d'administration de PostgreSQL.
+
+<Tabs>
+<TabItem label="pgAdmin desktop">
+1. Installer [pgAdmin 4](https://www.pgadmin.org/download/).
+1. Clic droit sur « Servers », puis « Register » > « Server... ».
+1. Dans l'onglet « General », donner un nom au serveur (par exemple `mproject`).
+1. Dans l'onglet « Connection », renseigner les paramètres de connexion ci-dessus (cochez « Save password » pour ne pas devoir le retaper).
+</TabItem>
+<TabItem label="pgAdmin sur docker compose">
+1. Ajouter un service `pgadmin` au fichier docker compose :
+   ``` yaml showLineNumbers=true title=compose.yaml ins={10-16,20}
+   services:
+     db:
+       image: postgres:18
+       env_file: .env
+       ports:
+         - "5432:5432"
+       volumes:
+         - postgres_data:/var/lib/postgresql
+
+     pgadmin:
+       image: dpage/pgadmin4
+       env_file: .env
+       ports:
+         - "5050:80"
+       volumes:
+         - pgadmin_data:/var/lib/pgadmin
+
+   volumes:
+     postgres_data:
+     pgadmin_data:
+   ```
+1. Ajouter les identifiants du compte administrateur de pgAdmin à votre `.env` :
+   ``` dotenv showLineNumbers=false title=".env" ins={5-7}
+   POSTGRES_USER=mproject
+   # GÉNÉREZ EN UN !
+   POSTGRES_PASSWORD=mysecretpassword
+   # POSTGRES_DB=... # La valeur par défaut est $POSTGRES_USER
+   PGADMIN_DEFAULT_EMAIL=admin@example.com
+   # GÉNÉREZ EN UN AUTRE !
+   PGADMIN_DEFAULT_PASSWORD=myothersecretpassword
+   ```
+1. Relancer `docker compose up`, puis ouvrir http://localhost:5050 et s'y connecter avec ces identifiants.
+1. Enregistrer le serveur comme pour pgAdmin desktop, mais avec l'hôte `db` au lieu de `localhost`.
+   pgAdmin tourne en effet dans son propre conteneur, où `localhost` désigne ce conteneur lui-même.
+   Au sein du réseau créé par docker compose, chaque service est joignable par son nom.
+</TabItem>
+</Tabs>
+
+La base se trouve alors dans « Databases » > `mproject` > « Schemas » > `public` > « Tables », et l'éditeur de requêtes s'ouvre via « Tools » > « Query Tool ».
+
+**PyCharm**
+
+La version étudiante de PyCharm intègre un outil de base de données.
+1. Activer le plugin « Database Tools and SQL » (« Settings » > « Plugins », onglet « Installed »), puis redémarrer PyCharm si demandé.
+1. Ouvrir la fenêtre « Database » (« View » > « Tool Windows » > « Database »).
+1. « + » > « Data Source » > « PostgreSQL ».
+1. Renseigner les paramètres de connexion ci-dessus, et télécharger les pilotes si PyCharm le propose.
+1. Vérifier avec « Test Connection », puis valider.
+
+Un clic droit sur la source de données, puis « New » > « Query Console », ouvre un éditeur de requêtes.
+
+**VS Code**
+
+Installer l'extension [PostgreSQL](https://marketplace.visualstudio.com/items?itemName=ms-ossdata.vscode-pgsql) de Microsoft, puis ajouter une connexion depuis son panneau latéral avec les paramètres de connexion ci-dessus.
+</details>
 
 ## Migrations
 
-Lorsque nous sommes au début du développement d'un logiciel, nous pouvons échapper aux problèmes liés aux migrations. Nous allons cependant voir le minimum afin de gérer les quelques conflits que nous pourrions rencontrer. Si la gestion des migrations vous intéresse, vous trouverez de quoi satisfaire votre curiosité [ici](https://docs.djangoproject.com/fr/4.1/topics/migrations/).
+Lorsque nous sommes au début du développement d'un logiciel, nous pouvons échapper aux problèmes liés aux migrations. Nous allons cependant voir le minimum afin de gérer les quelques conflits que nous pourrions rencontrer. Si la gestion des migrations vous intéresse, vous trouverez de quoi satisfaire votre curiosité [ici](https://docs.djangoproject.com/fr/6.1/topics/migrations/).
 
 Imaginons que nous souhaitons ajouter un nouveau champ `username` à notre modèle `Developer`.
 
@@ -139,7 +319,8 @@ Saisissez la commande `python manage.py makemigrations` qui va vérifier les cha
 
 Vous devriez avoir ce message : 
 
-``` sh showLineNumbers=false frame="none"
+``` console showLineNumbers=false frame="none"
+$ python manage.py makemigrations
 You are trying to add a non-nullable field 'user_name' to developer without a default; we can't do that (the database needs something to populate existing rows).
 Please select a fix:
  1) Provide a one-off default now (will be set on all existing rows with a null value for this column)
@@ -160,10 +341,16 @@ La procédure que nous allons vous soumettre est un peu radicale, mais nous somm
    <FileTree>
    - developer/
       - migrations/
+         - \_\_init\_\_.py à conserver !
          - 0001\_initial.py
          - ...
          - 000n\_initial.py
    </FileTree>
+   <Aside type="caution" title="__init__.py">
+   Ne supprimez pas `__init__.py` : c'est lui qui fait du dossier `migrations` un paquet Python.
+   Sans lui, Django considère que l'application `developer` n'a pas de migrations, et `python manage.py makemigrations` répond « No changes detected ».
+   Si vous l'avez supprimé, lancez `python manage.py makemigrations developer` : en précisant le nom de l'application, Django crée la migration initiale et recrée le fichier `__init__.py`.
+   </Aside>
 
 1. Relancez la procédure complète de migration
    1. `python manage.py makemigrations`
