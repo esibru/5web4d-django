@@ -18,7 +18,7 @@ Ajoutez ce morceau de code dans le gabarit `index.html`
 
 ``` html showLineNumbers=false title="developer/templates/developer/index.html" ins={5-13}
    {% else %}
-       <p><strong>Il n'y a aucun développeur enregistré !</strong>/p>
+       <p><strong>Il n'y a aucun développeur enregistré !</strong></p>
    {% endif %}
   
    <form action="{% url 'developer:create' %}" method="post"> 
