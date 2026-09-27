@@ -118,19 +118,55 @@ class IndexView(ListView):
     context_object_name = 'developers'
 
     def get_context_data(self, **kwargs):
-        context = super(IndexView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['form'] = DeveloperForm
         return context
 ```
 
 <Card title="Héritage en Python" icon="seti:python">
-En Java, nous écririons `super.getContextData(...)` afin d'appeler la fonction de la classe mère. En Python, il est nécessaire de donner la classe en premier paramètre et `self` en second paramètre.
+En Java, nous écririons `super.getContextData(...)` afin d'appeler la fonction de la classe mère.
+En Python, nous écrivons `super().get_context_data(...)`.
 
 Ainsi,
 
 1. nous chargeons dans la variable `context` le contexte tel qu'il était défini précédemment, c'est-à-dire, contenant la variable `developers`. 
 1. Ensuite, nous ajoutons une clé `form` et le formulaire à utiliser `DeveloperForm`. Nous retournons ensuite le contexte défini au sein de la variable `context`.
+
+<details>
+<summary>Héritage multiple et `super()` (optionnel)</summary>
+
+Contrairement à Java, Python permet l'héritage multiple : une classe peut avoir plusieurs classes mères.
+C'est le cas des vues génériques, construites à partir de mixins (voir plus bas).
+`super()` ne désigne donc pas « la » classe mère, mais la classe suivante dans l'ordre de résolution des méthodes (MRO, _Method Resolution Order_) de l'objet.
+
+Cet ordre est visible avec `IndexView.__mro__` :
+
+```python showLineNumbers=false
+(IndexView, ListView, MultipleObjectTemplateResponseMixin,
+ TemplateResponseMixin, BaseListView, MultipleObjectMixin,
+ ContextMixin, View, object)
+```
+
+Dans cette liste, seules `MultipleObjectMixin` et `ContextMixin` définissent `get_context_data()`.
+Notre appel à `super().get_context_data()` aboutit donc dans `MultipleObjectMixin`, qui ajoute la liste des développeurs puis appelle à son tour `super().get_context_data()`, ce qui mène à `ContextMixin`.
+Chaque classe ajoute ainsi sa part au contexte avant de passer la main à la suivante.
+</details>
 </Card>
+
+<Aside type="tip" title="Raccourci : `extra_context`">
+Lorsque les données à ajouter au contexte sont fixes, comme ici, il n'est pas nécessaire de réécrire `get_context_data()`.
+L'attribut [`extra_context`](https://docs.djangoproject.com/fr/6.1/ref/class-based-views/mixins-simple/#django.views.generic.base.ContextMixin.extra_context) suffit :
+
+```python showLineNumbers=false
+class IndexView(ListView):
+    model = Developer
+    template_name = "developer/index.html"
+    context_object_name = 'developers'
+    extra_context = {'form': DeveloperForm}
+```
+
+Réécrire `get_context_data()` reste nécessaire lorsque les données ajoutées dépendent de la requête ou de l'objet courant (par exemple `self.object` dans une `DetailView`).
+</Aside>
 
 
 ### URL `IndexView`
