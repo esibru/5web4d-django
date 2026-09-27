@@ -2,7 +2,7 @@
 title: Amélioration des pages développeurs
 description: /
 ---
-import { Aside } from '@astrojs/starlight/components';
+import { Aside, Card, Tabs, TabItem } from '@astrojs/starlight/components';
 
 Prenons un peu de temps pour améliorer le rendu de nos pages web.
 
@@ -66,7 +66,7 @@ Remarquez la ligne
 
 * `{{ dev.tasks.all|length }}` permet d'afficher le nombre de tâches.
 * `tâche{{developer.tasks.all|length|pluralize}}` permet de mettre le mot tâche au pluriel si le développeur en a plusieurs (ou 0).
-  Le _filtre_ [`pluralize`](https://docs.djangoproject.com/en/6.1/ref/templates/builtins/#pluralize) prend également un argument pour les cas où le pluriel n'est pas un simple ajout d'un s: `bateau{{ num_boats | pluralize:"x" }}`, ou encore `journa{{ num_logs | pluralize:"l,ux" }}`.
+  Le _filtre_ [`pluralize`](https://docs.djangoproject.com/en/6.1/ref/templates/builtins/#pluralize) prend également un argument pour les cas où le pluriel n'est pas un simple ajout d'un s : `bateau{{ num_boats | pluralize:"x" }}`, ou encore `journa{{ num_logs | pluralize:"l,ux" }}`.
 
 ## Détails des développeurs
 
@@ -126,10 +126,178 @@ Ce code a pour objectif d'ajouter une petite corbeille près du nom d'un dévelo
 
 <Aside title="Exercice" icon="pencil">
 Tel quel, la vue détail ne fonctionne pas. En effet, l'action `developer:delete` n'est pas définie.
-1. Inspirez-vous des vues existantes afin de permettre la suppression d'un développeur. Lors de la suppression, redirigez vers l'index des développeurs.
+1. Inspirez-vous des vues existantes afin de permettre la suppression d'un développeur.
+   Lors de la suppression, redirigez vers l'index des développeurs.
+   Vous êtes libre d'écrire une vue fonction (FBV) ou une vue classe (CBV).
 1. Ajoutez le chemin adéquat.
 1. Testez.
 </Aside>
 <Aside title="Exercice" icon="pencil">
 Que se passe-t-il pour les tâches qui étaient assignées ? Amendez le code afin qu'une tâche assignée à un développeur ne soit plus supprimée.
+</Aside>
+
+### Une suppression un peu trop facile
+
+<Aside title="Exercice" icon="pencil">
+Sans passer par le bouton corbeille, tapez directement l'URL de suppression d'un développeur dans la barre d'adresse de votre navigateur (par exemple `/developer/1/delete/`, selon le chemin que vous avez défini).
+Que se passe-t-il ?
+</Aside>
+
+<Tabs>
+<TabItem label="Question">
+<Aside type="caution" title="Question">
+Pourquoi est-ce un problème ?
+</Aside>
+</TabItem>
+<TabItem label="Réponse">
+Taper une URL dans la barre d'adresse envoie une requête `GET`.
+Si votre vue ne vérifie pas la méthode HTTP de la requête, le développeur est supprimé.
+
+Or, une requête `GET` est censée uniquement _lire_ des données, jamais les modifier.
+Les navigateurs (préchargement de pages), les robots d'indexation (voir [cette histoire](https://thedailywtf.com/articles/The_Spider_of_Doom)) ou les aperçus de liens envoient des requêtes `GET` sans que l'utilisateur ne le demande explicitement.
+
+<details>
+<summary>Et la protection CSRF ? (optionnel)</summary>
+
+La protection CSRF (`{% csrf_token %}`) ne vous protège pas ici.
+Django ne vérifie le jeton CSRF que pour les méthodes qui modifient des données (`POST`, `PUT`, `PATCH`, `DELETE`), pas pour `GET`.
+Une page malveillante contenant simplement `<img src="https://votre-site/developer/1/delete/">` ferait supprimer le développeur par le navigateur d'un utilisateur connecté à votre site.
+</details>
+</TabItem>
+</Tabs>
+
+La règle à retenir : une requête `GET` ne doit jamais modifier de données.
+
+Nos vues de création et de suppression n'ont rien à afficher : le formulaire de création est affiché par l'index, et le bouton de suppression par la page de détail.
+Elles doivent donc refuser toute autre méthode que `POST`.
+HTTP prévoit un code de réponse pour cela : `405 Method Not Allowed`.
+
+<details>
+<summary>Une vue qui modifie des données doit-elle toujours refuser `GET` ? (optionnel)</summary>
+
+Non.
+Elle peut répondre à une requête `GET`, tant que cette réponse ne modifie rien.
+Par exemple, une vue de suppression peut afficher une page « Voulez-vous vraiment supprimer ce développeur ? » sur un `GET`, et ne supprimer que sur le `POST` envoyé par cette page.
+C'est d'ailleurs ce que fait la vue générique `DeleteView` (voir plus bas).
+Les choses peuvent donc vite se compliquer, et il faut réfléchir, pour chaque vue, aux méthodes qu'elle accepte et à ce qu'elle fait pour chacune d'elles.
+</details>
+
+### Restreindre les méthodes HTTP
+
+La manière de procéder dépend du type de vue que vous avez choisi.
+
+<Tabs>
+<TabItem label="Vue fonction (FBV)">
+Avec une vue fonction, Django fournit des _décorateurs_ pour restreindre les méthodes acceptées.
+
+``` python showLineNumbers=false title="developer/views.py" ins={1,5}
+from django.views.decorators.http import require_POST
+
+#...
+
+@require_POST
+def delete(request, pk):
+    # votre code de suppression
+    ...
+```
+
+Si la requête n'est pas une requête `POST`, le décorateur `@require_POST` renvoie directement une réponse `405`, sans même appeler la fonction `delete`.
+
+<details>
+<summary>Pour aller plus loin (optionnel)</summary>
+
+Il existe d'autres décorateurs du même genre, comme `@require_GET` ou `@require_http_methods(["GET", "POST"])` ([documentation](https://docs.djangoproject.com/en/6.1/topics/http/decorators/#allowed-http-methods)).
+
+<Card title="Décorateurs en Python" icon="seti:python">
+Un décorateur est une fonction qui prend une fonction en paramètre et renvoie une nouvelle fonction qui l'« enveloppe ».
+Écrire `@require_POST` au-dessus de `def delete(...)` revient à écrire `delete = require_POST(delete)` après la définition de la fonction.
+</Card>
+</details>
+</TabItem>
+<TabItem label="Vue classe (CBV)">
+Avec une vue classe, Django appelle la méthode de la classe qui porte le nom de la méthode HTTP (`get()`, `post()`…).
+Si la classe ne définit pas cette méthode, Django renvoie une réponse `405`.
+
+Il suffit donc de ne définir que la méthode `post()`.
+
+``` python showLineNumbers=false title="developer/views.py"
+from django.views import View
+
+#...
+
+class DevDeleteView(View):
+    def post(self, request, pk):
+        # votre code de suppression
+        ...
+```
+
+<details>
+<summary>Pour aller plus loin (optionnel)</summary>
+
+La fonction renvoyée par `as_view()` appelle la méthode `dispatch()` de la vue.
+C'est elle qui appelle la méthode portant le nom de la méthode HTTP, en minuscules, ou qui renvoie la réponse `405`.
+
+C'est d'ailleurs pour cette raison que nos vues `IndexView` et `DevDetailVue` refusent déjà les requêtes `POST` : `ListView` et `DetailView` ne définissent que la méthode `get()`.
+</details>
+</TabItem>
+<TabItem label="Vue générique (GCBV)">
+Django fournit une vue générique dédiée à la suppression : `DeleteView`.
+
+``` python showLineNumbers=false title="developer/views.py"
+from django.urls import reverse_lazy
+from django.views.generic import DeleteView
+
+#...
+
+class DevDeleteView(DeleteView):
+    model = Developer
+    success_url = reverse_lazy('developer:index')
+    http_method_names = ['post']
+```
+
+* Comme `DetailView`, `DeleteView` s'attend à ce que la clé primaire capturée dans l'URL s'appelle `pk`.
+* Sur une requête `POST`, l'objet est supprimé et l'utilisateur est redirigé vers `success_url`.
+* L'attribut `http_method_names` limite les méthodes acceptées à `POST`.
+
+<details>
+<summary>Pour aller plus loin (optionnel)</summary>
+
+* Sans `http_method_names`, `DeleteView` accepte aussi `GET` : elle affiche alors une page de confirmation, avec le gabarit `developer/developer_confirm_delete.html`.
+  Ce gabarit doit contenir un formulaire `POST` qui confirme la suppression.
+  Une requête `GET` ne supprime donc rien, mais sans ce gabarit, elle provoque une erreur.
+  Notre bouton corbeille envoie directement une requête `POST` et n'a pas besoin de cette page.
+* Nous utilisons `reverse_lazy()` plutôt que `reverse()` car les attributs de classe sont évalués au chargement du module, avant que la configuration des URL ne soit chargée.
+
+C'est tout l'intérêt, et le piège, des vues génériques : elles font beaucoup à votre place, mais il faut savoir ce qu'elles font ([documentation](https://docs.djangoproject.com/en/6.1/ref/class-based-views/generic-editing/#deleteview)).
+</details>
+</TabItem>
+</Tabs>
+
+### FBV, CBV ou GCBV : que choisir ?
+
+Il n'y a pas de règle absolue, mais voici quelques repères.
+
+* **Vue générique (GCBV)** : lorsque le cas est classique (afficher une liste, afficher un objet, créer, modifier ou supprimer un objet).
+  Il y a très peu de code à écrire, mais vous acceptez les comportements de la vue générique, qu'il faut connaître.
+* **Vue classe (CBV)** : lorsque le traitement ne correspond à aucune vue générique, mais que vous voulez profiter de la gestion des méthodes HTTP et des mixins.
+* **Vue fonction (FBV)** : lorsque le traitement est court ou très spécifique.
+  Tout est explicite, mais vous devez penser à tout vous-même (méthodes HTTP, et plus tard, authentification).
+
+Quel que soit votre choix, restez cohérent au sein d'un même projet.
+
+### Et la création ?
+
+<Aside title="Exercice" icon="pencil">
+1. Tapez l'URL de création d'un développeur (`/developer/create/`) dans la barre d'adresse de votre navigateur.
+   Que se passe-t-il ?
+   Est-ce le comportement attendu ?
+1. Corrigez la vue `create` afin qu'elle refuse toute autre méthode que `POST`.
+</Aside>
+
+<Aside title="Exercice supplémentaire" icon="pencil">
+Ajoutez des tests (voir la partie « Les tests ») qui vérifient que :
+* une requête `GET` sur les vues de création et de suppression renvoie le code `405` et ne crée ni ne supprime aucun développeur ;
+* une requête `POST` sur ces mêmes vues crée ou supprime bien un développeur.
+
+Le client de test permet d'envoyer une requête `POST` avec des données : `self.client.post(url, {'first_name': 'Ada', 'last_name': 'Lovelace'})`.
 </Aside>

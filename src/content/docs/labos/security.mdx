@@ -48,6 +48,16 @@ Remarques :
 
 * On place le mixin `LoginRequiredMixin` **avant** les autres mixins. En effet, les mixins sont chargés dans l'ordre donné. Si l'utilisateur n'est pas connecté, il est inutile de charger les autres mixins.
 
+<Aside title="Et les vues fonctions ?">
+Un mixin ne s'applique qu'à une vue classe.
+Comme pour `@require_POST` dans la partie « Amélioration des pages développeurs », l'équivalent pour une vue fonction est un décorateur : `@login_required` (du module `django.contrib.auth.decorators`).
+</Aside>
+
+<Aside title="Exercice" icon="pencil">
+Les vues de création et de suppression d'un développeur sont-elles protégées ?
+Si ce n'est pas le cas, protégez-les, avec un mixin ou un décorateur selon le type de vue que vous avez choisi.
+</Aside>
+
 ## Permissions de gestion des tâches
 
 Nous voici dans la toute dernière ligne droite. Nous allons ajouter le droit à certains utilisateurs de gérer les tâches.

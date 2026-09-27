@@ -4,7 +4,7 @@ description: /
 ---
 import { Card, Aside, FileTree, Steps, Tabs, TabItem, Code } from '@astrojs/starlight/components';
 
-En Django, il y a les vues fonctions que nous avons déjà vues, mais il y a aussi les vues génériques (vues classes). Ces dernières, plus récentes, ont pour objectif de simplifier davantage la création de vue.
+En Django, il y a les vues fonctions (FBV, _Function-Based Views_) que nous avons déjà vues, mais il y a aussi les vues génériques (vues classes, CBV, _Class-Based Views_ ou GCBV pour _Generic Class-Based Views_). Ces dernières, plus récentes, ont pour objectif de simplifier davantage la création de vue.
 
 De base, ces vues sont utilisées pour les cas classiques du développement Web : récupérer les données depuis la base de données suivant un paramètre contenu dans l'URL, charger un gabarit et renvoyer le gabarit interprété.
 
@@ -145,6 +145,11 @@ urlpatterns = [
     path('create/', views.create, name='create'),
 ]
 ```
+
+<Aside title="Et la vue `create` ?">
+Pour le moment, la vue `create` reste une vue fonction.
+Nous y reviendrons dans la partie « Amélioration des pages développeurs ».
+</Aside>
 
 ## Vue générique et Mixins
 
