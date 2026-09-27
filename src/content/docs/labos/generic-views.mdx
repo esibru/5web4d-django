@@ -40,7 +40,7 @@ class DevDetailVue(DetailView):
     template_name = 'developer/detail.html'
 ```
 
-* Nous utilisons ici la vue générique : `DetailView`. Cette vue permet l'abstraction des concepts vus pour afficher une page détaillée pour un type particulier d'objet (ici `Developer`).
+* Nous utilisons ici la vue générique : `DetailView`. Cette vue permet l'abstraction des concepts vus pour afficher une page détaillée pour un type particulier d'objet (ici `Developer`).
 
 * Par défaut, la vue générique `DetailView` utilise un gabarit appelé `<nom app>/<nom modèle>_detail.html`. Dans notre cas, elle utiliserait le gabarit `developer/developer_detail.html`. L'attribut `template_name` est utilisé pour signifier à Django d'utiliser un nom de gabarit spécifique plutôt que le nom de gabarit par défaut. Dans notre cas, nous avons choisi de renommer le gabarit, mais cela n'était pas obligatoire. En revanche, cela le devient si vous devez afficher de deux manières différentes un même modèle.
 
@@ -64,12 +64,12 @@ urlpatterns = [
 <Tabs>
 <TabItem label="Question">
 <Aside type="caution" title="Question">
-Pourquoi y a-t-il les parenthèses après `views.DevDetailVue.as_view()` et pas après `views.detail` ?
+Pourquoi y a-t-il les parenthèses après `views.DevDetailVue.as_view()` et pas après `views.detail` ?
 </Aside>
 
 </TabItem>
 <TabItem label="Réponse">
-Le deuxième paramètre de `path` est une fonction qui sera appelée lorsque l'url coïncidera avec le premier paramètre. Ainsi, dans le cas d'une vue fonction, nous donnons en paramètre la fonction `detail`. Dans le cas d'une vue générique, nous donnons en paramètre le retour de la fonction `as_view()` qui est une fonction !
+Le deuxième paramètre de `path` est une fonction qui sera appelée lorsque l'url coïncidera avec le premier paramètre. Ainsi, dans le cas d'une vue fonction, nous donnons en paramètre la fonction `detail`. Dans le cas d'une vue générique, nous donnons en paramètre le retour de la fonction `as_view()` qui est une fonction !
 </TabItem>
 </Tabs>
 
@@ -95,8 +95,8 @@ class IndexView(ListView):
 
 * Nous créons une nouvelle classe qui hérite de `ListView`.
 * Nous indiquons que la vue est faite pour le modèle `Developer`.
-* À l'instar d'une `DetailView` un nom de gabarit est généré automatiquement. Dans le cas d'une `ListView`, le nom généré automatiquement est : `<nom_app>/<nom_modèle><suffixe_gabarit>.html`. Étant donné que le suffixe par défaut est `_list`, nous aurions pour notre modèle : `developer/developer_list.html`. Nous modifions ce nom de gabarit afin qu'il corresponde au gabarit existant (ce changement pourrait aussi se faire au niveau du gabarit).
-* Nous modifions également le nom de la variable du contexte qui contient la liste des développeurs. Par défaut, celle-ci aurait pour nom : `developer_list`.
+* À l'instar d'une `DetailView` un nom de gabarit est généré automatiquement. Dans le cas d'une `ListView`, le nom généré automatiquement est : `<nom_app>/<nom_modèle><suffixe_gabarit>.html`. Étant donné que le suffixe par défaut est `_list`, nous aurions pour notre modèle : `developer/developer_list.html`. Nous modifions ce nom de gabarit afin qu'il corresponde au gabarit existant (ce changement pourrait aussi se faire au niveau du gabarit).
+* Nous modifions également le nom de la variable du contexte qui contient la liste des développeurs. Par défaut, celle-ci aurait pour nom : `developer_list`.
 
 #### Ajout du formulaire à IndexView
 
@@ -146,7 +146,7 @@ urlpatterns = [
 ]
 ```
 
-<Aside title="Et la vue `create` ?">
+<Aside title="Et la vue `create` ?">
 Pour le moment, la vue `create` reste une vue fonction.
 Nous y reviendrons dans la partie « Amélioration des pages développeurs ».
 </Aside>
@@ -168,11 +168,11 @@ Maintenant que vous savez ce que c'est, il vous suffit de savoir quelle fonction
 
 Par exemple, pour `DetailView` vous trouverez les Mixin utilisés et donc les fonctionnalités [ici](https://docs.djangoproject.com/fr/6.1/ref/class-based-views/generic-display/).
 
-Autres exemples :
+Autres exemples :
 
-* Comment je sais que le gabarit par défaut pour une classe qui hérite de `ListView`est `<nom_app>/<nom_modèle><suffixe_gabarit>.html` ? Cela est ajouté grâce au [MultipleObjectTemplateResponseMixin](https://docs.djangoproject.com/fr/6.1/ref/class-based-views/mixins-multiple-object/#multipleobjecttemplateresponsemixin) dont hérite la classe `ListView`.
+* Comment je sais que le gabarit par défaut pour une classe qui hérite de `ListView`est `<nom_app>/<nom_modèle><suffixe_gabarit>.html` ? Cela est ajouté grâce au [MultipleObjectTemplateResponseMixin](https://docs.djangoproject.com/fr/6.1/ref/class-based-views/mixins-multiple-object/#multipleobjecttemplateresponsemixin) dont hérite la classe `ListView`.
 
-* Et pour `get_context_data()` ? [ContextMixin](https://docs.djangoproject.com/fr/6.1/ref/class-based-views/mixins-multiple-object/)
+* Et pour `get_context_data()` ? [ContextMixin](https://docs.djangoproject.com/fr/6.1/ref/class-based-views/mixins-multiple-object/)
 
 
 Nous vous recommandons également d'aller jeter un coup d'oeil de temps à autre dans le code des vues génériques. Il vous apprendra beaucoup sur leur fonctionnement. Il se trouve [ici](https://github.com/django/django/tree/master/django/views/generic).

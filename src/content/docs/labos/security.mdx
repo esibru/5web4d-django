@@ -42,13 +42,13 @@ Grâce aux mixins, c'est sans doute l'une des étapes les plus simples. Il suffi
   #...  
 ```
 
-Remarques :
+Remarques :
 
 * Si l'utilisateur n'est pas connecté, il sera redirigé automatiquement vers la page de login.
 
 * On place le mixin `LoginRequiredMixin` **avant** les autres mixins. En effet, les mixins sont chargés dans l'ordre donné. Si l'utilisateur n'est pas connecté, il est inutile de charger les autres mixins.
 
-<Aside title="Et les vues fonctions ?">
+<Aside title="Et les vues fonctions ?">
 Un mixin ne s'applique qu'à une vue classe.
 Comme pour `@require_POST` dans la partie « Amélioration des pages développeurs », l'équivalent pour une vue fonction est un décorateur : `@login_required` (du module `django.contrib.auth.decorators`).
 </Aside>
@@ -83,7 +83,7 @@ class Task(models.Model):
        ]
 ```
 
-Réalisez une migration. ✏️ Dans quelle table trouvez-vous les différentes permissions ?
+Réalisez une migration. ✏️ Dans quelle table trouvez-vous les différentes permissions ?
 
 À nouveau, utilisons les mixins pour ajouter cette fonctionnalité. Celui qui nous intéresse est `PermissionRequiredMixin`.
 
@@ -106,7 +106,7 @@ Modifiez la vue index des tâches.
 
 Notez qu'il est nécessaire d'ajouter le champ `permission_required` avec la permission demandée.
 
-> 📃 Encore une fois, faites attention à l'ordre de vos mixins !
+> 📃 Encore une fois, faites attention à l'ordre de vos mixins !
 
 > ⚠️ Attention, il est nécessaire de faire une migration du modèle.
 
@@ -128,7 +128,7 @@ Il reste à empêcher d'accéder au bouton d'ajout de tâche dans le détail d'u
 {% endif %}
 ```
 
-Le tutoriel est terminé, mais vous pouvez encore améliorer votre projet. Quelques pistes d'amélioration : 
+Le tutoriel est terminé, mais vous pouvez encore améliorer votre projet. Quelques pistes d'amélioration : 
 
 * Cacher les liens vers les pages `developers` et `tasks` aux visiteurs non connectés.
 * Cacher le lien vers la page `tasks` aux utilisateurs qui n'ont pas la permission

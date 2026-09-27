@@ -80,7 +80,7 @@ Remarquez la ligne
     </div>
 {% endblock content %}
 ```
-C'est terminé !
+C'est terminé !
 
 <Aside title="Exercice" icon="pencil">
 Ajoutez une tâche à un développeur afin de vérifier que le nombre de tâches assignées est bien amendé.
@@ -133,20 +133,20 @@ Tel quel, la vue détail ne fonctionne pas. En effet, l'action `developer:delete
 1. Testez.
 </Aside>
 <Aside title="Exercice" icon="pencil">
-Que se passe-t-il pour les tâches qui étaient assignées ? Amendez le code afin qu'une tâche assignée à un développeur ne soit plus supprimée.
+Que se passe-t-il pour les tâches qui étaient assignées ? Amendez le code afin qu'une tâche assignée à un développeur ne soit plus supprimée.
 </Aside>
 
 ### Une suppression un peu trop facile
 
 <Aside title="Exercice" icon="pencil">
 Sans passer par le bouton corbeille, tapez directement l'URL de suppression d'un développeur dans la barre d'adresse de votre navigateur (par exemple `/developer/1/delete/`, selon le chemin que vous avez défini).
-Que se passe-t-il ?
+Que se passe-t-il ?
 </Aside>
 
 <Tabs>
 <TabItem label="Question">
 <Aside type="caution" title="Question">
-Pourquoi est-ce un problème ?
+Pourquoi est-ce un problème ?
 </Aside>
 </TabItem>
 <TabItem label="Réponse">
@@ -157,7 +157,7 @@ Or, une requête `GET` est censée uniquement _lire_ des données, jamais les mo
 Les navigateurs (préchargement de pages), les robots d'indexation (voir [cette histoire](https://thedailywtf.com/articles/The_Spider_of_Doom)) ou les aperçus de liens envoient des requêtes `GET` sans que l'utilisateur ne le demande explicitement.
 
 <details>
-<summary>Et la protection CSRF ? (optionnel)</summary>
+<summary>Et la protection CSRF ? (optionnel)</summary>
 
 La protection CSRF (`{% csrf_token %}`) ne vous protège pas ici.
 Django ne vérifie le jeton CSRF que pour les méthodes qui modifient des données (`POST`, `PUT`, `PATCH`, `DELETE`), pas pour `GET`.
@@ -177,7 +177,7 @@ HTTP prévoit un code de réponse pour cela : `405 Method Not Allowed`.
 
 Non.
 Elle peut répondre à une requête `GET`, tant que cette réponse ne modifie rien.
-Par exemple, une vue de suppression peut afficher une page « Voulez-vous vraiment supprimer ce développeur ? » sur un `GET`, et ne supprimer que sur le `POST` envoyé par cette page.
+Par exemple, une vue de suppression peut afficher une page « Voulez-vous vraiment supprimer ce développeur ? » sur un `GET`, et ne supprimer que sur le `POST` envoyé par cette page.
 C'est d'ailleurs ce que fait la vue générique `DeleteView` (voir plus bas).
 Les choses peuvent donc vite se compliquer, et il faut réfléchir, pour chaque vue, aux méthodes qu'elle accepte et à ce qu'elle fait pour chacune d'elles.
 </details>
@@ -237,11 +237,11 @@ class DevDeleteView(View):
 La fonction renvoyée par `as_view()` appelle la méthode `dispatch()` de la vue.
 C'est elle qui appelle la méthode portant le nom de la méthode HTTP, en minuscules, ou qui renvoie la réponse `405`.
 
-C'est d'ailleurs pour cette raison que nos vues `IndexView` et `DevDetailVue` refusent déjà les requêtes `POST` : `ListView` et `DetailView` ne définissent que la méthode `get()`.
+C'est d'ailleurs pour cette raison que nos vues `IndexView` et `DevDetailVue` refusent déjà les requêtes `POST` : `ListView` et `DetailView` ne définissent que la méthode `get()`.
 </details>
 </TabItem>
 <TabItem label="Vue générique (GCBV)">
-Django fournit une vue générique dédiée à la suppression : `DeleteView`.
+Django fournit une vue générique dédiée à la suppression : `DeleteView`.
 
 ``` python showLineNumbers=false title="developer/views.py"
 from django.urls import reverse_lazy
@@ -268,34 +268,34 @@ class DevDeleteView(DeleteView):
   Notre bouton corbeille envoie directement une requête `POST` et n'a pas besoin de cette page.
 * Nous utilisons `reverse_lazy()` plutôt que `reverse()` car les attributs de classe sont évalués au chargement du module, avant que la configuration des URL ne soit chargée.
 
-C'est tout l'intérêt, et le piège, des vues génériques : elles font beaucoup à votre place, mais il faut savoir ce qu'elles font ([documentation](https://docs.djangoproject.com/en/6.1/ref/class-based-views/generic-editing/#deleteview)).
+C'est tout l'intérêt, et le piège, des vues génériques : elles font beaucoup à votre place, mais il faut savoir ce qu'elles font ([documentation](https://docs.djangoproject.com/en/6.1/ref/class-based-views/generic-editing/#deleteview)).
 </details>
 </TabItem>
 </Tabs>
 
-### FBV, CBV ou GCBV : que choisir ?
+### FBV, CBV ou GCBV : que choisir ?
 
 Il n'y a pas de règle absolue, mais voici quelques repères.
 
-* **Vue générique (GCBV)** : lorsque le cas est classique (afficher une liste, afficher un objet, créer, modifier ou supprimer un objet).
+* **Vue générique (GCBV)** : lorsque le cas est classique (afficher une liste, afficher un objet, créer, modifier ou supprimer un objet).
   Il y a très peu de code à écrire, mais vous acceptez les comportements de la vue générique, qu'il faut connaître.
-* **Vue classe (CBV)** : lorsque le traitement ne correspond à aucune vue générique, mais que vous voulez profiter de la gestion des méthodes HTTP et des mixins.
-* **Vue fonction (FBV)** : lorsque le traitement est court ou très spécifique.
+* **Vue classe (CBV)** : lorsque le traitement ne correspond à aucune vue générique, mais que vous voulez profiter de la gestion des méthodes HTTP et des mixins.
+* **Vue fonction (FBV)** : lorsque le traitement est court ou très spécifique.
   Tout est explicite, mais vous devez penser à tout vous-même (méthodes HTTP, et plus tard, authentification).
 
 Quel que soit votre choix, restez cohérent au sein d'un même projet.
 
-### Et la création ?
+### Et la création ?
 
 <Aside title="Exercice" icon="pencil">
 1. Tapez l'URL de création d'un développeur (`/developer/create/`) dans la barre d'adresse de votre navigateur.
-   Que se passe-t-il ?
-   Est-ce le comportement attendu ?
+   Que se passe-t-il ?
+   Est-ce le comportement attendu ?
 1. Corrigez la vue `create` afin qu'elle refuse toute autre méthode que `POST`.
 </Aside>
 
 <Aside title="Exercice supplémentaire" icon="pencil">
-Ajoutez des tests (voir la partie « Les tests ») qui vérifient que :
+Ajoutez des tests (voir la partie « Les tests ») qui vérifient que :
 * une requête `GET` sur les vues de création et de suppression renvoie le code `405` et ne crée ni ne supprime aucun développeur ;
 * une requête `POST` sur ces mêmes vues crée ou supprime bien un développeur.
 

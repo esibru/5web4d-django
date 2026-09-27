@@ -10,7 +10,7 @@ Si vous vous documentez par vous-même, vous risquez de tomber sur l'ancienne ap
 
 En effet, il existe deux possibilités. Soit étendre le modèle `AbstractUser`, soit étendre le modèle `AbstractBaseUser`. Nous allons plutôt choisir la première possibilité, car même si le second permet beaucoup plus de flexibilité, la première méthode est plus simple et permet un changement postérieur si les besoins changent.
 
-Nous allons suivre ces 4 étapes : 
+Nous allons suivre ces 4 étapes : 
 
 1. Créer un modèle "CustomUser".
 1. Mettre à jour le fichier `settings.py`.
@@ -122,7 +122,7 @@ Faites la migration et testez la création d'un nouveau super utilisateur. Vous 
 
 #### Correction du formulaire de création de développeur
 
-Si vous essayez de créer un développeur, vous verrez que de nombreux champs se sont ajoutés au formulaire. Essayez ! ✏️ Ceci est tout à fait normal puisqu'un développeur est un utilisateur. Les champs `username` ; `email` ; `password`... sont ainsi demandés. Nous allons donner un autre formulaire afin de créer un développeur avec les données minimales à leur gestion.
+Si vous essayez de créer un développeur, vous verrez que de nombreux champs se sont ajoutés au formulaire. Essayez ! ✏️ Ceci est tout à fait normal puisqu'un développeur est un utilisateur. Les champs `username` ; `email` ; `password`... sont ainsi demandés. Nous allons donner un autre formulaire afin de créer un développeur avec les données minimales à leur gestion.
 
 Ajoutez un formulaire simplifié lié directement au modèle développeur.
 

@@ -30,7 +30,7 @@ class Developer(models.Model):
 
 Un endroit conventionnel pour placer les tests d'une application est le fichier `tests.py` dans le répertoire de l'application. Cependant, le système de test va automatiquement trouver les tests dans tout fichier dont le nom commence par test.
 
-Placez ce qui suit **dans une classe** `DeveloperModelTests` qui hérite de la classe `TestCase` déjà importée dans le fichier `tests.py` de l'application `developer` :
+Placez ce qui suit **dans une classe** `DeveloperModelTests` qui hérite de la classe `TestCase` déjà importée dans le fichier `tests.py` de l'application `developer` :
 
 ``` python showLineNumbers=false title="developer/tests.py"
     def test_is_free_with_no_tasks(self):
@@ -66,13 +66,13 @@ Nous venons ici de créer une sous-classe de `django.test.TestCase` contenant
 $ python manage.py test developer
 ```
 
-Voici ce qui s'est passé :
+Voici ce qui s'est passé :
 
-1. La commande `manage.py test developer` a cherché des tests dans l'application `developer` ;
-1. elle a trouvé une sous-classe de `django.test.TestCase` ;
-1. elle a créé une base de données spéciale uniquement pour les tests ⚠️ ;
-1. elle a recherché des méthodes de test : celles dont le nom commence par test ;
-1. dans `test_is_free_with_no_tasks`, elle a créé une instance de `Developer` ;
+1. La commande `manage.py test developer` a cherché des tests dans l'application `developer` ;
+1. elle a trouvé une sous-classe de `django.test.TestCase` ;
+1. elle a créé une base de données spéciale uniquement pour les tests ⚠️ ;
+1. elle a recherché des méthodes de test : celles dont le nom commence par test ;
+1. dans `test_is_free_with_no_tasks`, elle a créé une instance de `Developer` ;
 1. et à l'aide de la méthode `assertIs()`, elle a pu vérifier son bon fonctionnement.
 
 En cas d'échec, le nom du test est affiché ainsi que la ligne concernée.
@@ -135,7 +135,7 @@ Ensuite, il est nécessaire d'importer la classe Client de test ( ⚠️ plus lo
 >>> client = Client()
 ```
 
-Nous pouvons maintenant demander au client de faire certaines tâches pour nous :
+Nous pouvons maintenant demander au client de faire certaines tâches pour nous :
 
 ``` python showLineNumbers=false frame="none"
 >>> response = client.get('/')
@@ -172,7 +172,7 @@ class DeveloperIndexViewTests(TestCase):
 Dans le premier test, nous vérifions que la page existe bel et bien, qu'un message indiquant l'absence de développeur est affiché et que la variable `developer` du contexte est vide.
 
 <Aside title="Convention" >
-Les tests sont faits dans un ordre logique permettant de déterminer directement la source de l'erreur !
+Les tests sont faits dans un ordre logique permettant de déterminer directement la source de l'erreur !
 </Aside>
 
 Dans le second test, nous vérifions que le prénom du développeur est bien affiché.

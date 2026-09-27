@@ -6,7 +6,7 @@ import { Card, Aside, Steps} from '@astrojs/starlight/components';
 
 Maintenant que nous avons la capacité de créer des utilisateurs. Nous allons limiter l'accès au site aux utilisateurs connectés et limiter l'accès à certaines fonctionnalités aux utilisateurs qui en ont le droit.
 
-Voici donc la suite du programme :
+Voici donc la suite du programme :
 
 1. Nous allons ajouter une page d'accueil qui va afficher les tâches de l'utilisateur connecté et permettre à l'utilisateur de se connecter s'il ne l'est pas.
 2. Nous allons empêcher l'accès aux vues d'index des applications `developer` et `task` aux utilisateurs non connecté.
@@ -63,7 +63,7 @@ urlpatterns = [
 ]
 ```
 
-Lancez le serveur et testez !
+Lancez le serveur et testez !
 
 ### Personnalisation de l'accueil
 
@@ -147,7 +147,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 ```
 
-Définissons les urls : 
+Définissons les urls : 
 
 ``` python showLineNumbers=false title=mproject/urls.py ins={4}
   urlpatterns = [
@@ -169,7 +169,7 @@ Et ajoutez un lien pour permettre la connexion.
 
 📃 L'URL "login" fait partie des URLs inclues à l'étape précédente.
 
-Cliquez pour vous connecter ! Et prenez le temps de lire l'erreur obtenue.
+Cliquez pour vous connecter ! Et prenez le temps de lire l'erreur obtenue.
 
 Cette erreur est simple, le gabarit qui doit permettre de se connecter n'a pas été trouvé. Django s'attend en effet à le trouver dans le répertoire `registration` et celui-ci doit s'appeler `login.html`.
 
@@ -195,7 +195,7 @@ Ajoutez donc le fichier suivant dans le dossier `templates` de votre projet avec
 
 Essayez à nouveau de vous connecter avec les identifiants d'un développeur créé dans votre projet (en dehors de la page admin) et pour lequel vous avez défini un mot de passe.
 
-Une nouvelle fois, vous rencontrez une page d'erreur. Moins évidente cette fois. Pas de panique toutefois ! Après vous êtes connecté, Django cherche à rediriger vers une page de profil qui n'existe pas. Et nous n'allons pas la créer ! Plutôt que de faire cela, nous allons rediriger l'utilisateur qui s'est connecté vers la page d'accueil de notre site.
+Une nouvelle fois, vous rencontrez une page d'erreur. Moins évidente cette fois. Pas de panique toutefois ! Après vous êtes connecté, Django cherche à rediriger vers une page de profil qui n'existe pas. Et nous n'allons pas la créer ! Plutôt que de faire cela, nous allons rediriger l'utilisateur qui s'est connecté vers la page d'accueil de notre site.
 
 Dans le fichier `settings.py`, ajoutez cette ligne à la fin.
 
@@ -233,7 +233,7 @@ Nous allons gérer la déconnexion maintenant, rassurez-vous, le plus dur est fa
    <Aside type="caution" title="Sécurité">
    Pour des raisons de sécurité (CSRF), il n'est pas possible de se déconnecter via une requête GET. Une requête POST est nécessaire.
    </Aside>
-2. Rediriger l'utilisateur vers la page d'accueil en ajoutant la constante `LOGOUT_REDIRECT_URL` à notre fichier `settings.py` :
+2. Rediriger l'utilisateur vers la page d'accueil en ajoutant la constante `LOGOUT_REDIRECT_URL` à notre fichier `settings.py` :
    
    ```python showLineNumbers=false title=mproject/settings.py ins={6}
      #... 
@@ -248,4 +248,4 @@ Nous allons gérer la déconnexion maintenant, rassurez-vous, le plus dur est fa
 
 
 
-La déconnexion est maintenant implémentée !
+La déconnexion est maintenant implémentée !

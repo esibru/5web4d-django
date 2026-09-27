@@ -13,9 +13,9 @@ Actuellement, les tâches (`Task`) sont dans le modèle `developer`. Nous avons 
 <Aside title="Exercice" icon="pencil">
 Commencez par créer et ajouter une nouvelle application `task` et ensuite, déplacez le modèle de `Task` dans cette nouvelle application.
 
-N'oubliez pas :
-* d'écrire la méthode `__str__(self)` ;
-* d'ajouter l'application dans le fichier `settings.py` ;
+N'oubliez pas :
+* d'écrire la méthode `__str__(self)` ;
+* d'ajouter l'application dans le fichier `settings.py` ;
 * de gérer la migration dans la base de donnée.
 </Aside>
 
@@ -25,9 +25,9 @@ N'oubliez pas :
 <Aside title="Exercice" icon="pencil">
 Inspirez-vous de ce qui a déjà été fait pour ajouter une nouvelle vue qui permet uniquement d'afficher la liste de toutes les tâches. Si un développeur est affecté à une tâche, son nom doit apparaître à côté. Sinon, il doit être indiqué qu'elle n'est pas assignée.
 
-Pensez à :
-* gérer la nouvelle URL (création d'un nouveau fichier `task/urls.py` et modification du fichier `mproject/urls.py`) ;
-* utiliser une vue de type "classe" ;
+Pensez à :
+* gérer la nouvelle URL (création d'un nouveau fichier `task/urls.py` et modification du fichier `mproject/urls.py`) ;
+* utiliser une vue de type "classe" ;
 * ajouter un nouveau gabarit (pensez à l'héritage de `_base`).
 </Aside>
 
@@ -80,12 +80,12 @@ Ajoutez la possibilité de créer une tâche dans la vue détail d'un développe
 
 * Il serait aussi bien de ne pas exposer l'utilisateur à une erreur possible. Désactivez le champ pour que celui-ci ne soit pas modifiable. Attention, un champ désactivé n'est pas envoyé dans les données `POST`.
 
-   **Aide :** 
+   **Aide :** 
 
    * Dans la fonction `get_context_data` d'une vue générique `DetailView`, il est possible d'accéder à l'instance de l'objet courant grâce à `self.object`.
    * [Désactiver un champ](https://docs.djangoproject.com/en/6.1/ref/forms/fields/#disabled)
    * `<un formulaire>.fields` permet d'accéder aux champs d'un formulaire. Chaque clé du dictionnaire représente le nom d'un champ et la valeur associé le champ lui-même (l'objet python).
-   * En Python 🐍, il est possible d'ajouter des valeurs par défauts aux arguments. Exemple : `def create(request, developer_id=None):`
+   * En Python 🐍, il est possible d'ajouter des valeurs par défauts aux arguments. Exemple : `def create(request, developer_id=None):`
    * Pour qu'un champ ne soit pas obligatoire, il faut que son attribut `blank` soit mis à `True`.
 
 <Card title="Champ désactivé" icon="warning">
@@ -95,7 +95,7 @@ Essayez de créer une nouvelle tâche à partir d'un développeur. Vérifiez si 
 
 Au cas où vous ne le sauriez pas, un champ `disabled` n'est pas renvoyée au serveur lors d'une requête `POST`. Votre création de tâche ne peut donc se clôturer puisqu'il manque l'information du développeur assigné à la tâche.
 
-   **Aide :**
+   **Aide :**
 
    * Deux chemins (`path`) peuvent avoir le même nom, à condition d'avoir des motifs de route différents.
    * Pensez au concept DRY et à la manière dont nous avons créé le modal pour la création d'un développeur. Dans un template, vous pouvez utiliser `request.resolver_match.app_name` pour connaître l'application qui l'utilise. Cela peut-être utile pour savoir si la création d'une tâche se fait à partir d'un développeur ou à partir de l'index des tâches. Une autre manière de procéder est de directement vérifier si des variables du contexte existent (par ex: `developer`).

@@ -8,7 +8,7 @@ Vous voici presque à la fin de ce tutoriel. Les dernières parties permettent l
 
 ## Page d'administration et super utilisateur
 
-Vous vous êtes sûrement demandé à quoi servait les fichiers `admin.py` ? Celui-ci permet de configurer la page d'administration de notre projet. Nous aurions
+Vous vous êtes sûrement demandé à quoi servait les fichiers `admin.py` ? Celui-ci permet de configurer la page d'administration de notre projet. Nous aurions
 pu le décrire plus tôt, mais vous auriez trop vite délaissé le `shell`.
 
 Nous allons donc commencer par créer un super utilisateur. Saisissez la commande suivante et remplissez le formulaire.
@@ -17,7 +17,7 @@ Nous allons donc commencer par créer un super utilisateur. Saisissez la command
 $ python manage.py createsuperuser
 ```
 
-Redémarrez le serveur et rendez-vous sur la page `localhost:8000/admin` ; connectez-vous et explorez un peu.
+Redémarrez le serveur et rendez-vous sur la page `localhost:8000/admin` ; connectez-vous et explorez un peu.
 
 Maintenant que vous avez découvert la page d'administration, nous allons configurer les fichiers `admin.py` de l'application `developer` et `task`.
 
@@ -43,7 +43,7 @@ Retournez sur la page administration et vérifiez l'ajout de l'administration de
 * Les différents types de champs du modèle (`DateTimeField`, `CharField`) correspondent au composant graphique d'entrée HTML approprié. Chaque type de champ possède son propre [widget](https://docs.djangoproject.com/fr/6.1/ref/forms/widgets/) dans l'interface d'administration de Django.
 </Aside>
 
-La partie inférieure de la page vous propose une série d'opérations :
+La partie inférieure de la page vous propose une série d'opérations :
 
 * Enregistrer - Enregistre les modifications et retourne à la page liste pour modification de ce type d'objet.
 * Enregistrer et continuer les modifications - Enregistre les modifications et recharge la page d'administration de cet objet.
@@ -58,7 +58,7 @@ Nous n'allons pas rentrer dans les détails ici, juste vous proposer deux modifi
 
 La première et de rendre visible les tâches dans la vue développeur.
 
-Modifiez le code :
+Modifiez le code :
 
 ``` python showLineNumbers=false title=developer/admin.py ins={3,5,6,7,9,10,13} del={12}
   # ...
@@ -123,7 +123,7 @@ Vous n'avez pas besoin de réaliser une migration pour cette étape. En effet, l
 
 Nous avons modifié le minimum de la page d'administration, mais vous pouvez configurer davantage votre page d'administration. 
 
-**Et même utiliser un décorateur :**
+**Et même utiliser un décorateur :**
 
 ``` python showLineNumbers=false title=task/admin.py ins={1} del={5}
   @admin.register(Task)

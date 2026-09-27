@@ -9,17 +9,17 @@ import { Card, Aside, Icon, FileTree} from '@astrojs/starlight/components';
 Nous allons maintenant définir les modèles - essentiellement, le schéma de base de données, avec quelques métadonnées supplémentaires.
 
 <Card title="Philosophie DRY de Django">
-Un modèle est la source d'information unique et définitive pour vos données. Il contient les champs essentiels et le comportement attendu des données que vous stockerez. Django respecte la philosophie DRY (**Don't Repeat Yourself**, « ne vous répétez pas »). Le but est de définir le modèle des données à un seul endroit, et ensuite de dériver automatiquement ce qui est nécessaire à partir de celui-ci.
+Un modèle est la source d'information unique et définitive pour vos données. Il contient les champs essentiels et le comportement attendu des données que vous stockerez. Django respecte la philosophie DRY (**Don't Repeat Yourself**, « ne vous répétez pas »). Le but est de définir le modèle des données à un seul endroit, et ensuite de dériver automatiquement ce qui est nécessaire à partir de celui-ci.
 
 Ceci inclut les migrations. En effet, les migrations sont entièrement dérivées du fichier des modèles et ne sont au fond qu'un historique que Django peut parcourir pour mettre à jour le schéma de la base de données pour qu'il corresponde aux modèles actuels.
 </Card>
 
 ### Migration et base de données
 
-Lorsqu'on exécute la commande `python manage.py migrate`, cela provoque une migration du modèle. Nous n'avons pas encore défini de modèle, mais certains éléments existent déjà !
+Lorsqu'on exécute la commande `python manage.py migrate`, cela provoque une migration du modèle. Nous n'avons pas encore défini de modèle, mais certains éléments existent déjà !
 Ainsi, après avoir saisi la commande donnée, un fichier `db.sqlite3` apparaît.
 
-Par défaut, Django utilise une base de donnée _SQLite_. Cela peut facilement être changé en modifiant le fichier `settings`. C'est ce que nous ferons un peu plus tard. Voici la configuration actuelle :
+Par défaut, Django utilise une base de donnée _SQLite_. Cela peut facilement être changé en modifiant le fichier `settings`. C'est ce que nous ferons un peu plus tard. Voici la configuration actuelle :
 
 ``` python showLineNumbers=false title="mproject/settings.py"
 DATABASES = {
@@ -64,22 +64,22 @@ class Task(models.Model):
 * Le nom de chaque instance de `Field` (par exemple, `first_name` ou `title`) est le nom du champ en interne. Vous l'utiliserez dans votre code Python et votre base de données l'utilisera comme nom de colonne.
 * Vous pouvez utiliser le premier paramètre de position (facultatif) d'un `Field`  pour donner un nom plus lisible au champ. C'est utilisé par le système d'introspection de Django, et aussi pour la documentation. Si ce paramètre est absent, Django utilisera le nom du champ interne. Dans l'exemple, nous n'avons défini qu'un seul nom, pour `first_name` (en réalité, le nom donné automatiquement par Django est le même... 🙄). Parfois, le premier champ est pris par un autre paramètre. Dans ce cas, il est malgré tout possible d'assigner une valeur grâce à `verbose_name`(voir `assignee`).
 * Certaines classes `Field` possèdent des paramètres obligatoires. La classe `CharField`, par exemple, a besoin d'un attribut `max_length`. Ce n'est pas seulement utilisé dans le schéma de base de la base de données, mais également pour valider les champs, comme nous allons voir prochainement.
-* Finalement, notez que nous définissons une association, en utilisant `ForeignKey` (plusieurs-à-un). Cela indique à Django que chaque tâche (Task) n'est reliée qu'à un seul développeur. Django propose tous les modèles classiques d'association : 
+* Finalement, notez que nous définissons une association, en utilisant `ForeignKey` (plusieurs-à-un). Cela indique à Django que chaque tâche (Task) n'est reliée qu'à un seul développeur. Django propose tous les modèles classiques d'association : 
   * plusieurs-à-un,
   * plusieurs-à-plusieurs,
   * un-à-un.
 
-Pour plus d'information sur les champs : 
+Pour plus d'information sur les champs : 
 
-* [Options des champs](https://docs.djangoproject.com/fr/6.1/ref/models/fields/) 📖 ;
-* [Type des champs](https://docs.djangoproject.com/fr/6.1/ref/models/fields/#field-types) 📖 ;
-* [plusieurs-à-plusieurs](https://docs.djangoproject.com/fr/6.1/topics/db/examples/many_to_many/) 📖 ;
-* [plusieurs-à-un](https://docs.djangoproject.com/fr/6.1/topics/db/examples/many_to_one/) 📖 ;
+* [Options des champs](https://docs.djangoproject.com/fr/6.1/ref/models/fields/) 📖 ;
+* [Type des champs](https://docs.djangoproject.com/fr/6.1/ref/models/fields/#field-types) 📖 ;
+* [plusieurs-à-plusieurs](https://docs.djangoproject.com/fr/6.1/topics/db/examples/many_to_many/) 📖 ;
+* [plusieurs-à-un](https://docs.djangoproject.com/fr/6.1/topics/db/examples/many_to_one/) 📖 ;
 * [un-à-un](https://docs.djangoproject.com/fr/6.1/topics/db/examples/one_to_one/) 📖.
 
 #### Activation du modèle et migrations
 
-Ce petit morceau de code décrivant les modèles fournit beaucoup d'informations à Django. Cela lui permet de :
+Ce petit morceau de code décrivant les modèles fournit beaucoup d'informations à Django. Cela lui permet de :
 * créer un schéma de base de données (instructions `CREATE TABLE`) pour cette application.
 * Créer une API Python d'accès aux bases de données pour accéder aux objets `Developer` et `Task`.
 
@@ -88,7 +88,7 @@ Essayons de migrer les changements 🐇. La migration se fait grâce à la comma
 $ python manage.py makemigrations
 ```
 
-Résultat :
+Résultat :
 
 ``` text showLineNumbers=false frame="none"
 No changes detected
@@ -98,7 +98,7 @@ Rien ne s'est passé, en réalité, il faut d'abord "installer" l'application de
 
 ##### Installation de l'application `developer`
 
-Pour inclure l'application dans notre projet, nous avons besoin d'ajouter une référence à sa classe de configuration dans le réglage `INSTALLED_APPS` présent dans le fichier `settings.py`. La classe `DeveloperConfig` se trouve dans le fichier `developer/apps.py`, ce qui signifie que son chemin pointé est `developer.apps.DeveloperConfig`. Modifiez le fichier `mproject/settings.py` et ajoutez ce chemin pointé au réglage `INSTALLED_APPS`. Il doit ressembler à ceci :
+Pour inclure l'application dans notre projet, nous avons besoin d'ajouter une référence à sa classe de configuration dans le réglage `INSTALLED_APPS` présent dans le fichier `settings.py`. La classe `DeveloperConfig` se trouve dans le fichier `developer/apps.py`, ce qui signifie que son chemin pointé est `developer.apps.DeveloperConfig`. Modifiez le fichier `mproject/settings.py` et ajoutez ce chemin pointé au réglage `INSTALLED_APPS`. Il doit ressembler à ceci :
 
 ``` python showLineNumbers=false frame="none" ins={9, 10} title="mproject/settings.py"
 INSTALLED_APPS = [
@@ -117,7 +117,7 @@ INSTALLED_APPS = [
 
 Maintenant que c'est fait, nous pouvons relancer la commande `python manage.py makemigrations`.
 
-Vous devriez avoir quelque chose de similaire à ceci :
+Vous devriez avoir quelque chose de similaire à ceci :
 
 ``` text showLineNumbers=false frame="none" 
 Migrations for 'developer':
@@ -128,17 +128,17 @@ Migrations for 'developer':
 
 En exécutant `makemigrations`, vous indiquez à Django que vous avez effectué des changements à vos modèles (dans le cas présent, vous  avez créé un nouveau modèle) et que vous aimeriez que ces changements soient stockés sous forme de migration.
 
-Les migrations sont le moyen utilisé par Django pour stocker les modifications de vos modèles (et donc de votre schéma de base de données), il s'agit de fichiers présent sur votre disque. Vous pouvez consultez la migration pour vos nouveaux modèles si vous le voulez ; il s'agit du fichier `developer/migrations/0001_initial.py` ⭐️. Soyez sans crainte, vous n'êtes pas censé les lire chaque fois que Django en créé, mais ils sont conçus pour être lisibles facilement par un humain au cas où vous auriez besoin d'adapter manuellement les processus de modification de Django.
+Les migrations sont le moyen utilisé par Django pour stocker les modifications de vos modèles (et donc de votre schéma de base de données), il s'agit de fichiers présent sur votre disque. Vous pouvez consultez la migration pour vos nouveaux modèles si vous le voulez ; il s'agit du fichier `developer/migrations/0001_initial.py` ⭐️. Soyez sans crainte, vous n'êtes pas censé les lire chaque fois que Django en créé, mais ils sont conçus pour être lisibles facilement par un humain au cas où vous auriez besoin d'adapter manuellement les processus de modification de Django.
 
 ##### Commande `sqlmigrate`
 
-Il existe une commande qui exécute les migrations et gère automatiquement votre schéma de base de données, elle s'appelle `migrate`. Nous y viendrons bientôt, mais tout d'abord, voyons les instructions SQL que la migration produit. La commande `sqlmigrate` accepte des noms de migrations et affiche le code SQL correspondant :
+Il existe une commande qui exécute les migrations et gère automatiquement votre schéma de base de données, elle s'appelle `migrate`. Nous y viendrons bientôt, mais tout d'abord, voyons les instructions SQL que la migration produit. La commande `sqlmigrate` accepte des noms de migrations et affiche le code SQL correspondant :
 
 ``` console showLineNumbers=false frame="none"
 $ python manage.py sqlmigrate developer 0001
 ``` 
 
-Vous devriez voir quelque chose de similaire à ceci (remis en forme par souci de lisibilité) :
+Vous devriez voir quelque chose de similaire à ceci (remis en forme par souci de lisibilité) :
 
 ``` sql showLineNumbers=false frame="none"
 BEGIN;
@@ -166,7 +166,7 @@ CREATE INDEX "developer_task_assignee_id_497c1e11"
 COMMIT;
 ```
 
-Notez les points suivants :
+Notez les points suivants :
 
 * Ce que vous verrez dépendra de la base de données que vous utilisez. L'exemple ci-dessus est généré pour SQLite.
 * Les noms de tables sont générés automatiquement en combinant le nom de l'application (`developer`) et le nom du modèle en minuscules – `developer` et `task` (Les [meta-options du modèle](https://docs.djangoproject.com/en/6.1/ref/models/options/#db-table) permettent de changer ce comportement).
@@ -182,27 +182,27 @@ Si vous vérifiez la base de donnée, vous ne verrez aucun changement. En effet,
 
 ##### Commande migrate
 
-Appliquons maintenant notre migration. Saisissez la commande :
+Appliquons maintenant notre migration. Saisissez la commande :
 
 ``` console showLineNumbers=false frame="none"
 $ python manage.py migrate
 ```
 
-La commande migrate sélectionne toutes les migrations qui n'ont pas été appliquées (Django garde la trace des migrations appliquées en utilisant une table spéciale dans la base de données : django_migrations) puis les exécute dans la base de données, ce qui consiste essentiellement à synchroniser les changements des modèles avec le schéma de la base de données.
+La commande migrate sélectionne toutes les migrations qui n'ont pas été appliquées (Django garde la trace des migrations appliquées en utilisant une table spéciale dans la base de données : django_migrations) puis les exécute dans la base de données, ce qui consiste essentiellement à synchroniser les changements des modèles avec le schéma de la base de données.
 
 <Aside icon="pencil" title="Exercice">
-Vérifiez à nouveau la base de donnée. Quelle(s) table(s) a(ont) été ajoutée(s) ?
+Vérifiez à nouveau la base de donnée. Quelle(s) table(s) a(ont) été ajoutée(s) ?
 </Aside>
 
 ##### Résumé des commandes `makemigrations` et `migrate`
 
-Les migrations sont très puissantes et permettent de gérer les changements de modèles dans le temps, au cours du développement d'un projet, sans devoir supprimer la base de données ou ses tables et en refaire de nouvelles. Une migration s'attache à mettre à jour la base de données en live, sans perte de données. Nous les aborderons plus en détails dans une partie ultérieure de ce didacticiel, mais pour l'instant, retenez le guide en trois étapes pour effectuer des modifications aux modèles :
+Les migrations sont très puissantes et permettent de gérer les changements de modèles dans le temps, au cours du développement d'un projet, sans devoir supprimer la base de données ou ses tables et en refaire de nouvelles. Une migration s'attache à mettre à jour la base de données en live, sans perte de données. Nous les aborderons plus en détails dans une partie ultérieure de ce didacticiel, mais pour l'instant, retenez le guide en trois étapes pour effectuer des modifications aux modèles :
 
 > 1. Modifiez les modèles (dans `models.py`).
 > 1. Exécutez `python manage.py makemigrations` pour créer des migrations correspondant à ces changements.
 > 1. Exécutez `python manage.py migrate` pour appliquer ces modifications à la base de données.
 
-La raison de séparer les commandes pour créer et appliquer les migrations est que celles-ci vont être ajoutées dans votre système de gestion de versions et qu'elles seront livrées avec l'application ; elles ne font pas que faciliter le développement, elles sont également exploitables par d'autres développeurs ou en production.
+La raison de séparer les commandes pour créer et appliquer les migrations est que celles-ci vont être ajoutées dans votre système de gestion de versions et qu'elles seront livrées avec l'application ; elles ne font pas que faciliter le développement, elles sont également exploitables par d'autres développeurs ou en production.
 
 ### Pensez à utiliser un gestionnaire de versions
 
@@ -210,15 +210,15 @@ Cela pourrait être utile pour vous de revenir en arrière dans ce tutoriel et d
 
 ### Interface de programmation (API)
 
-Maintenant, utilisons un shell interactif Python pour jouer avec l'API que Django met à votre disposition. Pour lancer un shell Python, utilisez cette commande :
+Maintenant, utilisons un shell interactif Python pour jouer avec l'API que Django met à votre disposition. Pour lancer un shell Python, utilisez cette commande :
 
 ``` console showLineNumbers=false frame="none"
 $ python manage.py shell
 ```
 
-Nous utilisons celle-ci au lieu de simplement taper « python », parce que `manage.py` définit la variable d'environnement `DJANGO_SETTINGS_MODULE`, qui indique à Django le chemin d'importation Python vers votre fichier `developer/settings.py`. 
+Nous utilisons celle-ci au lieu de simplement taper « python », parce que `manage.py` définit la variable d'environnement `DJANGO_SETTINGS_MODULE`, qui indique à Django le chemin d'importation Python vers votre fichier `developer/settings.py`. 
 
-📃 Notez que cette API est utilisée plus loin pour la manipulation des modèles. La maîtrise de celle-ci est donc essentiel pour le développement d'application Web avec Django ! ⚠️
+📃 Notez que cette API est utilisée plus loin pour la manipulation des modèles. La maîtrise de celle-ci est donc essentiel pour le développement d'application Web avec Django ! ⚠️
 
 Une fois dans le shell, explorez [l'api de base de donnée](https://docs.djangoproject.com/fr/6.1/topics/db/queries/) 📖.
 
@@ -228,7 +228,7 @@ Une fois dans le shell, explorez [l'api de base de donnée](https://docs.djangop
 <QuerySet []>
 ```
 
-On obtient un _QuerySet_ en utilisant le _Manager_ du modèle. Chaque modèle a au moins un Manager ; il s'appelle _objects_ par défaut.
+On obtient un _QuerySet_ en utilisant le _Manager_ du modèle. Chaque modèle a au moins un Manager ; il s'appelle _objects_ par défaut.
 
 * [QuerySet](https://docs.djangoproject.com/fr/6.1/ref/models/querysets/#django.db.models.query.QuerySet) 📖
 * [Manager](https://docs.djangoproject.com/fr/6.1/topics/db/managers/#django.db.models.Manager) 📖
@@ -239,7 +239,7 @@ Ici, le QuerySet est vide puisqu'aucun élément n'a été créé.
 >>> jlc = Developer(first_name='Jonahtan', last_name='Lechien')
 ```
 <Aside title="Exercice" icon="star">
-Nous venons de créer un nouveau développeur. Vérifiez que celui-ci a bien été créé dans la base de donnée ! 🐇
+Nous venons de créer un nouveau développeur. Vérifiez que celui-ci a bien été créé dans la base de donnée ! 🐇
 </Aside>
 
 Vous vous êtes peut-être fait avoir. Quoiqu'il en soit, vous avez pu vérifier qu'il n'y a aucun nouvel enregistrement. Il est nécessaire de le sauvegarder pour que celui-ci soit enregistré en base de donnée...
@@ -248,7 +248,7 @@ Vous vous êtes peut-être fait avoir. Quoiqu'il en soit, vous avez pu vérifier
 >>> jlc.save()
 ```
 
-Il est possible de créer un nouvel enregistrement en passant par un manager, il n'est alors pas nécessaire de le sauvegarder. Essayez ! ⭐️
+Il est possible de créer un nouvel enregistrement en passant par un manager, il n'est alors pas nécessaire de le sauvegarder. Essayez ! ⭐️
 
 ``` python showLineNumbers=false frame="none"
 >>> sdr = Developer.objects.create(first_name='Sébastien', last_name='Drobisz')
@@ -295,9 +295,9 @@ class Task(models.Model):
 
 <Card title="Rappel" icon="seti:python">
 * Vous l'aurez probablement compris, `__str__()` est à Python ce que `toString()` est à Java.
-* Pour formater du texte, on peut utiliser : 
-   * `'%s %s' % (self.first_name, self.last_name)` 💩 ;
-   * `'{} {}'.format(self.first_name, self.last_name)` 💩 ;
+* Pour formater du texte, on peut utiliser : 
+   * `'%s %s' % (self.first_name, self.last_name)` 💩 ;
+   * `'{} {}'.format(self.first_name, self.last_name)` 💩 ;
    * `f"{self.first_name} {self.last_name}" ` (👍 depuis python 3.6).
 </Card>
 
@@ -339,7 +339,7 @@ Si vous avez lu le tuto [ici](https://docs.djangoproject.com/fr/6.1/intro/tutori
 0
 ```
 
-##### Toujours plus d'information 📖 :
+##### Toujours plus d'information 📖 :
 
 * [Recherche dans les champs](https://docs.djangoproject.com/fr/6.1/topics/db/queries/#field-lookups-intro).
 * [Référence des objets liés](https://docs.djangoproject.com/fr/6.1/ref/models/relations/).

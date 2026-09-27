@@ -4,24 +4,24 @@ description: Docs intro
 ---
 import { Aside, Steps } from '@astrojs/starlight/components';
 
-Une vue est un « type » de page Web dans votre application Django qui sert généralement à une fonction précise et possède un gabarit spécifique. Par exemple, dans une application de blog, vous pouvez avoir les vues suivantes :
+Une vue est un « type » de page Web dans votre application Django qui sert généralement à une fonction précise et possède un gabarit spécifique. Par exemple, dans une application de blog, vous pouvez avoir les vues suivantes :
 
 * La page d'accueil du blog - affiche quelques-uns des derniers billets.
-* La page de « détail » d'un billet - lien permanent vers un seul billet.
+* La page de « détail » d'un billet - lien permanent vers un seul billet.
 * La page d'archives pour une année - affiche tous les mois contenant des billets pour une année donnée.
 * La page d'archives pour un mois - affiche tous les jours contenant des billets pour un mois donné.
 * La page d'archives pour un jour - affiche tous les billets pour un jour donné.
 * Action de commentaire - gère l'écriture de commentaires sur un billet donné.
 
-Dans notre application, nous possédons plusieurs vues. Parmi celles-ci :
-* une page d'accueil ;
-* une page qui liste les développeurs ;
-* une page qui donne le détail des développeurs - c'est-à-dire le nom, prénom ainsi que toutes ses tâches ;
+Dans notre application, nous possédons plusieurs vues. Parmi celles-ci :
+* une page d'accueil ;
+* une page qui liste les développeurs ;
+* une page qui donne le détail des développeurs - c'est-à-dire le nom, prénom ainsi que toutes ses tâches ;
 * une page pour l'ensemble des tâches...
 
 Dans Django, les pages Web et les autres contenus sont générés par des vues. Chaque vue est représentée par une fonction Python. Django choisit une vue en examinant l'URL demandée (pour être précis, la partie de l'URL après le nom de domaine).
 
-Un modèle d'URL est la forme générale d'une URL ; par exemple : `/archive/<année>/<mois>/`.
+Un modèle d'URL est la forme générale d'une URL ; par exemple : `/archive/<année>/<mois>/`.
 
 Pour passer de l'URL à la vue, Django utilise ce qu'on appelle des configurations d'URL (URLconf). Une configuration d'URL associe des motifs d'URL à des vues.
 
@@ -29,7 +29,7 @@ Pour passer de l'URL à la vue, Django utilise ce qu'on appelle des configuratio
 
 La vue que nous avons écrite jusqu'à maintenant est très sommaire, une page web ne ressemble en rien à cela.
 
-De plus, il y a un problème : l'allure de la page est codée en dur dans la vue. Si vous voulez changer le style de la page, vous devrez modifier votre code Python. Nous allons donc utiliser le système de gabarits de Django pour séparer le style du code Python en créant un gabarit que la vue pourra utiliser.
+De plus, il y a un problème : l'allure de la page est codée en dur dans la vue. Si vous voulez changer le style de la page, vous devrez modifier votre code Python. Nous allons donc utiliser le système de gabarits de Django pour séparer le style du code Python en créant un gabarit que la vue pourra utiliser.
 
 Tout d'abord, créez un répertoire nommé `templates` dans votre répertoire `developer`. C'est là que Django recherche les gabarits.
 
@@ -42,7 +42,7 @@ Vérifiez la présence de l'option dans le fichier `mproject/settings.py`.
 Dans le répertoire `templates` que vous venez de créer, créez un autre répertoire nommé `developer` dans lequel vous placez un nouveau fichier `index.html`. Autrement dit, le chemin de votre gabarit doit être `developer/templates/developer/index.html`. Conformément au fonctionnement du chargeur de gabarit `app_directories` (cf. explication ci-dessus), vous pouvez désigner ce gabarit dans Django par `developer/index.html`.
 
 
-> *_Gabarits : espace de nom_* 
+> *_Gabarits : espace de nom_* 
 >
 > Il serait aussi possible de placer directement nos gabarits dans `developer/templates` (plutôt que dans un sous-répertoire `developer`), mais ce serait une mauvaise idée. Django choisit le premier gabarit qu'il trouve pour un nom donné et dans le cas où vous avez un gabarit de même nom dans une autre application, Django ne fera pas la différence. Il faut pouvoir indiquer à Django le bon gabarit, et la meilleure manière de faire cela est d'utiliser des espaces de noms. C'est-à-dire que nous plaçons ces gabarits dans un autre répertoire portant le nom de l'application.
 
@@ -96,7 +96,7 @@ Chargez la page en appelant l'URL `/developer/` dans votre navigateur vous devri
 
 <Aside icon="pencil" title="Exercice">
 
-1. Supprimez chacun des développeurs et vérifiez que le message "II n'y a aucun développeur enregistré !" soit bien affiché. 
+1. Supprimez chacun des développeurs et vérifiez que le message "II n'y a aucun développeur enregistré !" soit bien affiché. 
 1. Rajoutez ensuite au moins deux développeurs.
 1. Modifier le gabarit pour ajouter le nom des développeurs.
 
@@ -104,7 +104,7 @@ Chargez la page en appelant l'URL `/developer/` dans votre navigateur vous devri
 
 ## Une deuxième vue
 
-Nous allons ajouter une deuxième vue qui va nous permettre d'afficher le détail des informations que l'on a sur les développeurs. Nous allons devoir compléter les étapes suivantes : 
+Nous allons ajouter une deuxième vue qui va nous permettre d'afficher le détail des informations que l'on a sur les développeurs. Nous allons devoir compléter les étapes suivantes : 
 
 <Steps>
 
@@ -151,19 +151,19 @@ Nous allons ajouter une deuxième vue qui va nous permettre d'afficher le détai
    ```
 </Steps>
 
-Ouvrez votre navigateur à l'adresse « `/developer/3/` ». La méthode `detail()` sera exécutée et affichera le développeur fourni dans l'URL.
+Ouvrez votre navigateur à l'adresse « `/developer/3/` ». La méthode `detail()` sera exécutée et affichera le développeur fourni dans l'URL.
 
 <Aside type="tip">
 > Nous vous suggérons ici d'utiliser la valeur 3 pour l'adresse. Cette valeur devrait correspond à l'id du développeur que vous avez recréé après avoir supprimé, comme demandé, les deux développeurs "sdr" et "jlc". Si vous avez un doute, vous pouvez aller dans le `shell` et lancer la commande `[dev.id for dev in Developer.objects.all()]` après avoir importé la classe `Developer`. Cette commande va vous retourner la liste des identifiants présents dans la base de donnée. (Ce code n'a rien de magique, il s'agit de la constitution d'une liste sur base d'un parcours des développeurs disponibles dans la BDD.)
 </Aside>
 
-Lorsque quelqu'un demande une page de votre site Web, par exemple `/developer/3/`, Django charge le module Python `mproject.urls` parce qu'il est mentionné dans le réglage `ROOT_URLCONF`. Il trouve la variable nommée `urlpatterns` et parcourt les motifs dans l'ordre. Après avoir trouvé la correspondance `developer/`, il retire le texte correspondant (`developer/`) et passe le texte restant - `3/` - à la configuration d'URL `developer.urls` pour la suite du traitement. Dans le cas présent, c'est `<int:developer_id>/` qui correspond, ce qui aboutit à un appel à la vue `detail()` comme ceci :
+Lorsque quelqu'un demande une page de votre site Web, par exemple `/developer/3/`, Django charge le module Python `mproject.urls` parce qu'il est mentionné dans le réglage `ROOT_URLCONF`. Il trouve la variable nommée `urlpatterns` et parcourt les motifs dans l'ordre. Après avoir trouvé la correspondance `developer/`, il retire le texte correspondant (`developer/`) et passe le texte restant - `3/` - à la configuration d'URL `developer.urls` pour la suite du traitement. Dans le cas présent, c'est `<int:developer_id>/` qui correspond, ce qui aboutit à un appel à la vue `detail()` comme ceci :
 
 ``` python showLineNumbers=false frame="none"
 detail(request=<HttpRequest object>, developer_id=3)
 ```
 
-La partie `developer_id=3` vient de `<int:developer_id>`. En utilisant des chevrons, cela « capture » une partie de l'URL l'envoie en tant que paramètre nommé à la fonction de vue ; la partie `:developer_id>` de la chaîne définit le nom qui va être utilisé pour identifier le motif trouvé, et la partie `<int:` est un convertisseur qui détermine ce à quoi les motifs doivent correspondre dans cette partie du chemin d'URL.
+La partie `developer_id=3` vient de `<int:developer_id>`. En utilisant des chevrons, cela « capture » une partie de l'URL l'envoie en tant que paramètre nommé à la fonction de vue ; la partie `:developer_id>` de la chaîne définit le nom qui va être utilisé pour identifier le motif trouvé, et la partie `<int:` est un convertisseur qui détermine ce à quoi les motifs doivent correspondre dans cette partie du chemin d'URL.
 
 Pour plus d'info sur la distribution d'URL, cela se passe [ici](https://docs.djangoproject.com/fr/6.1/topics/http/urls/). 📖
 
@@ -215,17 +215,17 @@ Revenons dans la vue `index` et plus précisément dans le gabarit et ajoutons c
 </body>
 ```
 
-Vous pouvez maintenant essayer d'aller sur l'index de votre site et suivre les liens qui sont créés !
+Vous pouvez maintenant essayer d'aller sur l'index de votre site et suivre les liens qui sont créés !
 
 #### Configurer les chemins via `{% url %}`
 
-Le problème de cette approche codée en dur et fortement couplée est qu'il devient fastidieux de modifier les URL dans des projets qui ont beaucoup de gabarits. Cependant, comme vous avez défini le paramètre `name` dans les fonctions `path()` du module `developer.urls`, vous pouvez supprimer la dépendance en chemins d'URL spécifiques définis dans les configurations d'URL en utilisant la balise de gabarit `{% url %}` :
+Le problème de cette approche codée en dur et fortement couplée est qu'il devient fastidieux de modifier les URL dans des projets qui ont beaucoup de gabarits. Cependant, comme vous avez défini le paramètre `name` dans les fonctions `path()` du module `developer.urls`, vous pouvez supprimer la dépendance en chemins d'URL spécifiques définis dans les configurations d'URL en utilisant la balise de gabarit `{% url %}` :
 
 ``` python showLineNumbers=false title="developer/templates/developer/index.html"
 <li><a href="{% url 'detail' dev.id %}">{{ dev.first_name }}</a></li>
 ```
 
-Le principe de ce fonctionnement est que l'URL est recherchée dans les définitions du module `developer.urls`. Ci-dessous, vous pouvez voir exactement où le nom d'URL "detail" est défini :
+Le principe de ce fonctionnement est que l'URL est recherchée dans les définitions du module `developer.urls`. Ci-dessous, vous pouvez voir exactement où le nom d'URL "detail" est défini :
 
 ``` python showLineNumbers=false title="developer/urls.py"
 path('<int:developer_id>/', views.detail, name='detail'),
@@ -240,9 +240,9 @@ Si vous souhaitez modifier l'URL de détail des développeurs, par exemple sur l
 
 #### Espaces de noms et noms d'URL
 
-Le projet ne contient actuellement qu'une seule application, `developer`. Plus tard, une autre application va se greffer à notre projet. Comment Django arrive-t-il à différencier les noms d'URL entre elles ? Par exemple, l'application `developer` possède une vue `detail` et il se peut tout à fait qu'une autre application du même projet en possède aussi une. Comment peut-on indiquer à Django quelle vue d'application il doit appeler pour une URL lors de l'utilisation de la balise de gabarit `{% url %}` ?
+Le projet ne contient actuellement qu'une seule application, `developer`. Plus tard, une autre application va se greffer à notre projet. Comment Django arrive-t-il à différencier les noms d'URL entre elles ? Par exemple, l'application `developer` possède une vue `detail` et il se peut tout à fait qu'une autre application du même projet en possède aussi une. Comment peut-on indiquer à Django quelle vue d'application il doit appeler pour une URL lors de l'utilisation de la balise de gabarit `{% url %}` ?
 
-La réponse est donnée par l'ajout d'espaces de noms à votre configuration d'URL. Dans le fichier `developer/urls.py`, ajoutez une variable `app_name` pour définir l'espace de nom de l'application :
+La réponse est donnée par l'ajout d'espaces de noms à votre configuration d'URL. Dans le fichier `developer/urls.py`, ajoutez une variable `app_name` pour définir l'espace de nom de l'application :
 
 ```python showLineNumbers=false title="developer/urls.py" ins={1}
 app_name = 'developer'
