@@ -58,6 +58,7 @@ Remarquez la ligne
 
 * `{{ dev.tasks.all|length }}` permet d'afficher le nombre de tâches.
 * `tâche{{developer.tasks.all|length|pluralize}}` permet de mettre le mot tâche au pluriel si le développeur en a plusieurs (ou 0).
+  Le _filtre_ [`pluralize`](https://docs.djangoproject.com/en/6.1/ref/templates/builtins/#pluralize) prend également un argument pour les cas où le pluriel n'est pas un simple ajout d'un s: `bateau{{ num_boats | pluralize:"x" }}`, ou encore `journa{{ num_logs | pluralize:"l,ux" }}`.
 
 ## Détails des développeurs
 
