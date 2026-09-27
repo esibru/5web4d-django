@@ -69,8 +69,8 @@ def create(request):
         last_name=request.POST['last_name']
     )
     # Toujours renvoyer une HTTPResponseRedirect après avoir géré correctement
-    # les données de la requête POST. Cela empêche les données d'être postée deux
-    # fois si l'utilisateur clique sur le bouton précédent.
+    # les données de la requête POST. Cela empêche les données d'être postées
+    # deux fois si l'utilisateur clique sur le bouton précédent.
     return HttpResponseRedirect(reverse('developer:index'))
 ```
 
@@ -167,8 +167,8 @@ def create(request):
         )
 
     # Toujours renvoyer une HTTPResponseRedirect après avoir géré correctement
-    # les données de la requête POST. Cela empêche les données d'être postée deux
-    # fois si l'utilisateur clique sur le bouton précédent.
+    # les données de la requête POST. Cela empêche les données d'être postées
+    # deux fois si l'utilisateur clique sur le bouton précédent.
     return HttpResponseRedirect(reverse('developer:index'))
 ```
 
