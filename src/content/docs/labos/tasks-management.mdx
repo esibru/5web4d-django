@@ -32,23 +32,11 @@ Pensez à :
 
 ## Suppression d'une tâche
 
-Pour chacune des tâches listées, ajoutez un bouton pour la supprimer.
-
-``` html showLineNumbers=false title="task/templates/task/index.html"
-#...
-<li class="list-group-item">
-    <form action="{% url 'task:delete' task.id %}" method="post">
-        {% csrf_token %}
-        <button class="close" type="submit"><i class="fa fa-trash"></i></button>
-    </form>
-
-    # ... 
-```
-
-Ce bout de code permet d'ajouter une corbeille pour supprimer une tâche.
-
 <Aside title="Exercice" icon="pencil">
-Ajoutez le code nécessaire afin d'ajouter la fonctionnalité de suppression de tâches.
+Pour chacune des tâches listées, ajoutez un bouton pour la supprimer, de la même manière que pour les développeurs.
+Lors de la suppression, redirigez vers l'index des tâches.
+
+N'oubliez pas qu'une requête `GET` ne doit pas supprimer de tâche.
 </Aside>
 
 ## Création d'une tâche
