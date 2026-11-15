@@ -1,0 +1,151 @@
+---
+title: Projet développement web IV — Gestion d'une bibliothèque
+---
+import { Card, Aside, Icon, Steps } from '@astrojs/starlight/components';
+
+<Card title="Modalités" icon="list-format">
+
+## Projet d'examen pour l'UE 5WEB4D
+
+### Pondération
+
+L'évaluation de l'UE se déroule de la manière suivante :
+
+|Pondération|Matière|
+|---|---|
+|100%|Défense du projet|
+
+### Groupes
+
+Le projet peut se faire seul ou en groupe de 2.
+
+[Formulaire d'inscription](https://docs.google.com/forms/d/e/1FAIpQLSdbFVRc-4E4ADzo7M_kHx6p94tgnq64jsgJrhkgaDaODUKEQw/viewform?usp=header)
+
+### <Icon name="gitlab" size="2rem" class="inline" /> git
+Un dépôt Git sera mis à votre disposition après inscription via le formulaire.
+Celui ci doit être utilisé pour la remise des livrables.
+
+### <Icon name="seti:clock" size="2rem" class="inline" /> Deadlines
+
+|Phase|Date|
+|---|---|
+|Inscription| 27 novembre 2026 |
+|Dernier commit du projet | 04 janvier 2027 |
+
+### Défense Orale
+
+<Aside type="danger" title="Défense Orale">
+Lors de l’examen/défense orale, le strict minimum est d’être capable de:
+
+- expliquer tant l’utilité que le fonctionnement de chaque ligne ou extrait de code (boucle, méthode) sans se référer aux commentaires. 
+
+- identifier le ou les extraits de code responsables de chaque fonctionnalité du logiciel (sans devoir scroller/chercher au travers de tous les fichiers en espérant trouver un mot clef…)
+
+- être capable d’écrire du code basique, sans IA, pour démontrer votre maîtrise du code proposé et des SGBD utilisés.
+</Aside>
+
+</Card>
+
+## Contexte
+
+Une bibliothèque souhaite disposer de deux applications complémentaires :
+
+- **Odoo 18**, utilisé par les bibliothécaires pour la gestion quotidienne de la bibliothèque ;
+- **Django**, utilisé par les lecteurs pour consulter le catalogue et gérer leur espace personnel.
+
+Les applications disposent de bases de données distinctes et communiquent via **XML-RPC**. Cette séparation vise notamment à distinguer les responsabilités, à limiter l'accès aux données personnelles et à permettre un déploiement et un dimensionnement indépendants.
+
+L'énoncé décrit les grandes lignes attendues. Certains choix de conception sont volontairement laissés à votre appréciation. En cas de doute, posez vos questions à l'enseignant.
+
+## Back office — Odoo
+
+### Catalogue et exemplaires
+
+La bibliothèque gère des **ouvrages**, modélisés en étendant les **produits Odoo**, ainsi que leurs **exemplaires physiques**. Un même ouvrage peut posséder plusieurs exemplaires. Les bibliothécaires doivent pouvoir gérer les informations utiles du catalogue et connaître l'état des exemplaires.
+
+### Lecteurs et prêts
+
+Les lecteurs sont représentés à l'aide des **contacts Odoo**. Les bibliothécaires enregistrent les prêts et les retours des exemplaires.
+
+Les règles métier doivent être appliquées dans Odoo, notamment :
+
+- Un exemplaire ne peut pas être prêté simultanément à plusieurs lecteurs.
+- Un prêt est associé à un lecteur, un exemplaire et une date de début.
+- **La date limite de retour est calculée automatiquement** : elle correspond à **un mois calendaire** après la date de début du prêt.
+- **Une seule prolongation** est autorisée ; elle porte la durée totale du prêt à **deux mois calendaires** depuis la date initiale.
+- Les données et les transitions d'état doivent rester cohérentes (dates, prêt en cours, retour, disponibilité de l'exemplaire, etc.).
+
+**Exemple :** un exemplaire emprunté le **4 mars** doit être rendu au plus tard le **4 avril**. Si le prêt est prolongé, la nouvelle échéance est le **4 mai**.
+
+### Retards et pénalités
+
+Odoo permet d'identifier les retards, de calculer les pénalités selon une règle définie et de suivre leur règlement. Les étudiants s'appuient sur les mécanismes standards d'Odoo lorsque cela est pertinent, sans devoir développer une comptabilité complète.
+
+## Front office — Django
+
+### Comptes et catalogue
+
+Les lecteurs disposent d'un espace personnel. Leur compte Django est associé de manière sécurisée à leur contact Odoo.
+
+Le catalogue des ouvrages est consultable et recherchable depuis Django. Une **copie locale des informations utiles du catalogue** permet de continuer à le consulter lorsque le back office est indisponible. Odoo reste la source de référence.
+
+Pour chaque ouvrage, le front office présente une indication de disponibilité : **disponible**, **indisponible** ou **inconnue**. Si l'actualisation échoue, la disponibilité affichée est **inconnue**, et non une ancienne valeur présentée comme actuelle. Un mécanisme d'actualisation doit être prévu.
+
+### Bibliothèque personnelle
+
+Chaque lecteur peut gérer sa propre liste d'ouvrages : **à lire**, **en cours de lecture**, **lus**, avec éventuellement des notes ou dates personnelles. Un ouvrage peut figurer dans cette liste sans avoir été emprunté à la bibliothèque.
+
+Ces informations appartiennent à Django et **ne sont pas transmises à Odoo**.
+
+### Avis
+
+Les lecteurs peuvent publier, modifier et supprimer leurs avis et évaluations sur les ouvrages. Les avis publiés sont visibles par les autres lecteurs ; les notes privées de la bibliothèque personnelle ne le sont pas.
+
+### Prêts et pénalités
+
+Un lecteur peut consulter ses **prêts en cours**, leurs échéances et ses **éventuelles pénalités**. Ces informations sont demandées à Odoo lors de la consultation : elles ne constituent pas un historique local des emprunts.
+
+Si Odoo ne peut pas être joint, Django signale clairement que ces informations sont **indisponibles ou inconnues**. Une erreur de communication ne doit jamais être interprétée comme une absence de prêt ou une pénalité de 0 €.
+
+Les prêts, retours et prolongations sont gérés par les bibliothécaires dans Odoo, et non par les lecteurs dans Django.
+
+## Communication, sécurité et autonomie
+
+- Les deux applications ont leur propre base de données ; Django **n'accède pas directement** à celle d'Odoo.
+- La communication avec Odoo s'effectue par **XML-RPC**, côté serveur, sans exposer les identifiants techniques au navigateur.
+- Les données ne sont échangées que lorsque cela est nécessaire à une fonctionnalité.
+- Les lecteurs ne peuvent consulter que leurs propres informations privées.
+- Une panne d'Odoo ne doit pas empêcher l'utilisation des fonctions locales de Django (bibliothèque personnelle, avis, catalogue déjà synchronisé).
+- Les applications doivent pouvoir être **déployées indépendamment**.
+
+## Travail attendu
+
+Réaliser les deux applications et leur intégration, avec une attention particulière à :
+
+- la modélisation et à l'**héritage des modèles Odoo** ;
+- la mise en œuvre des **contraintes métier** et des **champs calculés** ;
+- la cohérence des données entre ouvrages, exemplaires et prêts ;
+- la séparation des responsabilités entre Django et Odoo ;
+- la gestion des erreurs de communication et des données inconnues ;
+- la confidentialité des informations personnelles ;
+- la qualité générale de l'application et la justification des choix de conception.
+
+<Aside type="note" title="Hors champs">
+- réservation d'ouvrages,
+- listes d'attente. 
+- Il n'est pas demandé de mettre en place une comptabilité complète.
+</Aside>
+
+## Utilisation de l'IA
+
+L'utilisation de l'IA est autorisée pour des cas particuliers.
+
+**Exemple :** génération du style de l'application django.
+
+<Aside type="caution" title="Charte IA">
+L'utilisation de l'IA est encadrée par la [charte IA de la HE2B](https://he2b.be/wp-content/uploads/2026/09/RDE-HE2B-2026-2027.pdf). En particulier, il vous est imposé de garder une trace de votre utilisation (Article 4).
+</Aside>
+
+## En cas de question
+
+N'hésitez pas à vous adresser directement à votre enseignant en cas de question. Prenez en particulier garde à bien respecter les contraintes (fonctionnelles, techniques, pédagogiques) énoncées plus haut et à interroger votre enseignant à ce propos si nécessaire, faute de quoi votre projet pourrait être jugé irrecevable.

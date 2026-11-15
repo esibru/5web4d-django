@@ -5,7 +5,7 @@ import starlight from '@astrojs/starlight';
 // https://astro.build/config
 export default defineConfig({
 	site: 'https://esibru.github.io',
-  	base: '/5web4d-django/',
+	base: '/5web4d-django/',
 	integrations: [
 		starlight({
 			title: '5WEB4D',
@@ -39,18 +39,24 @@ export default defineConfig({
 						{ label: '3.2 - PostgreSQL', slug: 'labos/postgresql' },
 						{ label: '3.3 - Amélioration des pages développeurs', slug: 'labos/developer-improvement' },
 						{ label: '3.4 - Gestion des tâches', slug: 'labos/tasks-management' },
-						{ label: '3.5 - Gestion des onglets actifs', slug: 'labos/tab-management'},
+						{ label: '3.5 - Gestion des onglets actifs', slug: 'labos/tab-management' },
 					],
 				},
 				{
 					label: '4 - Gestion des utilisateurs',
 					items: [
-						{ label: "4.1 - Page d'administration", slug: 'labos/admin-page'},
-						{ label: "4.2 - Gestion des utilisateurs", slug: 'labos/user-management'},
-						{ label: "4.3 - Authentification", slug: 'labos/authentification'},
-						{ label: "4.4 - Sécurité", slug: 'labos/security'},
+						{ label: "4.1 - Page d'administration", slug: 'labos/admin-page' },
+						{ label: "4.2 - Gestion des utilisateurs", slug: 'labos/user-management' },
+						{ label: "4.3 - Authentification", slug: 'labos/authentification' },
+						{ label: "4.4 - Sécurité", slug: 'labos/security' },
 					],
 				},
+				// {
+				// 	label: "Projet",
+				// 	items: [
+				// 		{ label: "Énoncé", slug: 'projets/enonce-2026' },
+				// 	],
+				// },
 			],
 		}),
 	],
