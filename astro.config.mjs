@@ -51,12 +51,12 @@ export default defineConfig({
 						{ label: "4.4 - Sécurité", slug: 'labos/security' },
 					],
 				},
-				// {
-				// 	label: "Projet",
-				// 	items: [
-				// 		{ label: "Énoncé", slug: 'projets/enonce-2026' },
-				// 	],
-				// },
+				{
+					label: "Projet",
+					items: [
+						{ label: "Énoncé", slug: 'projets/enonce-2026' },
+					],
+				},
 			],
 		}),
 	],
